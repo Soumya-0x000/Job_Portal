@@ -1,0 +1,213 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&family=Montserrat:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mooli&family=Onest:wght@300;400&family=Roboto+Mono:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jaldi&family=M+PLUS+1p:wght@300&family=Maven+Pro&family=Oxanium:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=K2D:wght@200&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.MuiDataGrid-cell {
+    background-color: rgb(1, 27, 18);
+    color: rgb(204, 255, 255);
+    font-size: 14px;
+}
+
+.MuiDataGrid-footerContainer  {
+    background-color: rgb(1, 12, 27);
+    color: rgb(208, 233, 255);
+}
+
+.MuiToolbar-root{
+    color: rgb(208, 233, 255);   
+}
+
+.MuiTablePagination-selectIcon {
+    fill: rgb(208, 233, 255);
+}
+
+.MuiDataGrid-columnHeaderTitle {
+    font-size: large;
+}
+
+.actionBtnBend {
+    clip-path: polygon(78% 0%, 100% 0, 100% 100%, 0% 100%);
+}
+
+/* contact us CSS beginning */
+.contentContainer {
+    display: flex;
+    flex-direction: row;
+    row-gap: 1.4rem;
+    column-gap: 1rem;
+    padding: 4px 4px;
+  }
+  
+  .formContainer {
+    display: flex;
+    flex-direction: column;
+    row-gap: 3rem;
+  }
+  
+  .map {
+    width: 43rem;
+  }
+  
+  @media screen and (max-width: 1024px) {
+    .contentContainer {
+      flex-direction: column;
+    }
+  
+    .map {
+      width: 100%;
+      height: 23rem;
+    }
+  }
+  
+  @media screen and (min-width: 1024px) {
+    .map {
+      width: 30rem; 
+      height: 100%; 
+    }
+  }
+  
+  @media screen and (min-width: 1280px) {
+    .map {
+      width: 36rem; 
+      height: 100%; 
+    }
+  }
+
+/* contact us CSS ending */
+
+
+
+
+
+/* 404 page svg style beginning */
+.cls-1 {
+  fill: #d6b49a;
+  stroke: #000;
+  stroke-width: 3px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cls-2 {
+  fill: #020202;
+  stroke: #000;
+  stroke-width: 3px;
+  stroke-miterlimit: 10;
+}
+
+/* Add the rest of your styles here */
+.cls-3 {
+  fill: #818181;
+  stroke: #000;
+  stroke-width: 3px;
+  stroke-miterlimit: 10;
+}
+
+.cls-4 {
+  fill: #dcdbda;
+  stroke: #000;
+  stroke-width: 3px;
+  stroke-miterlimit: 10;
+}
+
+.cls-5 {
+  fill: #4ea7f1;
+  stroke: #000;
+  stroke-width: 3px;
+  stroke-miterlimit: 10;
+}
+
+.cls-6 {
+  fill: #f8f3ed;
+  stroke: #000;
+  stroke-width: 3px;
+  stroke-miterlimit: 10;
+}
+
+.cls-7 {
+  fill: #333;
+  stroke: #191818;
+  stroke-width: 3px;
+  stroke-miterlimit: 10;
+}
+
+.cls-8 {
+  fill: none;
+  stroke: #191818;
+  stroke-width: 3px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cls-9 {
+  fill: #f8f59c;
+  stroke: #000;
+  stroke-width: 3px;
+  stroke-miterlimit: 10;
+}
+
+.cls-10 {
+  fill: #f3d2c9;
+  stroke: #000;
+  stroke-width: 3px;
+  stroke-miterlimit: 10;
+}
+
+.cls-11 {
+  fill: #f3d2c9;
+  stroke: #000;
+  stroke-width: 3px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cls-12 {
+  fill: #333;
+  stroke: #191818;
+  stroke-width: 3px;
+  stroke-miterlimit: 10;
+}
+
+.cls-13 {
+  fill: none;
+  stroke: #000;
+  stroke-width: 3px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cls-14 {
+  fill: #f8f3ed;
+  stroke: #000;
+  stroke-width: 3px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cls-15 {
+  fill: #8bb174;
+  stroke: #000;
+  stroke-width: 3px;
+  stroke-miterlimit: 10;
+}
+
+.cls-16 {
+  fill: #333;
+  stroke: #191818;
+  stroke-width: 3px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cls-17 {
+  fill: #da4e22;
+  stroke: #000;
+  stroke-width: 3px;
+  stroke-miterlimit: 10;
+}
+/* 404 page svg style ending */
