@@ -1,4 +1,4 @@
-import { FC, ReactElement, useState } from 'react';
+import { ChangeEvent, FC, useState } from 'react';
 import { motion } from 'framer-motion';
 import { GoSearch } from "react-icons/go";
 import { TbDatabaseSearch } from "react-icons/tb";
@@ -9,10 +9,8 @@ import { buttonsData, coursesCard, onlineCourses, statCard, tabs } from '../../c
 import { GoArrowLeft, GoArrowRight } from "react-icons/go";
 import { TiStarFullOutline  } from "react-icons/ti";
 import { Footer } from '../../common/Footer';
-import AboutUs from '../AboutUs';
 import { NavBar } from '../../common/Navbar';
-import ContactUs from '../ContactUs';
-import Home from '../Home';
+import PageRender from './PageRender';
 
 interface BtnCardType {
     imgSrc: string;
@@ -42,21 +40,6 @@ const ButtonWithCard: FC<BtnCardType> = ({ imgSrc, alt, text, bgColor, textColor
             </div>
         </div>
     );
-};
-
-export const pageRender: (selected: string) => ReactElement = (selected) => {
-    switch (selected) {
-        case 'Home':
-            return <HomePageContent />;
-        case 'About Us':
-            return <AboutUs />;
-        case 'Contact Us':
-            return <ContactUs />;
-        case 'Career':
-            return <Home />;
-        default:
-            return <HomePageContent />;
-    }
 };
 
 export interface accType {
@@ -90,7 +73,7 @@ const LandingPage = () => {
                 </div>
             </div> 
 
-            {pageRender(selected)}
+            {PageRender(selected)}
         </>
     );
 };
@@ -102,7 +85,7 @@ export const HomePageContent = () => {
     const [typedText, setTypedText] = useState<string>('');
     const [courseDisplay, setCourseDisplay] = useState<number>(3);
 
-    const handleInputText = (e: any) => {
+    const handleInputText = (e: ChangeEvent<HTMLInputElement>) => {
         setTypedText(e.target.value);
     };
 

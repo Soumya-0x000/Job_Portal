@@ -1,49 +1,7 @@
-import { Button, Container, Grid } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
 import { FC, useEffect, useState } from "react";
 import { Loading } from "../common/Loading";
 import { demoJobRoles, jobRoleTypes } from "../common/DemoData";
 import { useLocation } from "react-router-dom";
-
-interface applyBtnTypes {
-    applied: string | null;
-    onApply: (jobId: string) => void;
-    jobId: string;
-}
-
-const ApplyButton: FC<applyBtnTypes> = ({ applied, onApply, jobId }) => {
-    const isApplied = applied === jobId;
-
-    const handleApply = () => {
-        if (!isApplied) {
-            onApply(jobId);
-        }
-    };
-
-    return (
-        <Button
-        variant='contained'
-        style={{ backgroundColor: isApplied ? '#FF5D5D' : '#5DFF89', color: isApplied ? '#430202' : '#003E11' }}
-        sx={{ width: '100%' }}
-        onClick={handleApply}
-        disabled={isApplied || applied !== null}>
-            {isApplied ? "Applied" : applied !== null ? "Can't Apply" : "Apply"}
-        </Button>
-    );
-};
-
-const jobColumns = (applied: string | null, onApply: (jobId: string) => void) => [
-    { field: 'id', headerName: 'ID', width: 80 },
-    { field: 'title', headerName: 'Title', width: 250 },
-    { field: 'description', headerName: 'Description', width: 480 },
-    { field: 'requirements', headerName: 'Requirements', width: 480 },
-    {
-        field: 'status',
-        headerName: 'Status',
-        width: 120,
-        renderCell: (params: any) => <ApplyButton applied={applied} onApply={onApply} jobId={params.row.id} />
-    },
-];
 
 const Career: FC = () => {
     const [loading, setLoading] = useState(true);
@@ -76,7 +34,7 @@ const Career: FC = () => {
         <div className='h-full overflow-y-auto w-full py-10 flex items-center justify-center px-4 bg-slate-400 rounded-lg min-h-screen'>
             {loading 
                 ? <Loading />
-                : <div className=" grid grid-cols-1 md:grid-cols-2 md:gap-10 Llg:grid-cols-3 2xl:grid-cols-4 xl:gap-8 2xl:gap-6">
+                : <div className=" grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-10 Llg:grid-cols-3 2xl:grid-cols-4 xl:gap-8 2xl:gap-6 mt-20">
                     {demoJobRoles.map((job, indx) => (
                         <JobCard key={indx} job={job} applied={appliedJob} onApply={handleApply} />
                     ))}
@@ -92,15 +50,13 @@ interface jobCardType {
     job: jobRoleTypes;
     applied: string | null;
     onApply: (jobId: string) => void;
-};
+}
 
 const JobCard: FC<jobCardType> = ({ job, applied, onApply }) => {
     const isApplied = applied === job.id;
 
     const handleApply = () => {
-        if (!isApplied) {
-            onApply(job.id);
-        }
+        if (!isApplied) onApply(job.id)
     };
 
     return (
@@ -119,7 +75,7 @@ const JobCard: FC<jobCardType> = ({ job, applied, onApply }) => {
                 {job.requirements && (
                     <div className=" flex items-center gap-x-1 gap-y-2 flex-wrap mt-4">
                         {job.requirements.split(', ').map((item, indx) => (
-                            <div key={indx} className=" text-green-300 bg-slate-900 w-fit rounded-full py-1 px-2">{item}</div>
+                            <div key={indx} className=" text-green-300 bg-slate-900 w-fit rounded-full py-1 px-2 text-[13px]">{item}</div>
                         ))}
                     </div>
                 )}
@@ -132,10 +88,12 @@ const JobCard: FC<jobCardType> = ({ job, applied, onApply }) => {
             </>
 
             <button
-            style={{ backgroundColor: isApplied ? '#FF5D5D' : '#5DFF89', color: isApplied ? '#430202' : '#003E11' }}
+            style={{ 
+                backgroundColor: isApplied ? '#FF5D5D' : applied !== null ? "#f0ff5d" : '#5DFF89', 
+                color: isApplied ? '#430202' : applied !== null ? "#737204" :'#003E11' }}
             onClick={handleApply}
             disabled={isApplied || applied !== null}
-            className=" rounded-md py-1 px-2 mt-4">
+            className=" rounded-md py-1 px-2 mt-4 active:scale-95 transition-all font-bold">
                 {isApplied ? "Applied" : applied !== null ? "Can't Apply" : "Apply"}
             </button>
         </div>

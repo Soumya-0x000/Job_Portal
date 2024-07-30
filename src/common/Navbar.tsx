@@ -128,7 +128,7 @@ interface OptionType {
     setIsDropdownOpen: Dispatch<SetStateAction<boolean>>;
     setSelected: Dispatch<SetStateAction<string>>;
     setHamburgerActive: Dispatch<SetStateAction<boolean>>
-};
+}
 
 const Option: FC<OptionType> = ({ 
     text, 

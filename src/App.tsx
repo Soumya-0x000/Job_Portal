@@ -4,7 +4,8 @@ import { Loading } from './common/Loading';
 import { FormValues } from './components/authPage/SignIn';
 import { tabs, tabsType } from './common/DemoData';
 import { NavBar } from './common/Navbar';
-import { accountArr, accType, pageRender } from './components/Home/LandingPage';
+import { accountArr, accType } from './components/Home/LandingPage';
+import PageRender from './components/Home/PageRender';
 
 const App = () => {
     const [selected, setSelected] = useState<string>(tabs[0]?.text);
@@ -25,9 +26,7 @@ const App = () => {
 
             const savedUniqId = user?.uniqId
             if(uniqId !== savedUniqId) navigate('/')
-        } else {
-            navigate('/')
-        }
+        } else navigate('/')
 
         setTimeout(() => {
             setLoading(false);
@@ -60,7 +59,7 @@ const App = () => {
         <div className=' bg-slate-800 h-screen'>
             {loading 
                 ? <Loading/>
-                : <div>
+                : <div> 
                     <div className='absolute flex flex-col items-center w-full top-10 gap-y-4 z-50'>
                         <div className='rounded-lg w-[96%] bg-[#0f172a25] backdrop-blur-md'>
                             <NavBar
@@ -72,7 +71,7 @@ const App = () => {
                         </div>
                     </div>
 
-                    {pageRender(selected)}
+                    {PageRender(selected)}
                 </div>
             }
         </div>

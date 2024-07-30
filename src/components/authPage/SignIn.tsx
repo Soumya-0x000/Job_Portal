@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useState, MouseEvent as ReactMouseEvent } from 'react';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import { Link, useNavigate } from 'react-router-dom';
@@ -20,21 +20,21 @@ const validationSchema = Yup.object({
 type loginOptionType = {
     name: string;
     icon: ReactElement;
-    onClick: (e:any) => void
+    onClick: (e: ReactMouseEvent<HTMLButtonElement>) => void
 };
 
 const loginOption: loginOptionType[] = [
     {
         name: 'Log in with Google',
         icon: <FcGoogle className=' text-[1.6rem]'/>,
-        onClick: (e: any) => {
-            e.preventDefault()
+        onClick: (e: ReactMouseEvent<HTMLButtonElement>) => {
+            e.preventDefault();
         }   
     }, {
         name: 'Log in with GitHub',
         icon: <FaGithub className=' text-[1.6rem] text-white '/>,
-        onClick: (e: any) => {
-            e.preventDefault()
+        onClick: (e: ReactMouseEvent<HTMLButtonElement>) => {
+            e.preventDefault();
         }
     }
 ];
@@ -105,11 +105,11 @@ const LoginPage: React.FC = () => {
                                             className=" w-full bg-slate-800 pl-3 text-slate-200 border-none outline-none focus:outline-none rounded-lg py-1 ml-2"
                                             autoComplete="off"
                                             spellCheck="false"
-                                            onPaste={(e:any) => type === 'password' ? e.preventDefault() : ''}
-                                            onCopy={(e:any) => type === 'password' ? e.preventDefault() : ''}
-                                            onCut={(e:any) => type === 'password' ? e.preventDefault() : ''}
-                                            onDrag={(e:any) => type === 'password' ? e.preventDefault() : ''}
-                                            onDrop={(e:any) => type === 'password' ? e.preventDefault() : ''}
+                                            onPaste={(e: ReactMouseEvent<HTMLButtonElement>) => type === 'password' ? e.preventDefault() : undefined}
+                                            onCopy={(e: ReactMouseEvent<HTMLButtonElement>) => type === 'password' ? e.preventDefault() : undefined}
+                                            onCut={(e: ReactMouseEvent<HTMLButtonElement>) => type === 'password' ? e.preventDefault() : undefined}
+                                            onDrag={(e: ReactMouseEvent<HTMLButtonElement>) => type === 'password' ? e.preventDefault() : undefined}
+                                            onDrop={(e: ReactMouseEvent<HTMLButtonElement>) => type === 'password' ? e.preventDefault() : undefined}
                                         />
                                         
                                         {errors[id as keyof FormValues] && touched[id as keyof FormValues] ? (
@@ -131,7 +131,7 @@ const LoginPage: React.FC = () => {
                                 <div className='pt-6 flex flex-col sm:flex-row items-center justify-center w-full gap-x-6 gap-y-3'>
                                     {loginOption.map((option, indx) => (
                                         <button className=' ring-1 ring-slate-600 rounded-lg bg-slate-800 px-3 py-2 flex items-center justify-center gap-x-2 active:scale-105 transition-all w-full line-clamp-1'
-                                        onClick={option.onClick}
+                                        onClick={(e: ReactMouseEvent<HTMLButtonElement>) => option.onClick(e)}
                                         key={indx}>
                                         {option.icon}
                                         <span className=' text-slate-200 '>

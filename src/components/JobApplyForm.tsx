@@ -1,20 +1,7 @@
 import { useFormik } from 'formik';
-import { FC, forwardRef, useState } from 'react';
+import { FC, useState } from 'react';
 import * as Yup from 'yup';
-import Career from './Career';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemButton from '@mui/material/ListItemButton';
-import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import CloseIcon from '@mui/icons-material/Close';
-import Slide from '@mui/material/Slide';
-import { TransitionProps } from '@mui/material/transitions';
+import { useNavigate } from 'react-router-dom';
 
 interface InputTypes {
     name: string;
@@ -45,24 +32,9 @@ interface FormData {
     address: string;
 }
 
-const Transition = forwardRef(function Transition(
-    props: TransitionProps & {
-        children: React.ReactElement;
-    }, ref: React.Ref<unknown>,
-    ) { return <Slide direction="up" ref={ref} {...props} /> }
-);
-
 export const JobApplyForm: FC = () => {
     const [showJobs, setShowJobs] = useState<boolean>(false);
-    const [open, setOpen] = useState(false);
-
-    const handleClickOpen = () => {
-      setOpen(true);
-    };
-  
-    const handleClose = () => {
-      setOpen(false);
-    };
+    const navigate = useNavigate()
 
     const formik = useFormik<FormData>({
         initialValues: {
@@ -74,10 +46,15 @@ export const JobApplyForm: FC = () => {
         validationSchema,
         onSubmit: () => setShowJobs(true)
     });
+    
+    const handleClickOpen = () => {
+        if (formik.isValid && formik.dirty) navigate('career', { state: { values: formik.values } })
+        else alert('error in submission')
+    }
 
     return (
-        <form onSubmit={formik.handleSubmit} className=' flex flex-col justify-center lg:w-[50%] max-w-[50%] bg-[#3f4f66fd] px-5 py-3 rounded-lg backdrop-blur z-50'>
-            <div className=' grid grid-cols-1 md:grid-cols-2 gap-4 w-full'>
+        <form onSubmit={formik.handleSubmit} className=' flex flex-col justify-center w-full lg:w-[50%] md:max-w-[50%] bg-[#3f4f66fd] px-5 py-3 rounded-lg backdrop-blur z-50'>
+            <div className=' md:grid grid-cols-1 md:grid-cols-2 gap-4 w-full space-y-3 md:space-y-0'>
                 {inputDetails.map((input, index) => (
                     <div key={index} className={` ${input.name === 'address' ? 'col-span-2' : ''} w-full`}>
                         <label className="block text-gray-200 text-sm font-bold mb-1" htmlFor={input.name}>
@@ -138,41 +115,13 @@ export const JobApplyForm: FC = () => {
                     <button
                     className="bg-indigo-500 text-white active:scale-95 transition-all font-bold mt-5 py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
                     onClick={handleClickOpen}>
-                        See avialable jobs
+                        <span className=' md:hidden'>Jobs</span>
+                        <span className='hidden md:block'>
+                            See avialable jobs
+                        </span>
                     </button>
                 )}
             </div>
-
-            <Dialog
-            fullScreen
-            open={open}
-            onClose={handleClose}
-            TransitionComponent={Transition}>
-                <AppBar sx={{ position: 'relative' }}>  
-                    <Toolbar>
-                        <IconButton
-                        edge="start"
-                        color="inherit"
-                        onClick={handleClose}
-                        aria-label="close">
-                            <CloseIcon />
-                        </IconButton>
-                        <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-                            Jobs
-                        </Typography>
-                        <Button autoFocus color="inherit" onClick={handleClose}>
-                            save
-                        </Button>
-                    </Toolbar>
-                </AppBar>
-
-                <List>
-                    <Divider />
-                    <ListItemButton>
-                        <Career/>
-                    </ListItemButton>
-                </List>
-            </Dialog>
         </form>
     );
 };
