@@ -10,6 +10,8 @@ import Register from './components/authPage/SignUp.tsx';
 import AdminPanel from './components/admin/AdminPanel.tsx';
 import LandingPage from './components/Home/LandingPage.tsx';
 import Error404 from './common/Error404.tsx';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const router = createBrowserRouter([
     { path: '/', element: <LandingPage /> },
@@ -30,6 +32,7 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
+        <ToastContainer/>
         <RouterProvider router={router} />
     </React.StrictMode>
 );

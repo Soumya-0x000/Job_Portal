@@ -1,7 +1,6 @@
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Loading } from './common/Loading';
-import { FormValues } from './components/authPage/SignIn';
 import { tabs, tabsType } from './common/DemoData';
 import { NavBar } from './common/Navbar';
 import { accountArr, accType } from './components/Home/LandingPage';
@@ -14,19 +13,11 @@ const App = () => {
     const [account, setAccount] = useState<accType[]>(accountArr);
 
     const { uniqId } = useParams();
-    const location = useLocation();
     const navigate = useNavigate();
-    const queryParams = new URLSearchParams(location.search);
-    const email = queryParams.get('email')
   
     useEffect(() => {
-        if (email) {
-            const savedLocalData = JSON.parse(localStorage.getItem('user') || '{}');
-            const user = savedLocalData?.find((user: FormValues) => user.email === email);
-
-            const savedUniqId = user?.uniqId
-            if(uniqId !== savedUniqId) navigate('/')
-        } else navigate('/')
+        const savedToken = JSON.parse(localStorage.getItem('token') || '');
+        if(uniqId !== savedToken) navigate('/')
 
         setTimeout(() => {
             setLoading(false);
