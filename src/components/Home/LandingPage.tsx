@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useState } from 'react';
+import { ChangeEvent, FC, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { GoSearch } from "react-icons/go";
 import { TbDatabaseSearch } from "react-icons/tb";
@@ -58,11 +58,21 @@ export const accountArr: accType[] = [
 
 const LandingPage = () => {
     const [selected, setSelected] = useState<string>(tabs[0].text);
+    const [isScrolled, setIsScrolled] = useState<boolean>(false)
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 20) setIsScrolled(true)
+            else setIsScrolled(false)
+        }
+        window.addEventListener('scroll', handleScroll)
+        return () => window.removeEventListener('scroll', handleScroll)
+    }, [])
 
     return (
         <>
             {/* navbar */}
-            <div className='absolute flex flex-col items-center w-full top-10 gap-y-4 z-50'>
+            <div className={`fixed flex flex-col items-center w-full ${isScrolled ? 'top-3' : 'top-10'} transition-all duration-500 gap-y-4 z-50`}>
                 <div className='rounded-lg w-[96%] bg-[#0f172a25] backdrop-blur-md'>
                     <NavBar
                         accountArr={accountArr}

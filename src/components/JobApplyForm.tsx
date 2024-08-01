@@ -53,7 +53,7 @@ export const JobApplyForm: FC = () => {
     }
 
     return (
-        <form onSubmit={formik.handleSubmit} className=' flex flex-col justify-center w-full lg:w-[50%] md:max-w-[50%] bg-[#3f4f66fd] px-5 py-3 rounded-lg backdrop-blur z-50'>
+        <form onSubmit={formik.handleSubmit} className=' flex flex-col justify-center w-full lg:w-[50%] md:max-w-[50%] bg-[#3f4f66fd] px-5 py-3 rounded-lg backdrop-blur z-40'>
             <div className=' md:grid grid-cols-1 md:grid-cols-2 gap-4 w-full space-y-3 md:space-y-0'>
                 {inputDetails.map((input, index) => (
                     <div key={index} className={` ${input.name === 'address' ? 'col-span-2' : ''} w-full`}>

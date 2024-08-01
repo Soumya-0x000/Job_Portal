@@ -211,3 +211,7 @@
   stroke-miterlimit: 10;
 }
 /* 404 page svg style ending */
+
+::-webkit-scrollbar {
+  display: none;
+}

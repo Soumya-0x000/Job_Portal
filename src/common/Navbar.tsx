@@ -17,7 +17,7 @@ export const NavBar: FC<NavbarType> = ({ tabsArr, accountArr, selected, setSelec
     const navigate = useNavigate();
 
     return (
-        <div className={` flex items-center justify-between w-full h-[4rem] backdrop-blur-xl pl-4 sm:pl-3 xl:pl-8 rounded-lg ${selected === 'Career' ? ' bg-[#3a4656]' : ''}`}>
+        <div className={` flex items-center justify-between w-full h-[4rem] backdrop-blur-xl pl-4 sm:pl-3 xl:pl-8 rounded-lg ${selected === 'Career' ? ' bg-[#4e5b6b]' : ''}`}>
             {/* hamburger icon in less than 1024 screen width */}
             <div className="relative block md:hidden">
                 <div onClick={() => setIsDropdownOpen((pv) => !pv)}>
@@ -30,7 +30,7 @@ export const NavBar: FC<NavbarType> = ({ tabsArr, accountArr, selected, setSelec
                 <div className="absolute flex items-center justify-center -right-11">
                     <motion.div animate={isDropdownOpen ? "open" : "closed"} className="relative">
                         <motion.ul
-                        className="flex flex-col gap-2 p-2 rounded-lg bg-slate-900 shadow-xl absolute top-[120%] left-[50%] w-48 overflow-hidden z-30 ring-1 ring-blue-400"
+                        className="flex flex-col gap-2 p-2 rounded-lg bg-slate-900 shadow-xl absolute top-[120%] left-[50%] w-48 overflow-hidden z-50 ring-1 ring-blue-400"
                         initial={wrapperVariants.closed}
                         variants={wrapperVariants}
                         style={{ originY: "top", translateX: "-50%" }}>

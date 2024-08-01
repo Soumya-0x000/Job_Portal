@@ -48,7 +48,7 @@ const Register: React.FC = () => {
         try {
             const {confirmPassword: _, name: username, ...rest} = values
             const user = {...rest, username}
-            const response = await axios.post(URL, user, {
+            const response = await axios.post(`${URL}/users`, user, {
                 headers: {
                     'Content-Type': 'application/json',
                     'ngrok-skip-browser-warning': '69420'
@@ -58,9 +58,11 @@ const Register: React.FC = () => {
             if (response.status) {
                 const resData = response?.data
                 setIsSubmitting(false)
-                showToastMsg('Account created successfully')
-                navigate(`/home/${resData?.token}`)
-                localStorage.setItem('token', JSON.stringify(resData.token))
+                if (resData?.token) {
+                    navigate(`/home/${resData?.token}`)
+                    showToastMsg('Account created successfully')
+                    localStorage.setItem('token', JSON.stringify(resData.token))
+                }
             }
         } catch (error) {
             setIsSubmitting(false)

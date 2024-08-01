@@ -12,12 +12,21 @@ import LandingPage from './components/Home/LandingPage.tsx';
 import Error404 from './common/Error404.tsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Rooms from './components/admin/jobRooms/Rooms.tsx';
+import ShowJobs from './components/admin/job/ShowJobs.tsx';
 
 const router = createBrowserRouter([
     { path: '/', element: <LandingPage /> },
     { path: 'login', element: <LoginPage /> },
     { path: 'signup', element: <Register /> },
-    { path: 'admindashboard', element: <AdminPanel /> },
+    { 
+        path: 'admindashboard', 
+        element: <AdminPanel />,
+        children: [
+            { path: '', element: <ShowJobs /> },
+            { path: 'rooms', element: <Rooms/> },
+        ]
+    },
     { path: 'error404', element: <Error404 /> },
     {
         path: '/home/:uniqId',

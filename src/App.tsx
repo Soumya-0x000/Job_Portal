@@ -11,6 +11,7 @@ const App = () => {
     const [loading, setLoading] = useState(true);
     const [tabsArr,  setTabsArr] = useState<tabsType[]>(tabs);
     const [account, setAccount] = useState<accType[]>(accountArr);
+    const [isScrolled, setIsScrolled] = useState<boolean>(false);
 
     const { uniqId } = useParams();
     const navigate = useNavigate();
@@ -23,6 +24,15 @@ const App = () => {
             setLoading(false);
         }, 600);
     }, []);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 20) setIsScrolled(true)
+            else setIsScrolled(false)
+        }
+        window.addEventListener('scroll', handleScroll)
+        return () => window.removeEventListener('scroll', handleScroll)
+    }, [])
 
     useEffect(() => {
         const newTabs: tabsType[] = [
@@ -51,7 +61,7 @@ const App = () => {
             {loading 
                 ? <Loading/>
                 : <div> 
-                    <div className='absolute flex flex-col items-center w-full top-10 gap-y-4 z-50'>
+                    <div className={`fixed ${isScrolled ? 'top-3' : 'top-10'} transition-all duration-500 flex flex-col items-center w-full top-10 gap-y-4 z-50`}>
                         <div className='rounded-lg w-[96%] bg-[#0f172a25] backdrop-blur-md'>
                             <NavBar
                                 accountArr={account}
