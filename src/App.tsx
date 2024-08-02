@@ -1,10 +1,13 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
 import { Loading } from './common/Loading';
 import { tabs, tabsType } from './common/DemoData';
 import { NavBar } from './common/Navbar';
 import { accountArr, accType } from './components/Home/LandingPage';
 import PageRender from './components/Home/PageRender';
+import axios from 'axios';
+import { URL } from './API';
+import { PiBuildingOffice } from "react-icons/pi";
 
 const App = () => {
     const [selected, setSelected] = useState<string>(tabs[0]?.text);
@@ -13,16 +16,32 @@ const App = () => {
     const [account, setAccount] = useState<accType[]>(accountArr);
     const [isScrolled, setIsScrolled] = useState<boolean>(false);
 
-    const { uniqId } = useParams();
+    const location = useLocation();
     const navigate = useNavigate();
+    const uniqueId = location?.state
   
-    useEffect(() => {
-        const savedToken = JSON.parse(localStorage.getItem('token') || '');
-        if(uniqId !== savedToken) navigate('/')
+    useMemo(() => {
+        const user = JSON.parse(localStorage.getItem('userDetails') || '');
+        const savedToken = user?.token
 
-        setTimeout(() => {
-            setLoading(false);
-        }, 600);
+        if(uniqueId !== savedToken) navigate('/')
+        else {
+            const getUser = async() => {
+                const response = await axios.get(`${URL}/users/me`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': '69420',
+                        Authorization: `token ${savedToken}`,
+                    }
+                })
+
+                return response?.data?.appliedFor
+            }
+            const userAppliedJob = getUser();
+            console.log(userAppliedJob)
+        }
+
+        setTimeout(() => {setLoading(false)}, 600);
     }, []);
 
     useEffect(() => {
@@ -39,6 +58,7 @@ const App = () => {
             ...tabs, 
             {
                 text: 'Career',
+                icon: <PiBuildingOffice />,
                 path: 'career'
             }
         ]

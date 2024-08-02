@@ -12,7 +12,7 @@ interface InputTypes {
 const inputDetails: InputTypes[] = [
     { name: 'name', type: 'text', placeholder: 'Enter your name' },
     { name: 'email', type: 'email', placeholder: 'Enter your email' },
-    { name: 'phone', type: 'number', placeholder: 'Enter your phone number' },
+    { name: 'phoneNumber', type: 'number', placeholder: 'Enter your phone number' },
     { name: 'resume', type: 'file', placeholder: 'Upload your resume' },
     { name: 'address', type: 'text', placeholder: 'Enter your address' },
 ];
@@ -20,7 +20,7 @@ const inputDetails: InputTypes[] = [
 const validationSchema = Yup.object({
     name: Yup.string().required('Name is required'),
     email: Yup.string().email('Invalid email address').required('Email is required'),
-    phone: Yup.string().required('Phone number is required'),
+    phoneNumber: Yup.string().required('Phone number is required'),
     address: Yup.string().required('Address is required'),
     resume: Yup.mixed().required('Resume is required')
 });
@@ -28,7 +28,7 @@ const validationSchema = Yup.object({
 interface FormData {
     name: string;
     email: string;
-    phone: string;
+    phoneNumber: string;
     address: string;
 }
 
@@ -40,7 +40,7 @@ export const JobApplyForm: FC = () => {
         initialValues: {
             name: '',
             email: '',
-            phone: '',
+            phoneNumber: '',
             address: '',
         },
         validationSchema,
@@ -53,7 +53,7 @@ export const JobApplyForm: FC = () => {
     }
 
     return (
-        <form onSubmit={formik.handleSubmit} className=' flex flex-col justify-center w-full lg:w-[50%] md:max-w-[50%] bg-[#3f4f66fd] px-5 py-3 rounded-lg backdrop-blur z-40'>
+        <form onSubmit={formik.handleSubmit} className=' flex flex-col justify-center w-full md:w-[80%] lg:w-[70%] xl:w-[65%] 2xl:w-[50%] 2xl:max-w-[50rem] bg-[#3f4f66fd] px-5 py-3 rounded-lg backdrop-blur z-40'>
             <div className=' md:grid grid-cols-1 md:grid-cols-2 gap-4 w-full space-y-3 md:space-y-0'>
                 {inputDetails.map((input, index) => (
                     <div key={index} className={` ${input.name === 'address' ? 'col-span-2' : ''} w-full`}>

@@ -45,7 +45,7 @@ const LoginPage: React.FC = () => {
         setIsSubmitting(true);
 
         try {
-            const loginUser = await axios.post(`${URL}/users/login`, values, {
+            const loginUser = await axios.post(`${URL}/auth/login`, values, {
                 headers: {
                     'Content-Type': 'application/json',
                     'ngrok-skip-browser-warning': '69420'
@@ -56,9 +56,9 @@ const LoginPage: React.FC = () => {
                 const resData = loginUser?.data
                 setIsSubmitting(false)
                 if(resData?.token) {
-                    navigate(`/home/${resData?.token}`);
+                    localStorage.setItem('userDetails', JSON.stringify(resData))
                     showToastMsg('Login Successful');
-                    localStorage.setItem('token', JSON.stringify(resData?.token))
+                    navigate(`/home`, {state: resData?.token});
                 }
             }
         } catch (error) {

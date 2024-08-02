@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useLayoutEffect, useState } from "react";
 import { Loading } from "../common/Loading";
 import { demoJobRoles, jobRoleTypes } from "../common/DemoData";
 import { useLocation } from "react-router-dom";
@@ -12,19 +12,39 @@ const Career: FC = () => {
     const [appliedJob, setAppliedJob] = useState<string | null>(null);
     const [isApplying, setIsApplying] = useState<boolean>(false);
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const itemsPerPage: number = 6;
+    const [token, setToken] = useState<string>(JSON.parse(localStorage.getItem('token')!) || '');
+    const [itemsPerPage, setItemsPerPage] = useState<number>(8)
     const location = useLocation();
     const formData = location?.state?.values
+
+    useLayoutEffect(() => {
+        const handleScreenSize = () => {
+            if (window.innerWidth < 768) {
+                setItemsPerPage(3)
+            } else if (window.innerWidth < 1024) {
+                setItemsPerPage(4)
+            } else if (window.innerWidth < 1100) {
+                setItemsPerPage(6)
+            } else if (window.innerWidth > 1536) {
+                setItemsPerPage(8)
+            }
+        };
+
+        window.addEventListener('resize', handleScreenSize);
+        return () => window.removeEventListener('resize', handleScreenSize)
+    }, []);
 
     const handleApply = async(jobId: string) => {
         if (formData) {
             setIsApplying(true)
 
             const currentCandidates = JSON.parse(localStorage.getItem('demoCandidateData') || '[]');
-            formData.id = currentCandidates.length + 1
-            formData.jobRole = demoJobRoles.find(job => job.id === jobId)?.title || '';
-            formData.status = 'pending';
-            formData.filename = formData.resume ? formData.resume.name : '';
+            formData.role = demoJobRoles.find(job => job.id === jobId)?.title || '';
+            formData.applicationStatus = 'pending';
+            formData.attachments = formData.resume ? formData.resume.name : '';
+
+            const {phoneNumber, address, role, attachments, applicationStatus} = formData
+            const newFormData = {phoneNumber, address, role, attachments, applicationStatus}
 
             const updatedCandidates = [...currentCandidates, formData];
             localStorage.setItem('demoCandidateData', JSON.stringify(updatedCandidates));
@@ -32,10 +52,11 @@ const Career: FC = () => {
             setAppliedJob(jobId);
 
             try {
-                const applyJob = await axios.post(`${URL}/users/applyFor`, formData, {
+                const applyJob = await axios.post(`${URL}/users/applyFor`, newFormData, {
                     headers: {
                         'Content-Type': 'application/json',
-                        'ngrok-skip-browser-warning': '69420'
+                        'ngrok-skip-browser-warning': '69420',
+                        Authorization: `token ${token}`
                     }
                 });
 
@@ -60,6 +81,8 @@ const Career: FC = () => {
         setTimeout(() => {
             setLoading(false);
         }, 600);
+
+        setToken(JSON.parse(localStorage.getItem('token')!) || '')
     }, []);
 
     const startIndex = (currentPage - 1) * itemsPerPage;

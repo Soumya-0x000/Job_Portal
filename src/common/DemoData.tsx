@@ -54,10 +54,10 @@ import c7 from '../images/courses/c7.png';
 import c8 from '../images/courses/c8.png';
 import c9 from '../images/courses/c9.png';
 
-// import { CiHome } from "react-icons/ci";
-// import { MdOutlineAccountCircle } from "react-icons/md";
-// import { AiOutlineContacts } from "react-icons/ai";
-// import { ReactElement } from 'react';
+import { CiHome } from "react-icons/ci";
+import { MdOutlineAccountCircle } from "react-icons/md";
+import { AiOutlineContacts } from "react-icons/ai";
+import { ReactElement } from 'react';
 import avatar from '../images/courses/profile.gif';
 
 const randomStatus = () => Math.random() > 0.5 ? "Pending" : "Approved"
@@ -632,24 +632,24 @@ export const footerLists = [
 
 export interface tabsType {
   text: string;
-  // icon: ReactElement;
+  icon: ReactElement;
   path: string;
 }
 
 export const tabs: tabsType[] = [
   {
     text: "Home",
-    // icon: <CiHome />,
+    icon: <CiHome />,
     path: "home"
   },
   {
     text: "About Us",
-    // icon: <MdOutlineAccountCircle />,
+    icon: <MdOutlineAccountCircle />,
     path: "aboutus"
   },
   {
     text: "Contact Us",
-    // icon: <AiOutlineContacts />,
+    icon: <AiOutlineContacts />,
     path: "contactus"
   }
 ];

@@ -22,7 +22,9 @@ const ShowJobs: FC = () => {
     return (
         <div className=' flex items-center justify-center overflow-y-auto px-4 pt-20 pb-6'>
             {loading 
-                ? <Loading /> 
+                ? <div className=" flex items-center justify-center w-full h-screen">
+                    <Loading /> 
+                </div>
                 : <>
                     <div className='grid grid-cols-1 Lmd:grid-cols-2 gap-4 sm:grid-cols-2 md:gap-6 Cxl:grid-cols-3 cxl:gap-4 Lxl:gap-5'>
                         {selectedCandidates.map((candidate: Candidate) => (

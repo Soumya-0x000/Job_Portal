@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, ReactElement, SetStateAction, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { tabsType } from "./DemoData";
 import { AnimatePresence, motion } from "framer-motion";
@@ -17,7 +17,7 @@ export const NavBar: FC<NavbarType> = ({ tabsArr, accountArr, selected, setSelec
     const navigate = useNavigate();
 
     return (
-        <div className={` flex items-center justify-between w-full h-[4rem] backdrop-blur-xl pl-4 sm:pl-3 xl:pl-8 rounded-lg ${selected === 'Career' ? ' bg-[#4e5b6b]' : ''}`}>
+        <div className={` flex items-center justify-between w-full h-[4rem] backdrop-blur-xl pl-4 sm:pl-3 xl:pl-8 rounded-lg ${selected === 'Career' ? ' bg-[#4e5b6b7d]' : ''}`}>
             {/* hamburger icon in less than 1024 screen width */}
             <div className="relative block md:hidden">
                 <div onClick={() => setIsDropdownOpen((pv) => !pv)}>
@@ -37,7 +37,7 @@ export const NavBar: FC<NavbarType> = ({ tabsArr, accountArr, selected, setSelec
                             {tabsArr.map((tab: tabsType, indx) => (
                                 <Option 
                                     key={tab.text+indx}
-                                    // Icon={tab.icon}
+                                    Icon={tab.icon}
                                     text={tab.text}
                                     setIsDropdownOpen={setIsDropdownOpen}
                                     setSelected={setSelected}
@@ -54,7 +54,7 @@ export const NavBar: FC<NavbarType> = ({ tabsArr, accountArr, selected, setSelec
                 {tabsArr.map((tab) => (
                     <Chip
                         text={tab.text}
-                        // icon={tab.icon}
+                        icon={tab.icon}
                         selected={selected === tab.text}
                         setSelected={setSelected}
                         key={tab.text}
@@ -82,13 +82,13 @@ export const NavBar: FC<NavbarType> = ({ tabsArr, accountArr, selected, setSelec
 
 interface chipType {
     text: string;
-    // icon: ReactElement;
+    icon: ReactElement;
     selected: boolean;
     setSelected: Dispatch<SetStateAction<string>>;
 }
 const Chip: FC<chipType> = ({ 
     text, 
-    // icon,
+    icon,
     selected, 
     setSelected 
 }) => {
@@ -104,7 +104,7 @@ const Chip: FC<chipType> = ({
         } transition-colors px-3 py-1.5 rounded-md relative flex items-center group`}>
             <span className="relative z-10 flex items-center justify-center gap-x-2">
                 <span className='font-robotoMono lg:text-[1rem] text-white hidden md:block'>{text}</span>
-                {/* <span className=' text-[1.3rem] text-white'>{icon}</span> */}
+                <span className=' text-[1.3rem] text-white'>{icon}</span>
             </span>
 
             {selected && (
@@ -124,7 +124,7 @@ const Chip: FC<chipType> = ({
 
 interface OptionType {
     text: string;
-    // Icon: ReactElement;
+    Icon: ReactElement;
     setIsDropdownOpen: Dispatch<SetStateAction<boolean>>;
     setSelected: Dispatch<SetStateAction<string>>;
     setHamburgerActive: Dispatch<SetStateAction<boolean>>
@@ -132,7 +132,7 @@ interface OptionType {
 
 const Option: FC<OptionType> = ({ 
     text, 
-    // Icon, 
+    Icon, 
     setIsDropdownOpen, 
     setSelected,
     setHamburgerActive
@@ -151,7 +151,7 @@ const Option: FC<OptionType> = ({
             <motion.span 
             className='text-xl font-robotoMono'
             variants={actionIconVariants}>
-                {/* {Icon} */}
+                {Icon}
             </motion.span>
 
             <span className='text-[1rem] font-robotoMono'>{text}</span>

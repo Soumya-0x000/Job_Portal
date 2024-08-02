@@ -14,34 +14,38 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Rooms from './components/admin/jobRooms/Rooms.tsx';
 import ShowJobs from './components/admin/job/ShowJobs.tsx';
+import { Provider } from 'react-redux';
+import { Store } from './store/Store.ts';
 
 const router = createBrowserRouter([
     { path: '/', element: <LandingPage /> },
-    { path: 'login', element: <LoginPage /> },
-    { path: 'signup', element: <Register /> },
+    { path: '/login', element: <LoginPage /> },
+    { path: '/signup', element: <Register /> },
     { 
-        path: 'admindashboard', 
+        path: '/admindashboard', 
         element: <AdminPanel />,
         children: [
             { path: '', element: <ShowJobs /> },
             { path: 'rooms', element: <Rooms/> },
         ]
     },
-    { path: 'error404', element: <Error404 /> },
+    { path: '/error404', element: <Error404 /> },
     {
-        path: '/home/:uniqId',
+        path: '/home',
         element: <App />,
         children: [
             { path: '', element: <Home /> },
             { path: 'career', element: <Career /> },
         ],
     },
-    { path: '*', element: <Navigate to="error404" /> },
+    { path: '*', element: <Navigate to="/error404" /> },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <ToastContainer/>
-        <RouterProvider router={router} />
+        <Provider store={Store}>
+            <ToastContainer />
+            <RouterProvider router={router} />
+        </Provider>
     </React.StrictMode>
 );
