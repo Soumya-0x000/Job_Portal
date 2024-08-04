@@ -15,7 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Rooms from './components/admin/jobRooms/Rooms.tsx';
 import ShowJobs from './components/admin/job/ShowJobs.tsx';
 import { Provider } from 'react-redux';
-import { Store } from './store/Store.ts';
+import { store } from './store/Store.tsx';
 
 const router = createBrowserRouter([
     { path: '/', element: <LandingPage /> },
@@ -43,7 +43,7 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <Provider store={Store}>
+        <Provider store={store}>
             <ToastContainer />
             <RouterProvider router={router} />
         </Provider>

@@ -5,8 +5,11 @@ import { Dialog, Slide } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import * as Yup from 'yup';
 import { Field, Form, Formik, FormikErrors, FormikTouched } from "formik";
-import { motion } from "framer-motion";
-import { useDispatch } from "react-redux";
+import { generateUniqueId } from "../../../common/UniqID";
+import JobRoomTable from "../../../common/JobRoomTable";
+// import { useDispatch } from "react-redux";
+// import { setRooms } from "../../../store/features/JobRoomSlice";
+// import { AppDispatch } from "../../../store/Store";
 
 const Transition = forwardRef(function Transition(
     props: TransitionProps & {
@@ -24,31 +27,32 @@ const validationSchema = Yup.object({
     roomNumber: Yup.string().required('Required'),
 });
 
-type roomType = {
+export type slotType = {
+    slotCount: number, 
+    slotId: string,
+    isSlotAllocated: boolean
+}
+
+export type roomType = {
     roomName: string;
     roomCapacity: number;
     roomNumber: string;
     createdAt?: string;
+    roomId?: string;
+    slots?: slotType[];
 }
 
 const Rooms = () => {
-    const initialValues: roomType = {
-        roomName: '',
-        roomCapacity: 0,
-        roomNumber: '',
-        createdAt: ''
-    }
     const [open, setOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
-    const [currentValue, setCurrentValue] = useState<roomType>(initialValues);
     const [rooms, setRooms] = useState<roomType[]>([]);
-    // const dispatch = useDispatch();
+    // const dispatch = useDispatch<AppDispatch>();
 
     const handleClose = () => setOpen(false)
-
-    const roomArr = Array.from({ length: currentValue?.roomCapacity || 0}, (_, indx) => indx)
     
     useEffect(() => {
+        setRooms(JSON.parse(localStorage.getItem('jobRooms') || '[]'));
+
         setTimeout(() => {
             setLoading(false);
         }, 600);
@@ -61,12 +65,25 @@ const Rooms = () => {
     ]
 
     const handleSubmit = (value: roomType) => {
+        const allocateSLots = (arrLen: number) => Array.from({ length: arrLen || 0}, (_, indx) => ({
+            slotCount: indx,
+            slotId: generateUniqueId(),
+            isSlotAllocated: false
+        }));
+
         const newValue = {
             ...value,
-            createdAt: new Date().toISOString().split('T')[0]
+            createdAt: new Date().toISOString().split('T')[0],
+            roomId: generateUniqueId(),
+            slots: [ ...allocateSLots(value?.roomCapacity) ],
         }
-        setRooms(prev => ([ ...prev, newValue ]))
-        setCurrentValue(value)
+
+        setRooms(prev => {
+            const newRoom: roomType[] = [ ...prev, newValue ];
+            // dispatch(setRooms(newRoom));
+            localStorage.setItem('jobRooms', JSON.stringify(newRoom))
+            return newRoom;
+        })
         handleClose()
     };
 
@@ -80,45 +97,7 @@ const Rooms = () => {
                         <IoIosAdd className=" w-10 h-10 text-blue-300 group-active:scale-125 transition-all duration-500"/>
                     </button>
 
-                    <div className=" flex flex-col gap-y-10">
-                        {rooms.map((room, indx) => (
-                            <motion.div key={indx}
-                            initial={{ y: -50, opacity: 0.5}}
-                            animate={{ y: 0, opacity: 1}}>
-                                <div className=" px-4 pb-4 rounded-lg bg-slate-300 w-full">
-                                    <div className=" py-3 font-mavenPro text-slate-800 text-lg font-bold">
-                                        Created at {room?.createdAt} 
-                                    </div>
-
-                                    <div className=" flex items-center flex-wrap gap-2 mb-10">
-                                        {roomArr.map((_, indx) => (
-                                            <div key={indx} className=" aspect-square w-5 bg-slate-900 rounded-lg"/>
-                                        ))}
-                                    </div>
-
-                                    <div className=" relative">
-                                        <div className=" absolute -top-2 space-x-4">
-                                            <span className=" bg-slate-800 text-slate-300 px-3 py-2.5 rounded-md">
-                                                {room?.roomName}
-                                            </span>
-                                            
-                                            <span className=" bg-slate-800 text-slate-300 px-3 py-2.5 rounded-md">
-                                                Room number {room?.roomNumber}
-                                            </span>
-
-                                            <span className=" bg-slate-800 text-slate-300 px-3 py-2.5 rounded-md">
-                                                Seats {room?.roomCapacity}
-                                            </span>
-
-                                            <span className=" bg-slate-800 text-slate-300 px-3 py-2.5 rounded-md">
-                                                Available {room?.roomCapacity} seats
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
+                    <JobRoomTable rooms={rooms}/>
                 </div>
             }
 
