@@ -4,13 +4,13 @@ import { GoSearch } from "react-icons/go";
 import { TbDatabaseSearch } from "react-icons/tb";
 import { FaArrowRightLong } from "react-icons/fa6";
 import banner from '../../images/banner/homeback.jpg';
-import statBg from '../../images/stats/statBg.jpg';
-import { buttonsData, coursesCard, onlineCourses, statCard, tabs } from '../../common/DemoData';
+import { buttonsData, coursesCard, onlineCourses, tabs } from '../../common/DemoData';
 import { GoArrowLeft, GoArrowRight } from "react-icons/go";
 import { TiStarFullOutline  } from "react-icons/ti";
 import { Footer } from '../../common/Footer';
 import { NavBar } from '../../common/Navbar';
 import PageRender from './PageRender';
+import { Stats } from '../AboutUs';
 
 interface BtnCardType {
     imgSrc: string;
@@ -172,35 +172,7 @@ export const HomePageContent = () => {
             </>
 
             {/* stats */}
-            <div 
-            className={`h-[23rem] grid grid-cols-2 2xl:grid-cols-4 place-items-center place-content-center gap-14 px-4 sm:px-6 md:px-16 bg-bottom`}
-            style={{
-                backgroundImage: `url('${statBg}')`,
-            }}>
-                {statCard.map((stat, i) => (
-                    <span 
-                    className=' flex items-center gap-x-2 w-[7.7rem] sm:w-[12rem] md:w-[15rem] xl:w-[18rem]'
-                    key={i+stat.title}>
-                        <span className='w-[3.4rem] sm:w-[3.8rem] md:w-[4.5rem] xl:w-[5.1rem] h-[3.4rem] sm:h-[3.8rem] md:h-[4.5rem] xl:h-[5.1rem] hidden sm:block'>
-                            <img 
-                                src={stat.imgLink} 
-                                className='w-full h-full '
-                                alt={stat.title} 
-                            />
-                        </span>
-
-                        <span className=''>
-                            <div className='text-[1.4rem] md:text-[1.7rem] xl:text-[1.9rem] font-bold font-onest text-white'>
-                                {stat.num}
-                            </div>
-
-                            <div className='text-[1rem] md:text-[1.2rem] xl:text-[1.4rem] font-bold font-onest text-white capitalize'>
-                                {stat.title}
-                            </div>
-                        </span>
-                    </span>
-                ))}
-            </div>
+            <Stats/>
 
             {/* popular online courses */}
             <>

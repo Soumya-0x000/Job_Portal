@@ -3,6 +3,7 @@ import { HomePageContent } from "./LandingPage";
 import AboutUs from "../AboutUs";
 import ContactUs from "../ContactUs";
 import { Outlet } from "react-router-dom";
+import UserJobRooms from "../User/Job/UserJobRooms";
 
 const PageRender: (selected: string) => ReactElement = (selected) => {
     switch (selected) {
@@ -14,6 +15,8 @@ const PageRender: (selected: string) => ReactElement = (selected) => {
             return <ContactUs />;
         case 'Career':
             return <Outlet />;
+        case 'Room':
+            return <UserJobRooms/>
         default:
             return <HomePageContent />;
     }

@@ -55,10 +55,16 @@ const LoginPage: React.FC = () => {
             if (loginUser.status) {
                 const resData = loginUser?.data
                 setIsSubmitting(false)
+                
                 if(resData?.token) {
-                    localStorage.setItem('userDetails', JSON.stringify(resData))
                     showToastMsg('Login Successful');
-                    navigate(`/home`, {state: resData?.token});
+                    if (resData?.usersType === 1) {
+                        localStorage.setItem('adminDetails', JSON.stringify(resData))
+                        navigate(`/admin`, {state: resData?.token});
+                    } else if (resData?.usersType === 2) {
+                        localStorage.setItem('userDetails', JSON.stringify(resData))
+                        navigate(`/home`, {state: resData?.token});
+                    }
                 }
             }
         } catch (error) {

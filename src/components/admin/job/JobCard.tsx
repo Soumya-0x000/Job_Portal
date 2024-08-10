@@ -1,6 +1,6 @@
 import { Dispatch, FC, SetStateAction } from "react";
 import { Candidate } from "../../../common/DemoData";
-import { Dropdown } from "../AdminPanel";
+import { Dropdown } from "../AdminSideBar";
 
 interface JobCardProps {
     candidateData: Candidate[];

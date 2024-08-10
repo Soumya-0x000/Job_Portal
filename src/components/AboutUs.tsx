@@ -110,36 +110,7 @@ const AboutUs = () => {
                 </div>
             </div>
 
-            {/* stats */}
-            <div 
-            className={`h-[23rem] grid grid-cols-2 2xl:grid-cols-4 place-items-center place-content-center gap-14 px-4 sm:px-6 md:px-16 bg-bottom mb-6`}
-            style={{
-                backgroundImage: `url('${statBg}')`,
-            }}>
-                {statCard.map((stat, i) => (
-                    <span 
-                    className=' flex items-center gap-x-2 w-[7.7rem] sm:w-[12rem] md:w-[15rem] xl:w-[18rem]'
-                    key={i+stat.title}>
-                        <span className='w-[3.4rem] sm:w-[3.8rem] md:w-[4.5rem] xl:w-[5.1rem] h-[3.4rem] sm:h-[3.8rem] md:h-[4.5rem] xl:h-[5.1rem] hidden sm:block'>
-                            <img 
-                                src={stat.imgLink} 
-                                className='w-full h-full '
-                                alt={stat.title} 
-                            />
-                        </span>
-
-                        <div className=''>
-                            <div className='text-[1.4rem] md:text-[1.7rem] xl:text-[1.9rem] font-bold font-onest text-white'>
-                                {stat.num}
-                            </div>
-
-                            <div className='text-[1rem] md:text-[1.2rem] xl:text-[1.4rem] font-bold font-onest text-white capitalize'>
-                                {stat.title}
-                            </div>
-                        </div>
-                    </span>
-                ))}
-            </div>
+            <Stats/>
 
             <Footer/>
         </div>
@@ -147,3 +118,37 @@ const AboutUs = () => {
 }
 
 export default AboutUs;
+
+export const Stats: FC = () => {
+    return (
+        <div 
+        className={`h-[23rem] grid grid-cols-2 2xl:grid-cols-4 place-items-center place-content-center gap-14 px-4 sm:px-6 md:px-16 bg-bottom mb-6`}
+        style={{
+            backgroundImage: `url('${statBg}')`,
+        }}>
+            {statCard.map((stat, i) => (
+                <span 
+                className=' flex items-center gap-x-2 w-[7.7rem] sm:w-[12rem] md:w-[15rem] xl:w-[18rem]'
+                key={i+stat.title}>
+                    <span className='w-[3.4rem] sm:w-[3.8rem] md:w-[4.5rem] xl:w-[5.1rem] h-[3.4rem] sm:h-[3.8rem] md:h-[4.5rem] xl:h-[5.1rem] hidden sm:block'>
+                        <img 
+                            src={stat.imgLink} 
+                            className='w-full h-full '
+                            alt={stat.title} 
+                        />
+                    </span>
+
+                    <div className=''>
+                        <div className='text-[1.4rem] md:text-[1.7rem] xl:text-[1.9rem] font-bold font-onest text-white'>
+                            {stat.num}
+                        </div>
+
+                        <div className='text-[1rem] md:text-[1.2rem] xl:text-[1.4rem] font-bold font-onest text-white capitalize'>
+                            {stat.title}
+                        </div>
+                    </div>
+                </span>
+            ))}
+        </div>
+    )
+}

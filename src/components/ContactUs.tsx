@@ -1,32 +1,16 @@
 import banner from '../images/courses/coursesBanner.jpg';
-import { useState } from 'react';
 import { Footer } from '../common/Footer';
 import * as Yup from 'yup';
-import { ErrorMessage, Field, Formik } from 'formik';
-import { Form } from 'react-router-dom';
+import { ErrorMessage, Field, Formik, Form } from 'formik';
 
 const ContactUs = () => {
-    const map = ' https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d904726.6131739549!2d88.3953!3d26.7271!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2snp!4v1652535615693!5m2!1sen!2snp" allowfullscreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" '
+    const map = 'https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d904726.6131739549!2d88.3953!3d26.7271!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2snp!4v1652535615693!5m2!1sen!2snp';
 
     const initialFormValues = {
         name: '',
         email: '',
         subject: '',
         message: '',
-    };
-
-    const [formData, setFormData] = useState(initialFormValues);
-
-    const handleChange = (e: any) => {
-        setFormData({
-            ...formData, 
-            [e.target.name]: e.target.value
-        });
-    };
-
-    const handleSubmit = (e: any)  => {
-        console.log(formData);
-        e.preventDefault()
     };
 
     const validationSchema = Yup.object({
@@ -41,9 +25,7 @@ const ContactUs = () => {
             {/* banner */}
             <div
             className={`h-full flex flex-col items-start justify-center pl-4 pr-4 sm:pl-12 md:pl-32 bg-fixed bg-cover bg-top`}
-            style={{
-                backgroundImage: `url('${banner}')`,
-            }}>
+            style={{ backgroundImage: `url('${banner}')` }}>
                 <div className='text-[1rem] lg:text-[1.3rem] font-montserrat font-bold text-blue-900 uppercase'>
                     Welcome to stumate
                 </div>
@@ -57,35 +39,36 @@ const ContactUs = () => {
                 </div>
             </div>
 
-
             {/* content */}
-            <>
-                <div className='relative flex flex-col items-center justify-center text-blue-900 mx-6 mt-16 mb-8 text-2xl font-bold text-center capitalize font-onest gap-y-2 md:text-4xl'>
-                    We are located here!
-                </div>
+            <div className='relative flex flex-col items-center justify-center text-blue-900 mx-6 mt-16 mb-8 text-2xl font-bold text-center capitalize font-onest gap-y-2 md:text-4xl'>
+                We are located here!
+            </div>
 
-                <div className=' flex items-center justify-center w-full px-3'>
-                    <div className='shadow contentContainer'>
-                        {/* map */}
-                        <div>
-                            <iframe src={map} className='map'></iframe>
+            <div className='flex items-center justify-center w-full px-3'>
+                <div className='shadow contentContainer'>
+                    {/* map */}
+                    <div>
+                        <iframe src={map} className='map'></iframe>
+                    </div>
+
+                    {/* form */}
+                    <div className='formContainer space-y-16'>
+                        <div className='space-y-2'>
+                            <div className='text-3xl font-mavenPro font-bold text-blue-900'>
+                                Contact us
+                            </div>
+                            <div className='text-lg font-mavenPro font-bold text-indigo-500'>
+                                We're 24x7 open for any suggestion or having a chat
+                            </div>
                         </div>
 
-                        {/* form */}
-                        <div className='formContainer space-y-16'>
-                            <div className=' space-y-2'>
-                                <div className='text-3xl font-mavenPro font-bold text-blue-900'>
-                                Contact us
-                                </div>
-                                <div className='text-lg font-mavenPro font-bold text-indigo-500'>
-                                    We're 24x7 open for any suggestion or having a chat
-                                </div>
-                            </div>
-
-                            <Formik
-                            initialValues={initialFormValues}
-                            validationSchema={validationSchema}
-                            onSubmit={handleSubmit}>
+                        <Formik
+                        initialValues={initialFormValues}
+                        validationSchema={validationSchema}
+                        onSubmit={(values, { setSubmitting }) => {
+                            console.log(values);
+                            setSubmitting(false);
+                        }}>
                             {({ isSubmitting, handleReset }) => (
                                 <Form className="bg-white rounded-md shadow-2xl p-5">
                                     <div className="flex flex-col sm:flex-row gap-y-3 sm:gap-x-3">
@@ -94,20 +77,17 @@ const ContactUs = () => {
                                                 type="text"
                                                 name="name"
                                                 placeholder="Full name"
-                                                value={formData.name}
-                                                onChange={handleChange}
-                                                className={`border-2 mb-2 py-2 px-3 rounded-2xl outline-none focus:border-indigo-400 ${formData.name ? 'border-indigo-400 bg-slate-200' : ''}`}
+                                                className={`border-2 mb-2 py-2 px-3 rounded-2xl outline-none focus:border-indigo-400`}
                                             />
                                             <ErrorMessage name="name" component="div" className="text-red-500 text-sm" />
                                         </div>
+                                        
                                         <div className="w-full sm:w-1/2">
                                             <Field
                                                 type="email"
                                                 name="email"
                                                 placeholder="Email"
-                                                value={formData.email}
-                                                onChange={handleChange}
-                                                className={`border-2 mb-2 py-2 px-3 rounded-2xl outline-none focus:border-indigo-400 ${formData.email ? 'border-indigo-400 bg-slate-200' : ''}`}
+                                                className={`border-2 mb-2 py-2 px-3 rounded-2xl outline-none focus:border-indigo-400`}
                                             />
                                             <ErrorMessage name="email" component="div" className="text-red-500 text-sm" />
                                         </div>
@@ -118,9 +98,7 @@ const ContactUs = () => {
                                             type="text"
                                             name="subject"
                                             placeholder="Subject"
-                                            value={formData.subject}
-                                            onChange={handleChange}
-                                            className={`border-2 mb-2 py-2 px-3 rounded-2xl outline-none focus:border-indigo-400 w-full ${formData.subject ? 'border-indigo-400 bg-slate-200' : ''}`}
+                                            className={`border-2 mb-2 py-2 px-3 rounded-2xl outline-none focus:border-indigo-400 w-full`}
                                         />
                                         <ErrorMessage name="subject" component="div" className="text-red-500 text-sm" />
                                     </div>
@@ -131,9 +109,7 @@ const ContactUs = () => {
                                             rows="12"
                                             name="message"
                                             placeholder="Message"
-                                            value={formData.message}
-                                            onChange={handleChange}
-                                            className={`border-2 mb-2 py-2 px-3 rounded-2xl outline-none focus:border-indigo-400 w-full ${formData.message ? 'border-indigo-400 bg-slate-200' : ''}`}
+                                            className={`border-2 mb-2 py-2 px-3 rounded-2xl outline-none focus:border-indigo-400 w-full`}
                                         />
                                         <ErrorMessage name="message" component="div" className="text-red-500 text-sm" />
                                     </div>
@@ -158,17 +134,16 @@ const ContactUs = () => {
                                 </Form>
                             )}
                         </Formik>
-                        </div>
                     </div>
                 </div>
-            </>
+            </div>
 
             {/* footer */}
             <div className='mt-10'>
-                <Footer/>
+                <Footer />
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default ContactUs;

@@ -1,11 +1,11 @@
 import { FC, useEffect, useLayoutEffect, useState } from "react";
-import { Loading } from "../common/Loading";
-import { demoJobRoles, jobRoleTypes } from "../common/DemoData";
+import { Loading } from "../../common/Loading";
+import { demoJobRoles, jobRoleTypes } from "../../common/DemoData";
 import { useLocation } from "react-router-dom";
 import { Pagination, Stack } from "@mui/material";
 import axios from "axios";
-import { URL } from "../API";
-import { showToastMsg } from "../common/ToastMsg";
+import { URL } from "../../API";
+import { showToastMsg } from "../../common/ToastMsg";
 
 const Career: FC = () => {
     const [loading, setLoading] = useState(true);
@@ -16,6 +16,7 @@ const Career: FC = () => {
     const [itemsPerPage, setItemsPerPage] = useState<number>(8)
     const location = useLocation();
     const formData = location?.state?.values
+    console.log(formData)
 
     useLayoutEffect(() => {
         const handleScreenSize = () => {
@@ -82,7 +83,10 @@ const Career: FC = () => {
             setLoading(false);
         }, 600);
 
-        setToken(JSON.parse(localStorage.getItem('token')!) || '')
+        const user = JSON.parse(localStorage.getItem('userDetails') || '');
+        setToken(user?.token)
+
+        console.log(token)
     }, []);
 
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -93,6 +97,7 @@ const Career: FC = () => {
             {loading 
                 ? <Loading />
                 : <>
+                {console.log('first')}
                     <div className=" grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-10 Llg:grid-cols-3 2xl:grid-cols-4 xl:gap-8 2xl:gap-6 mt-20">
                         {selectedJobs.map((job, indx) => (
                             <JobCard 
@@ -154,7 +159,7 @@ const JobCard: FC<jobCardType> = ({ job, applied, onApply, isApplying }) => {
                 {job.requirements && (
                     <div className=" flex items-center gap-x-1 gap-y-2 flex-wrap mt-4">
                         {job.requirements.split(', ').map((item, indx) => (
-                            <div key={indx} className=" text-green-300 bg-slate-900 w-fit rounded-full py-1 px-2 text-[13px]">{item}</div>
+                            <div key={indx} className=" text-green-300 bg-slate-900 w-fit rounded-full py-1 px-3 text-[14px]">{item}</div>
                         ))}
                     </div>
                 )}

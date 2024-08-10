@@ -47,7 +47,8 @@ export const JobApplyForm: FC = () => {
         onSubmit: () => setShowJobs(true)
     });
     
-    const handleClickOpen = () => {
+    const handleClickNavigate = () => {
+        console.log(formik.values)
         if (formik.isValid && formik.dirty) navigate('career', { state: { values: formik.values } })
         else alert('error in submission')
     }
@@ -114,7 +115,7 @@ export const JobApplyForm: FC = () => {
                 {showJobs && (
                     <button
                     className="bg-indigo-500 text-white active:scale-95 transition-all font-bold mt-5 py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-                    onClick={handleClickOpen}>
+                    onClick={handleClickNavigate}>
                         <span className=' md:hidden'>Jobs</span>
                         <span className='hidden md:block'>
                             See avialable jobs

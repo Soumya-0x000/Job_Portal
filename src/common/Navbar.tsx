@@ -104,7 +104,7 @@ const Chip: FC<chipType> = ({
         } transition-colors px-3 py-1.5 rounded-md relative flex items-center group`}>
             <span className="relative z-10 flex items-center justify-center gap-x-2">
                 <span className='font-robotoMono lg:text-[1rem] text-white hidden md:block'>{text}</span>
-                <span className=' text-[1.3rem] text-white'>{icon}</span>
+                <span className=' text-[1.3rem] text-white hidden lg:block'>{icon}</span>
             </span>
 
             {selected && (

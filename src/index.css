@@ -8,18 +8,27 @@
 @tailwind utilities;
 
 .MuiDataGrid-cell {
-    background-color: rgb(1, 27, 18);
-    color: rgb(204, 255, 255);
+    background-color: rgb(238, 255, 249);
+    color: rgb(1, 48, 48);
     font-size: 14px;
 }
 
 .MuiDataGrid-footerContainer  {
-    background-color: rgb(1, 12, 27);
-    color: rgb(208, 233, 255);
+    background-color: rgb(201, 224, 255);
+    color: rgb(2, 23, 43);
+}
+
+.MuiTableContainer-root {
+  height: calc(90vh - 120px);
+}
+
+.MuiTableCell-head  {
+  background-color: #f3fccc;
+  font-weight: 900;
 }
 
 .MuiToolbar-root{
-    color: rgb(208, 233, 255);   
+    color: rgb(2, 36, 66);   
 }
 
 .MuiTablePagination-selectIcon {

@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Loading } from './common/Loading';
 import { tabs, tabsType } from './common/DemoData';
 import { NavBar } from './common/Navbar';
@@ -8,6 +8,7 @@ import PageRender from './components/Home/PageRender';
 import axios from 'axios';
 import { URL } from './API';
 import { PiBuildingOffice } from "react-icons/pi";
+import { LuReplace } from "react-icons/lu";
 
 const App = () => {
     const [selected, setSelected] = useState<string>(tabs[0]?.text);
@@ -20,18 +21,18 @@ const App = () => {
     const navigate = useNavigate();
     const uniqueId = location?.state
   
-    useMemo(() => {
+    useEffect(() => {
         const user = JSON.parse(localStorage.getItem('userDetails') || '');
         const savedToken = user?.token
-
-        if(uniqueId !== savedToken) navigate('/')
+        
+        if(uniqueId !== savedToken) navigate('/home') //change it to '/'
         else {
             const getUser = async() => {
                 const response = await axios.get(`${URL}/users/me`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'ngrok-skip-browser-warning': '69420',
-                        Authorization: `token ${savedToken}`,
+                        authorization: `token ${savedToken}`,
                     }
                 })
 
@@ -42,7 +43,7 @@ const App = () => {
         }
 
         setTimeout(() => {setLoading(false)}, 600);
-    }, []);
+    }, [uniqueId, navigate]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -60,6 +61,10 @@ const App = () => {
                 text: 'Career',
                 icon: <PiBuildingOffice />,
                 path: 'career'
+            }, {
+                text: 'Room',
+                icon: <LuReplace />,
+                path: 'userroom'
             }
         ]
 
