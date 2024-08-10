@@ -100,9 +100,9 @@ const RoomRow: FC<{ room: Room }> = ({ room }) => {
                             <Table size="small" aria-label="applied candidates">
                                 <TableHead>
                                     <TableRow>
+                                        <TableCell>Booking Date</TableCell>
                                         <TableCell>Name</TableCell>
                                         <TableCell>Email</TableCell>
-                                        <TableCell>Booking Date</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -110,15 +110,15 @@ const RoomRow: FC<{ room: Room }> = ({ room }) => {
                                         (candidate, index) => (
                                             <TableRow key={index}>
                                                 <TableCell>
+                                                    {formatDateTime(candidate.bookingDate)}
+                                                </TableCell>
+                                                <TableCell>
                                                     {candidate.userDetails
                                                         ?.username || "N/A"}
                                                 </TableCell>
                                                 <TableCell>
                                                     {candidate.userDetails
                                                         ?.email || "N/A"}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {formatDateTime(candidate.bookingDate)}
                                                 </TableCell>
                                             </TableRow>
                                         )
@@ -156,28 +156,29 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({ rooms }) => {
 
     return (
         <Paper sx={{ width: "100%" }}>
-            <TableContainer sx={{ }}>
+            <TableContainer>
                 <Table stickyHeader aria-label="room table">
                     <TableHead>
                         <TableRow>
                             <TableCell />
-                            <TableCell sx={{
-                                textAlign: 'center',
-                                fontWeight: '600',
-                                fontSize: '20px',
-                            }}>Room Name</TableCell>
-                            <TableCell sx={{
-                                textAlign: 'center',
-                                fontWeight: '600',
-                                fontSize: '20px',
-                            }}>Room Number</TableCell>
-                            <TableCell sx={{
-                                textAlign: 'center',
-                                fontWeight: '600',
-                                fontSize: '20px',
-                            }}>Seat Capacity</TableCell>
+                            {[
+                                "Room Name",
+                                "Room Number",
+                                "Seat Capacity",
+                            ].map((cell, indx) => (
+                                <TableCell 
+                                key={indx + cell}
+                                sx={{
+                                    textAlign: 'center',
+                                    fontWeight: '600',
+                                    fontSize: '20px',
+                                }}>
+                                    <span className=" font-onest">{cell}</span>
+                                </TableCell>
+                            ))}
                         </TableRow>
                     </TableHead>
+
                     <TableBody>
                         {rooms
                             .slice(
@@ -190,6 +191,7 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({ rooms }) => {
                     </TableBody>
                 </Table>
             </TableContainer>
+
             <TablePagination
                 rowsPerPageOptions={[10, 25, 100]}
                 component="div"
