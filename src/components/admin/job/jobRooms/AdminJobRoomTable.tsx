@@ -108,22 +108,40 @@ const RoomRow: React.FC<{ room: Room }> = ({ room }) => {
     );
 };
 
+import { useMediaQuery, useTheme } from '@mui/material';
+
 export const AdminJobRoomTable: React.FC<JobRoomTableProps> = ({ rooms }) => {
+    const theme = useTheme();
+    const isSmToMd = useMediaQuery(theme.breakpoints.between(640, 768));
+    const isMdToLg = useMediaQuery(theme.breakpoints.between(768, 1024));
+    const isLgToXl = useMediaQuery(theme.breakpoints.between(1024, 1280)); 
+    const isLgTo2Xl = useMediaQuery(theme.breakpoints.between(1280, 1536));
+    const isXlUp = useMediaQuery(theme.breakpoints.up(1536));
+
+    const getColumnWidth = (defaultWidth: number) => {
+        if (isSmToMd) return defaultWidth * 0.5;
+        if (isMdToLg) return defaultWidth * 0.74;
+        if (isLgToXl) return defaultWidth * 0.8; 
+        if (isLgTo2Xl) return defaultWidth * 1.12;
+        if (isXlUp) return defaultWidth * 1.26;
+        return defaultWidth;
+    };
+
     const roomColumns = [
-        { field: 'count', headerName: 'Index', width: 130 },
-        { field: 'roomName', headerName: 'Room Name', width: 300 },
-        { field: 'roomNumber', headerName: 'Room Number', width: 250 },
-        { field: 'seatCapacity', headerName: 'Seat Capacity', width: 250 },
+        { field: 'count', headerName: 'Index', width: getColumnWidth(130) },
+        { field: 'roomName', headerName: 'Room Name', width: getColumnWidth(300) },
+        { field: 'roomNumber', headerName: 'Room Number', width: getColumnWidth(200) },
+        { field: 'seatCapacity', headerName: 'Seat Capacity', width: getColumnWidth(200) },
         {
             field: 'actions',
             headerName: 'Applied Candidates',
-            width: 250,
+            width: getColumnWidth(350),
             renderCell: (params: GridRenderCellParams<Room>) => <RoomRow room={params.row} />,
         },
     ];
 
     const roomRows = rooms.map((room, index) => ({
-        count: index+1,
+        count: index + 1,
         id: room._id,
         roomName: room.roomName,
         roomNumber: room.roomNumber,
@@ -132,7 +150,7 @@ export const AdminJobRoomTable: React.FC<JobRoomTableProps> = ({ rooms }) => {
     }));
 
     return (
-        <div className=' max-w-[75rem] overflow-scroll'>
+        <div className=' w-screen sm:w-[35rem] md:w-[50rem] lg:w-[58rem] xl:w-[75rem] Lxl:w-[80rem] 2xl:w-[87rem]'>
             <DataGrid
                 rows={roomRows}
                 columns={roomColumns}
@@ -148,7 +166,11 @@ export const AdminJobRoomTable: React.FC<JobRoomTableProps> = ({ rooms }) => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        fontSize: '17px'
                     },
+                    '& .MuiDataGrid-root': {
+                        border: 'none'
+                    }
                 }}
             />
         </div>

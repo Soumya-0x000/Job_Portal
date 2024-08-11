@@ -23,6 +23,7 @@
 }
 .MuiDataGrid-main {
     height: calc(90vh - 140px);
+    width:  calc(90vw - 140px);
     width: 100%;
 }
 

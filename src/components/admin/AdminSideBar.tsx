@@ -52,7 +52,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     padding: theme.spacing(0, 1),
     ...theme.mixins.toolbar,
 }));
-
   
 interface AppBarProps extends MuiAppBarProps {
     open?: boolean;
@@ -106,19 +105,18 @@ export const AdminSideBar: FC<{ userName: string }> = ({ userName }) => {
     
     const buttonArr: btnArrType[] = [
         {
-            name: 'Dashboard',
+            name: 'Candidates',
             icon: <LuLayoutDashboard className=" text-[1.4rem]"/>,
             clickEvent: () => navigate('/admin')
-        },
-        {
-            name: 'LogOut',
-            icon: <BiLogOutCircle className=" text-[1.4rem]"/>,
-            clickEvent: () => navigate('/') 
         }, {
             name: 'Room',
             icon: <IoIosCreate className=" text-[1.4rem]"/>,
             clickEvent: () => navigate('rooms')
-        }
+        }, {
+            name: 'LogOut',
+            icon: <BiLogOutCircle className=" text-[1.4rem]"/>,
+            clickEvent: () => navigate('/') 
+        }, 
     ]
 
     const [selectedBtn, setSelectedBtn] = useState(buttonArr[0]?.name)
@@ -146,9 +144,13 @@ export const AdminSideBar: FC<{ userName: string }> = ({ userName }) => {
                         <MenuIcon />
                     </IconButton>
                     
-                    <div className=' flex text-[1.5rem] font-bold font-lato tracking-wider items-center justify-center gap-x-1 text-blue-100'>
-                        {userName}
-                        <MdOutlineAdminPanelSettings className=' text-[1.6rem]'/>
+                    <div className=' w-full flex items-center justify-between text-[1.5rem] font-bold font-lato tracking-wider text-blue-100'>
+                        <div className=' flex  items-center justify-center gap-x-1'>
+                            {userName}
+                            <MdOutlineAdminPanelSettings className=' text-[1.6rem]'/>
+                        </div>
+
+                        {selectedBtn}
                     </div>
                 </Toolbar>
             </AppBar>

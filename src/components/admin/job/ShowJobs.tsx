@@ -1,17 +1,53 @@
-import { Pagination, Stack } from "@mui/material"
-import JobCard from "./JobCard"
-import { FC, useEffect, useState } from "react";
+import { useState, useEffect, FC } from "react";
+import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
+import { useMediaQuery, useTheme } from "@mui/material";
 import { Candidate } from "../../../common/DemoData";
 import { Loading } from "../../../common/Loading";
 
 const ShowJobs: FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
-    const [candidateData, setCandidateData] = useState<Candidate[]>(JSON.parse(localStorage.getItem('demoCandidateData') || '[]'))
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const itemsPerPage: number = 9;
+    const [candidateData, setCandidateData] = useState<Candidate[]>([]);
 
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const selectedCandidates = candidateData.slice(startIndex, startIndex + itemsPerPage);
+    useEffect(() => {
+        setCandidateData(JSON.parse(localStorage.getItem('demoCandidateData') || '[]'))
+    }, []);
+
+    const theme = useTheme();
+    const isSmToMd = useMediaQuery(theme.breakpoints.between(640, 768));
+    const isMdToLg = useMediaQuery(theme.breakpoints.between(768, 1024));
+    const isLgToXl = useMediaQuery(theme.breakpoints.between(1024, 1280)); 
+    const isLgTo2Xl = useMediaQuery(theme.breakpoints.between(1280, 1536));
+    const isXlUp = useMediaQuery(theme.breakpoints.up(1536));
+
+    const getColumnWidth = (defaultWidth: number) => {
+        if (isSmToMd) return defaultWidth * 1.1;
+        if (isMdToLg) return defaultWidth * 1.1;
+        if (isLgToXl) return defaultWidth * 1.1; 
+        if (isLgTo2Xl) return defaultWidth * 1.12;
+        if (isXlUp) return defaultWidth * 1.26;
+        return defaultWidth;
+    };
+
+    const columns: GridColDef[] = [
+        { field: 'name', headerName: 'Name', width: getColumnWidth(150) },
+        { field: 'email', headerName: 'Email', width: getColumnWidth(270) },
+        { field: 'address', headerName: 'Address', width: getColumnWidth(250) },
+        { field: 'phone', headerName: 'Phone', width: getColumnWidth(100) },
+        { field: 'filename', headerName: 'CV File', width: getColumnWidth(200) },
+        { field: 'status', headerName: 'Status', width: getColumnWidth(100) },
+        { field: 'jobRole', headerName: 'Job Role', width: getColumnWidth(200) },
+    ];
+
+    const rows = candidateData.map(candidate => ({
+        id: candidate.id,
+        name: candidate.name,
+        email: candidate.email,
+        address: candidate.address,
+        phone: candidate.phone,
+        filename: candidate.filename,
+        status: candidate.status,
+        jobRole: candidate.jobRole,
+    }));
 
     useEffect(() => {
         setTimeout(() => {
@@ -20,39 +56,39 @@ const ShowJobs: FC = () => {
     }, []);
 
     return (
-        <div className=' flex items-center justify-center overflow-y-auto px-4 pt-20 pb-6'>
-            {loading 
-                ? <div className=" flex items-center justify-center w-full h-screen">
-                    <Loading /> 
+        <div className="flex items-center justify-center overflow-y-auto px-4 pt-20 pb-6">
+            {loading ? (
+                <div className="flex items-center justify-center w-full h-screen">
+                    <Loading />
                 </div>
-                : <>
-                    <div className='grid grid-cols-1 Lmd:grid-cols-2 gap-4 sm:grid-cols-2 md:gap-6 Cxl:grid-cols-3 cxl:gap-4 Lxl:gap-5'>
-                        {selectedCandidates.map((candidate: Candidate) => (
-                            <div key={candidate.id}>
-                                <JobCard  
-                                    candidate={candidate}
-                                    candidateData={candidateData}
-                                    setCandidateData={setCandidateData}
-                                />
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className='bg-slate-100 rounded-lg px-3 py-2 fixed bottom-0 mb-2' style={{ boxShadow: '0 14px 16px rgba(0, 0, 0, 0.1), 0 20px 14x rgba(0, 0, 0, 0.1)' }}>
-                        <Stack spacing={2}>
-                            <Pagination 
-                                page={currentPage} 
-                                onChange={(_, value: number) => setCurrentPage(value)} 
-                                count={Math.ceil(candidateData.length / itemsPerPage)} 
-                                variant="outlined" 
-                                shape="rounded" 
-                            />
-                        </Stack>
-                    </div>
-                </>
-            }
+            ) : (
+                <div className="w-screen sm:w-[32rem] md:w-[39rem] lg:w-[55rem] xl:w-[72rem] Lxl:w-[80rem] 2xl:w-[88rem]">
+                    <DataGrid
+                        rows={rows}
+                        columns={columns}
+                        pageSizeOptions={[15, 30, 50, 70, 100]}
+                        slots={{ toolbar: GridToolbar }}
+                        slotProps={{
+                            toolbar: {
+                                showQuickFilter: true,
+                            },
+                        }}
+                        sx={{
+                            '& .MuiDataGrid-cell': {
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '17px'
+                            },
+                            '& .MuiDataGrid-root': {
+                                border: 'none'
+                            }
+                        }}
+                    />
+                </div>
+            )}
         </div>
-    )
-}
+    );
+};
 
-export default ShowJobs
+export default ShowJobs;
