@@ -1,25 +1,20 @@
-import { FC, useState } from "react";
+import * as React from 'react';
+import { useState } from 'react';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TablePagination,
-    TableRow,
-    Paper,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Button,
     Box,
-    Collapse,
-    IconButton,
-    Typography,
-} from "@mui/material";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { formatDateTime } from "../../../../common/formatDateTime";
+} from '@mui/material';
+import { DataGrid, GridRenderCellParams, GridToolbar } from '@mui/x-data-grid';
+import { Transition } from '../../../../common/DialogComponent';
+import { formatDateTime } from '../../../../common/formatDateTime';
 
 interface Candidate {
     bookingDate: string;
-    bookingId: string; 
+    bookingId: string;
     userDetails?: {
         username: string;
         email: string;
@@ -38,169 +33,124 @@ interface JobRoomTableProps {
     rooms: Room[];
 }
 
-const RoomRow: FC<{ room: Room }> = ({ room }) => {
-    const [open, setOpen] = useState(false);
+const AppliedCandidatesDialog: React.FC<{
+    open: boolean;
+    onClose: () => void;
+    candidates: Candidate[];
+}> = ({ open, onClose, candidates }) => {
+    const candidateColumns = [
+        { field: 'bookingDate', headerName: 'Booking Date', width: 250 },
+        { field: 'username', headerName: 'Name', width: 300 },
+        { field: 'email', headerName: 'Email', width: 300 },
+    ];
+    const candidateRows = candidates.map(candidate => ({
+        id: candidate.bookingId,
+        bookingDate: formatDateTime(candidate.bookingDate),
+        username: candidate.userDetails?.username || "N/A",
+        email: candidate.userDetails?.email || "N/A",
+    }));
+
+    return (
+        <Dialog open={open} onClose={onClose}  maxWidth="md" TransitionComponent={Transition}>
+            <DialogTitle>Applied Candidates</DialogTitle>
+
+            <DialogContent>
+                <Box sx={{ height: 500, width: '100%' }}>
+                    <DataGrid
+                        rows={candidateRows}
+                        columns={candidateColumns}
+                        pageSizeOptions={[15, 30, 60, 100]}
+                        slots={{ toolbar: GridToolbar }}
+                        slotProps={{
+                            toolbar: {
+                                showQuickFilter: true,
+                            },
+                        }}
+                        sx={{
+                            '& .MuiDataGrid-cell': {
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '0.9rem',
+                            },
+                        }}
+                    />
+                </Box>
+            </DialogContent>
+
+            <DialogActions>
+                <Button onClick={onClose} color="primary">
+                    Close
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+};
+
+const RoomRow: React.FC<{ room: Room }> = ({ room }) => {
+    const [dialogOpen, setDialogOpen] = useState(false);
 
     return (
         <>
-            <TableRow>
-                <TableCell sx={{ 
-                    width: '5px',
-                    borderRight: '1px solid black'
-                    
-                }}>
-                    <IconButton
-                        aria-label="expand row"
-                        size="small"
-                        onClick={() => setOpen(!open)}
-                    >
-                        {open ? (
-                            <KeyboardArrowUpIcon />
-                        ) : (
-                            <KeyboardArrowDownIcon />
-                        )}
-                    </IconButton>
-                </TableCell>
-                <TableCell sx={{ 
-                    alignContent: 'center',
-                    textAlign: 'center',
-                    borderRight: '2px solid #b1b1b1',
-                    fontSize:'17px',
-                    fontWeight: '500'
-                }}>{room.roomName}</TableCell>
-                <TableCell sx={{ 
-                    alignContent: 'center',
-                    textAlign: 'center',
-                    borderRight: '2px solid #b1b1b1',
-                    fontSize:'17px',
-                    fontWeight: '500'
-                }}>{room.roomNumber}</TableCell>
-                <TableCell sx={{ 
-                    alignContent: 'center',
-                    textAlign: 'center',
-                    fontSize:'17px',
-                    fontWeight: '500'
-                }}>{room.seatCapacity}</TableCell>
-            </TableRow>
-
-            <TableRow>
-                <TableCell
-                    style={{ paddingBottom: 0, paddingTop: 0 }}
-                    colSpan={6}
+            <div className=' flex items-center justify-center w-full h-full'>
+                <button className=' text-indigo-900 font-mono font-bold bg-indigo-200 rounded-lg h-9 flex items-center justify-center px-4'
+                    onClick={() => setDialogOpen(true)}
                 >
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box sx={{ margin: 1 }}>
-                            <Typography
-                                variant="h6"
-                                gutterBottom
-                                component="div"
-                            >
-                                Applied Candidates
-                            </Typography>
-                            <Table size="small" aria-label="applied candidates">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Booking Date</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Email</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {room.appliedCandidates?.map(
-                                        (candidate, index) => (
-                                            <TableRow key={index}>
-                                                <TableCell>
-                                                    {formatDateTime(candidate.bookingDate)}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {candidate.userDetails
-                                                        ?.username || "N/A"}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {candidate.userDetails
-                                                        ?.email || "N/A"}
-                                                </TableCell>
-                                            </TableRow>
-                                        )
-                                    ) || (
-                                        <TableRow>
-                                            <TableCell colSpan={3}>
-                                                No candidates applied
-                                            </TableCell>
-                                        </TableRow>
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </Box>
-                    </Collapse>
-                </TableCell>
-            </TableRow>
+                    Applied Candidates
+                </button>
+            </div>
+            <AppliedCandidatesDialog
+                open={dialogOpen}
+                onClose={() => setDialogOpen(false)}
+                candidates={room.appliedCandidates || []}
+            />
         </>
     );
 };
 
-export const AdminJobRoomTable: FC<JobRoomTableProps> = ({ rooms }) => {
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
+export const AdminJobRoomTable: React.FC<JobRoomTableProps> = ({ rooms }) => {
+    const roomColumns = [
+        { field: 'count', headerName: 'Index', width: 130 },
+        { field: 'roomName', headerName: 'Room Name', width: 300 },
+        { field: 'roomNumber', headerName: 'Room Number', width: 250 },
+        { field: 'seatCapacity', headerName: 'Seat Capacity', width: 250 },
+        {
+            field: 'actions',
+            headerName: 'Applied Candidates',
+            width: 250,
+            renderCell: (params: GridRenderCellParams<Room>) => <RoomRow room={params.row} />,
+        },
+    ];
 
-    const handleChangePage = (event: unknown, newPage: number) => {
-        setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        setRowsPerPage(+event.target.value);
-        setPage(0);
-    };
+    const roomRows = rooms.map((room, index) => ({
+        count: index+1,
+        id: room._id,
+        roomName: room.roomName,
+        roomNumber: room.roomNumber,
+        seatCapacity: room.seatCapacity,
+        appliedCandidates: room.appliedCandidates,
+    }));
 
     return (
-        <Paper sx={{ width: "100%" }}>
-            <TableContainer>
-                <Table stickyHeader aria-label="room table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell />
-                            {[
-                                "Room Name",
-                                "Room Number",
-                                "Seat Capacity",
-                            ].map((cell, indx) => (
-                                <TableCell 
-                                key={indx + cell}
-                                sx={{
-                                    textAlign: 'center',
-                                    fontWeight: '600',
-                                    fontSize: '20px',
-                                }}>
-                                    <span className=" font-onest">{cell}</span>
-                                </TableCell>
-                            ))}
-                        </TableRow>
-                    </TableHead>
-
-                    <TableBody>
-                        {rooms
-                            .slice(
-                                page * rowsPerPage,
-                                page * rowsPerPage + rowsPerPage
-                            )
-                            .map((room, index) => (
-                                <RoomRow key={index} room={room} />
-                            ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-
-            <TablePagination
-                rowsPerPageOptions={[10, 25, 100]}
-                component="div"
-                count={rooms.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
+        <div className=' max-w-[75rem] overflow-scroll'>
+            <DataGrid
+                rows={roomRows}
+                columns={roomColumns}
+                pageSizeOptions={[15, 30, 50, 70, 100]}
+                slots={{ toolbar: GridToolbar }}
+                slotProps={{
+                    toolbar: {
+                        showQuickFilter: true,
+                    },
+                }}
+                sx={{
+                    '& .MuiDataGrid-cell': {
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    },
+                }}
             />
-        </Paper>
+        </div>
     );
 };

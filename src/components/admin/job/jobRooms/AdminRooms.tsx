@@ -186,7 +186,7 @@ const AdminRooms = () => {
                 </div>
             </DialogComponent>
 
-            {/* search room */}
+            {/* conditional room */}
             <DialogComponent
             open={showFilters}
             setOpen={setShowFilters}>

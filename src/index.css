@@ -18,13 +18,30 @@
     color: rgb(2, 23, 43);
 }
 
-.MuiTableContainer-root {
-  height: calc(90vh - 120px);
+.MuiDataGrid-toolbarContainer {
+    background-color: rgb(201, 224, 255);
+}
+.MuiDataGrid-main {
+    height: calc(90vh - 140px);
+    width: 100%;
 }
 
+.MuiDataGrid-columnHeaderTitleContainer{
+    display: flex;
+    justify-content: center;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.MuiDataGrid-cellEmpty {
+    
+}
 .MuiTableCell-head  {
   background-color: #f3fccc;
   font-weight: 900;
+}
+
+.MuiDataGrid-cell {
+  background-color: #e5ffd5;
 }
 
 .MuiToolbar-root{
