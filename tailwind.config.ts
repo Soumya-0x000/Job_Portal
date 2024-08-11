@@ -13,7 +13,7 @@ export default {
   theme: {
     extend: {
       screens: {
-        'Lxl': '1350px',
+        'Lxl': '1400px',
         'Lmd': '960px',
         'Lmd1': '970px',
         'xsm': '420px',
