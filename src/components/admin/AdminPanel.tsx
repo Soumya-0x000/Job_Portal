@@ -18,8 +18,7 @@ const AdminPanel: FC = () => {
 
         if(uniqueId !== savedToken) {
             // navigate('/')
-        }
-        else {
+        } else {
             (async() => {
                 const response = await axios.get(`${URL}/users/me`, {
                     headers: {
