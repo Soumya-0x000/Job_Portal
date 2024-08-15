@@ -59,6 +59,7 @@ import { MdOutlineAccountCircle } from "react-icons/md";
 import { AiOutlineContacts } from "react-icons/ai";
 import { ReactElement } from 'react';
 import avatar from '../images/courses/profile.gif';
+import { noFilterRoomDataType } from '../components/admin/AdminDataTypes';
 
 const randomStatus = () => Math.random() > 0.5 ? "Pending" : "Approved"
 
@@ -655,419 +656,293 @@ export const tabs: tabsType[] = [
 ];
 
 
-export interface roomDataType { 
-    roomName: string; 
-    roomNumber: number; 
-    seatCapacity: number; 
-    _id?: string;
-    appliedCandidates: { 
-        userDetails: { 
-            username: string; 
-            email: string; 
-        }; 
-        bookingDate: string; 
-        bookingId: string; 
-    }[]; 
-}[]
 
-export const demoRoomData: roomDataType[] = [
-    {
-        "_id": "66b3123af938498b5d64f88c",
-        "roomName": "Testing",
-        "roomNumber": 104,
-        "seatCapacity": 45,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b318cf05fa35fa37ed4ee4",
-        "roomName": "Testing1",
-        "roomNumber": 105,
-        "seatCapacity": 45,
-        "appliedCandidates": [
+export const demoRoomData: noFilterRoomDataType[] = [{
+    "data": {
+        "rooms": [
             {
-                "userDetails": {
-                    "username": "Debnath3",
-                    "email": "debnath3@gmail.com"
-                },
-                "bookingDate": "2024-08-09T18:30:00.000Z",
-                "bookingId": "66b33a5d803eff3d80b5a126"
+                "_id": "66b3123af938498b5d64f88c",
+                "roomName": "Testing",
+                "roomNumber": 104,
+                "seatCapacity": 45,
+                "appliedCandidates": [],
+                "totalBookings": 0,
+                "bookingLimit": 10,
+                "bookingOffset": 0
             },
             {
-                "userDetails": {
-                    "username": "Debnath3",
-                    "email": "debnath3@gmail.com"
-                },
-                "bookingDate": "2024-08-10T18:30:00.000Z",
-                "bookingId": "66b348d500626cfbaa2272c2"
+                "_id": "66b318cf05fa35fa37ed4ee4",
+                "roomName": "Testing1",
+                "roomNumber": 105,
+                "seatCapacity": 45,
+                "appliedCandidates": [
+                    {
+                        "userDetails": {
+                            "username": "Debnath3",
+                            "email": "debnath3@gmail.com"
+                        },
+                        "bookingDate": "2024-08-09T18:30:00.000Z",
+                        "bookingId": "66b33a5d803eff3d80b5a126",
+                        "bookingStatus": "past"
+                    },
+                    {
+                        "userDetails": {
+                            "username": "Debnath3",
+                            "email": "debnath3@gmail.com"
+                        },
+                        "bookingDate": "2024-08-10T18:30:00.000Z",
+                        "bookingId": "66b348d500626cfbaa2272c2",
+                        "bookingStatus": "past"
+                    },
+                    {
+                        "userDetails": {
+                            "username": "Debnath3",
+                            "email": "debnath3@gmail.com"
+                        },
+                        "bookingDate": "2024-08-11T18:30:00.000Z",
+                        "bookingId": "66b34971d383584664fddcf7",
+                        "bookingStatus": "past"
+                    },
+                    {
+                        "userDetails": {
+                            "username": "Debnath3",
+                            "email": "debnath3@gmail.com"
+                        },
+                        "bookingDate": "2024-08-12T18:30:00.000Z",
+                        "bookingId": "66b349b36e239693f7bb1334",
+                        "bookingStatus": "past"
+                    },
+                    {
+                        "userDetails": {
+                            "username": "Debnath3",
+                            "email": "debnath3@gmail.com"
+                        },
+                        "bookingDate": "2024-08-14T18:30:00.000Z",
+                        "bookingId": "66b34ed6a7efc8e8f0358dac",
+                        "bookingStatus": "upcoming"
+                    },
+                    {
+                        "userDetails": {
+                            "username": "Debnath3",
+                            "email": "debnath3@gmail.com"
+                        },
+                        "bookingDate": "2024-08-14T18:30:00.000Z",
+                        "bookingId": "66b34ee5a7efc8e8f0358db4",
+                        "bookingStatus": "upcoming"
+                    },
+                    {
+                        "userDetails": {
+                            "username": "Debnath3",
+                            "email": "debnath3@gmail.com"
+                        },
+                        "bookingDate": "2024-08-14T18:30:00.000Z",
+                        "bookingId": "66b34eeaa7efc8e8f0358dbc",
+                        "bookingStatus": "upcoming"
+                    },
+                    {
+                        "userDetails": {
+                            "username": "Debnath3",
+                            "email": "debnath3@gmail.com"
+                        },
+                        "bookingDate": "2024-08-15T18:30:00.000Z",
+                        "bookingId": "66b35024804e45a232bb5744",
+                        "bookingStatus": "upcoming"
+                    },
+                    {
+                        "userDetails": {
+                            "username": "Debnath3",
+                            "email": "debnath3@gmail.com"
+                        },
+                        "bookingDate": "2024-08-13T18:30:00.000Z",
+                        "bookingId": "66b349fd9708b57865bcf7d4",
+                        "bookingStatus": "past"
+                    },
+                    {
+                        "userDetails": {
+                            "username": "Debnath3",
+                            "email": "debnath3@gmail.com"
+                        },
+                        "bookingDate": "2024-08-16T18:30:00.000Z",
+                        "bookingId": "66b35954f1eb169686ef6f9d",
+                        "bookingStatus": "upcoming"
+                    }
+                ],
+                "totalBookings": 10,
+                "bookingLimit": 10,
+                "bookingOffset": 0
             },
             {
-                "userDetails": {
-                    "username": "Debnath3",
-                    "email": "debnath3@gmail.com"
-                },
-                "bookingDate": "2024-08-11T18:30:00.000Z",
-                "bookingId": "66b34971d383584664fddcf7"
+                "_id": "66b323e6ac18b988fcc67f9e",
+                "roomName": "mngmnt rm",
+                "roomNumber": 210,
+                "seatCapacity": 130,
+                "appliedCandidates": [
+                    {
+                        "userDetails": {
+                            "username": "test name 20",
+                            "email": "testname20@gmail.com"
+                        },
+                        "bookingDate": "2024-09-18T18:30:00.000Z",
+                        "bookingId": "66b5f4ae9053510b0e1bf185",
+                        "bookingStatus": "upcoming"
+                    }
+                ],
+                "totalBookings": 1,
+                "bookingLimit": 10,
+                "bookingOffset": 0
             },
             {
-                "userDetails": {
-                    "username": "Debnath3",
-                    "email": "debnath3@gmail.com"
-                },
-                "bookingDate": "2024-08-12T18:30:00.000Z",
-                "bookingId": "66b349b36e239693f7bb1334"
+                "_id": "66b324eee35ea7684ae078f2",
+                "roomName": "dev rm",
+                "roomNumber": 371,
+                "seatCapacity": 111,
+                "appliedCandidates": [
+                    {
+                        "userDetails": {
+                            "username": "test name 15",
+                            "email": "testname15@gmail.com"
+                        },
+                        "bookingDate": "2024-12-17T18:30:00.000Z",
+                        "bookingId": "66b6020c9053510b0e1c0d00",
+                        "bookingStatus": "upcoming"
+                    },
+                    {
+                        "userDetails": {
+                            "username": "test name 20",
+                            "email": "testname20@gmail.com"
+                        },
+                        "bookingDate": "2024-11-15T18:30:00.000Z",
+                        "bookingId": "66b5ee649053510b0e1bf0bd",
+                        "bookingStatus": "upcoming"
+                    }
+                ],
+                "totalBookings": 2,
+                "bookingLimit": 10,
+                "bookingOffset": 0
             },
             {
-                "userDetails": {
-                    "username": "Debnath3",
-                    "email": "debnath3@gmail.com"
-                },
-                "bookingDate": "2024-08-13T18:30:00.000Z",
-                "bookingId": "66b349fd9708b57865bcf7d4"
+                "_id": "66b332c9b86881255663e4ba",
+                "roomName": "Testing2",
+                "roomNumber": 106,
+                "seatCapacity": 45,
+                "appliedCandidates": [
+                    {
+                        "userDetails": {
+                            "username": "test name 20",
+                            "email": "testname20@gmail.com"
+                        },
+                        "bookingDate": "2024-12-11T18:30:00.000Z",
+                        "bookingId": "66b5f6369053510b0e1bf1a7",
+                        "bookingStatus": "upcoming"
+                    }
+                ],
+                "totalBookings": 1,
+                "bookingLimit": 10,
+                "bookingOffset": 0
             },
             {
-                "userDetails": {
-                    "username": "Debnath3",
-                    "email": "debnath3@gmail.com"
-                },
-                "bookingDate": "2024-08-14T18:30:00.000Z",
-                "bookingId": "66b34ed6a7efc8e8f0358dac"
+                "_id": "66b33a291d7441057b8f31ee",
+                "roomName": "dev room",
+                "roomNumber": 204,
+                "seatCapacity": 120,
+                "appliedCandidates": [
+                    {
+                        "userDetails": {
+                            "username": "test name 20",
+                            "email": "testname20@gmail.com"
+                        },
+                        "bookingDate": "2024-10-15T18:30:00.000Z",
+                        "bookingId": "66b5f1519053510b0e1bf103",
+                        "bookingStatus": "upcoming"
+                    },
+                    {
+                        "userDetails": {
+                            "username": "test name 20",
+                            "email": "testname20@gmail.com"
+                        },
+                        "bookingDate": "2024-10-21T18:30:00.000Z",
+                        "bookingId": "66b5f8b09053510b0e1bf1ff",
+                        "bookingStatus": "upcoming"
+                    }
+                ],
+                "totalBookings": 2,
+                "bookingLimit": 10,
+                "bookingOffset": 0
             },
             {
-                "userDetails": {
-                    "username": "Debnath3",
-                    "email": "debnath3@gmail.com"
-                },
-                "bookingDate": "2024-08-14T18:30:00.000Z",
-                "bookingId": "66b34ee5a7efc8e8f0358db4"
+                "_id": "66b33a381d7441057b8f31f2",
+                "roomName": "sales room",
+                "roomNumber": 904,
+                "seatCapacity": 156,
+                "appliedCandidates": [],
+                "totalBookings": 0,
+                "bookingLimit": 10,
+                "bookingOffset": 0
             },
             {
-                "userDetails": {
-                    "username": "Debnath3",
-                    "email": "debnath3@gmail.com"
-                },
-                "bookingDate": "2024-08-14T18:30:00.000Z",
-                "bookingId": "66b34eeaa7efc8e8f0358dbc"
+                "_id": "66b34a549708b57865bcf7db",
+                "roomName": "Testing3",
+                "roomNumber": 107,
+                "seatCapacity": 45,
+                "appliedCandidates": [
+                    {
+                        "userDetails": {
+                            "username": "test name 15",
+                            "email": "testname15@gmail.com"
+                        },
+                        "bookingDate": "2025-01-20T18:30:00.000Z",
+                        "bookingId": "66b60a569053510b0e1c31ac",
+                        "bookingStatus": "upcoming"
+                    }
+                ],
+                "totalBookings": 1,
+                "bookingLimit": 10,
+                "bookingOffset": 0
             },
             {
-                "userDetails": {
-                    "username": "Debnath3",
-                    "email": "debnath3@gmail.com"
-                },
-                "bookingDate": "2024-08-15T18:30:00.000Z",
-                "bookingId": "66b35024804e45a232bb5744"
+                "_id": "66b34acce745e5bab9a7f077",
+                "roomName": "Testing4",
+                "roomNumber": 108,
+                "seatCapacity": 45,
+                "appliedCandidates": [
+                    {
+                        "userDetails": {
+                            "username": "test name 20",
+                            "email": "testname20@gmail.com"
+                        },
+                        "bookingDate": "2024-08-20T18:30:00.000Z",
+                        "bookingId": "66b5ef3d9053510b0e1bf0d2",
+                        "bookingStatus": "upcoming"
+                    }
+                ],
+                "totalBookings": 1,
+                "bookingLimit": 10,
+                "bookingOffset": 0
             },
             {
-                "userDetails": {
-                    "username": "Debnath3",
-                    "email": "debnath3@gmail.com"
-                },
-                "bookingDate": "2024-08-16T18:30:00.000Z",
-                "bookingId": "66b35954f1eb169686ef6f9d"
+                "_id": "66b35442758b3b032063462e",
+                "roomName": "no room",
+                "roomNumber": 343,
+                "seatCapacity": 14,
+                "appliedCandidates": [
+                    {
+                        "userDetails": {
+                            "username": "test name 20",
+                            "email": "testname20@gmail.com"
+                        },
+                        "bookingDate": "2024-11-23T18:30:00.000Z",
+                        "bookingId": "66b5ef779053510b0e1bf0ea",
+                        "bookingStatus": "upcoming"
+                    }
+                ],
+                "totalBookings": 1,
+                "bookingLimit": 10,
+                "bookingOffset": 0
             }
-        ]
+        ],
+        "totalRooms": 34,
+        "limit": 10,
+        "offset": 0
     },
-    {
-        "_id": "66b323e6ac18b988fcc67f9e",
-        "roomName": "mngmnt rm",
-        "roomNumber": 210,
-        "seatCapacity": 130,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b324eee35ea7684ae078f2",
-        "roomName": "dev rm",
-        "roomNumber": 371,
-        "seatCapacity": 111,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b332c9b86881255663e4ba",
-        "roomName": "Testing2",
-        "roomNumber": 106,
-        "seatCapacity": 45,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b33a291d7441057b8f31ee",
-        "roomName": "dev room",
-        "roomNumber": 204,
-        "seatCapacity": 120,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b33a381d7441057b8f31f2",
-        "roomName": "sales room",
-        "roomNumber": 904,
-        "seatCapacity": 156,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b34a549708b57865bcf7db",
-        "roomName": "Testing3",
-        "roomNumber": 107,
-        "seatCapacity": 45,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b34acce745e5bab9a7f077",
-        "roomName": "Testing4",
-        "roomNumber": 108,
-        "seatCapacity": 45,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b35442758b3b032063462e",
-        "roomName": "no room",
-        "roomNumber": 343,
-        "seatCapacity": 14,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b35483758b3b0320634634",
-        "roomName": "not room",
-        "roomNumber": 383,
-        "seatCapacity": 141,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b355adc620744754e76839",
-        "roomName": "s room",
-        "roomNumber": 523,
-        "seatCapacity": 54,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b355ebc620744754e76842",
-        "roomName": "K room",
-        "roomNumber": 746,
-        "seatCapacity": 89,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b3561c7d0c6a92110e1f54",
-        "roomName": "Testing5",
-        "roomNumber": 109,
-        "seatCapacity": 45,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b35aa7c69ed2615ef6b45d",
-        "roomName": "Testing6",
-        "roomNumber": 110,
-        "seatCapacity": 45,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b35b48c2602583f8d8cc90",
-        "roomName": "Testing7",
-        "roomNumber": 111,
-        "seatCapacity": 45,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b35b5fc2602583f8d8cc96",
-        "roomName": "Testing8",
-        "roomNumber": 112,
-        "seatCapacity": 45,
-        "appliedCandidates": [
-            {
-                "userDetails": {
-                    "username": "Debnath2",
-                    "email": "debnath2@gmail.com"
-                },
-                "bookingDate": "2024-08-18T18:30:00.000Z",
-                "bookingId": "66b49a163bb303f4fc4fc962"
-            },
-            {
-                "userDetails": {
-                    "username": "Debnath3",
-                    "email": "debnath3@gmail.com"
-                },
-                "bookingDate": "2024-08-18T18:30:00.000Z",
-                "bookingId": "66b49c861d15742a89f2646b"
-            }
-        ]
-    },
-    {
-        "_id": "66b35e094f75e001a6f1d8b0",
-        "roomName": "Testing9",
-        "roomNumber": 113,
-        "seatCapacity": 1,
-        "appliedCandidates": [
-            {
-                "userDetails": {
-                    "username": "Debnath3",
-                    "email": "debnath3@gmail.com"
-                },
-                "bookingDate": "2024-08-17T18:30:00.000Z",
-                "bookingId": "66b35f09e4bf54fe616cf689"
-            },
-            {
-                "userDetails": {
-                    "username": "Debnath5",
-                    "email": "debnath5@gmail.com"
-                },
-                "bookingDate": "2024-08-18T18:30:00.000Z",
-                "bookingId": "66b4678e90c6c7d669909c3a"
-            },
-            {
-                "userDetails": {
-                    "username": "Debnath5",
-                    "email": "debnath5@gmail.com"
-                },
-                "bookingDate": "2024-08-11T18:30:00.000Z",
-                "bookingId": "66b46d27877fbda874c22445"
-            }
-        ]
-    },
-    {
-        "_id": "66b36d748b830b7925d5178f",
-        "roomName": "HRX room",
-        "roomNumber": 434,
-        "seatCapacity": 34,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b36d958b830b7925d51793",
-        "roomName": "HTYRX room",
-        "roomNumber": 717,
-        "seatCapacity": 53,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b36fec8b830b7925d51797",
-        "roomName": "FFGT room",
-        "roomNumber": 245,
-        "seatCapacity": 45,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b370528b830b7925d5179f",
-        "roomName": "MNT room",
-        "roomNumber": 286,
-        "seatCapacity": 48,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b371aa4ec4ff980d80185e",
-        "roomName": "RTT room",
-        "roomNumber": 492,
-        "seatCapacity": 76,
-        "appliedCandidates": [
-            {
-                "userDetails": {
-                    "username": "test name 15",
-                    "email": "testname15@gmail.com"
-                },
-                "bookingDate": "2024-08-14T18:30:00.000Z",
-                "bookingId": "66b46de4877fbda874c22450"
-            }
-        ]
-    },
-    {
-        "_id": "66b371ef4ec4ff980d801868",
-        "roomName": "RTI room",
-        "roomNumber": 442,
-        "seatCapacity": 82,
-        "appliedCandidates": [
-            {
-                "userDetails": {
-                    "username": "test name 15",
-                    "email": "testname15@gmail.com"
-                },
-                "bookingDate": "2024-08-08T18:30:00.000Z",
-                "bookingId": "66b47558877fbda874c22492"
-            }
-        ]
-    },
-    {
-        "_id": "66b3720c7da95ba223a6344a",
-        "roomName": "DDI room",
-        "roomNumber": 852,
-        "seatCapacity": 13,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b375b28fa9a12d14693fea",
-        "roomName": "Testing10",
-        "roomNumber": 114,
-        "seatCapacity": 1,
-        "appliedCandidates": [
-            {
-                "userDetails": {
-                    "username": "Debnath5",
-                    "email": "debnath5@gmail.com"
-                },
-                "bookingDate": "2024-08-17T18:30:00.000Z",
-                "bookingId": "66b375e18fa9a12d14693ff1"
-            }
-        ]
-    },
-    {
-        "_id": "66b454233ca353416a3fe12b",
-        "roomName": "Testing11",
-        "roomNumber": 115,
-        "seatCapacity": 1,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b45521e8660f8bfc6b5c42",
-        "roomName": "RTR room",
-        "roomNumber": 983,
-        "seatCapacity": 89,
-        "appliedCandidates": [
-            {
-                "userDetails": {
-                    "username": "test name 15",
-                    "email": "testname15@gmail.com"
-                },
-                "bookingDate": "2024-08-20T18:30:00.000Z",
-                "bookingId": "66b471d1877fbda874c22478"
-            },
-            {
-                "userDetails": {
-                    "username": "test name 15",
-                    "email": "testname15@gmail.com"
-                },
-                "bookingDate": "2024-08-27T18:30:00.000Z",
-                "bookingId": "66b47338877fbda874c22486"
-            },
-            {
-                "userDetails": {
-                    "username": "Debnath5",
-                    "email": "debnath5@gmail.com"
-                },
-                "bookingDate": "2024-08-08T18:30:00.000Z",
-                "bookingId": "66b49eb61d15742a89f26481"
-            }
-        ]
-    },
-    {
-        "_id": "66b4555ae8660f8bfc6b5c48",
-        "roomName": "BLUE room",
-        "roomNumber": 783,
-        "seatCapacity": 81,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b46b59877fbda874c22438",
-        "roomName": "Testing12",
-        "roomNumber": 116,
-        "seatCapacity": 1,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b46ea4877fbda874c2245c",
-        "roomName": "FUN room",
-        "roomNumber": 419,
-        "seatCapacity": 36,
-        "appliedCandidates": []
-    },
-    {
-        "_id": "66b46f30877fbda874c22466",
-        "roomName": "FUNNN room",
-        "roomNumber": 719,
-        "seatCapacity": 62,
-        "appliedCandidates": []
-    }
-]
+    "message": "Room details retrieved successfully"
+}]

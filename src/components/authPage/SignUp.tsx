@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import PersonIcon from '@mui/icons-material/Person';
-import { CiLogin } from "react-icons/ci";
+import { PiSignInBold } from "react-icons/pi";
 import { CiLock, CiMail, CiUnlock } from 'react-icons/ci';
 import axios from 'axios';
 import { showToastMsg } from '../../common/ToastMsg';
 import { URL } from '../../API';
+import HomePgBtn from '../../common/HomePgBtnNav';
 
 interface FormValues {
     name: string;
@@ -114,6 +115,9 @@ const Register: React.FC = () => {
 
     return (
         <div className="h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-900">
+            <HomePgBtn
+                navArr={{label: 'SignIn', link: '/login', icon: <PiSignInBold className=' text-xl text-emerald-300'/>}}
+            />
             <div className="flex flex-col w-full lg:w-1/2 px-8 md:px-32 lg:px-24 justify-center items-center">
                 <div className="w-full">
                     <Formik
@@ -161,13 +165,6 @@ const Register: React.FC = () => {
                                         <span style={{ borderTopColor: "transparent" }} className=" aspect-square h-4 border-2 border-blue-200 rounded-full animate-spin"></span>
                                     )}
                                 </button>
-
-                                <div className="flex items-center justify-between mt-4 pb-2">
-                                    <div className="text-sm hover:text-blue-300 text-cyan-200 cursor-pointer hover:-translate-y-1 duration-500 transition-all">Already have an account?</div>
-                                    <Link to={'/login'} className='bg-gradient-to-r from-green-800 to-green-700 text-green-300 text-[.9rem] flex items-center justify-center gap-x-2 rounded-lg py-2 px-3'>
-                                        SignIn <CiLogin className=' text-xl'/>
-                                    </Link>
-                                </div>
                             </Form>
                         )}
                     </Formik>

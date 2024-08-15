@@ -21,8 +21,9 @@ import { LuLayoutDashboard } from "react-icons/lu";
 import { FC, ReactNode, useState } from 'react';
 import { motion } from 'framer-motion';
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
+import { TbUsersGroup } from "react-icons/tb";
 
-const drawerWidth = 160;
+const drawerWidth = 190;
 
 const openedMixin = (theme: Theme): CSSObject => ({
     width: drawerWidth,
@@ -101,7 +102,7 @@ interface btnArrType {
 export const AdminSideBar: FC<{ userName: string }> = ({ userName }) => {
     const navigate = useNavigate();
     const theme = useTheme();
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState<boolean>(false);
     
     const buttonArr: btnArrType[] = [
         {
@@ -109,9 +110,13 @@ export const AdminSideBar: FC<{ userName: string }> = ({ userName }) => {
             icon: <LuLayoutDashboard className=" text-[1.4rem]"/>,
             clickEvent: () => navigate('/admin')
         }, {
-            name: 'Room',
+            name: 'Room booking',
             icon: <IoIosCreate className=" text-[1.4rem]"/>,
             clickEvent: () => navigate('rooms')
+        }, {
+            name: 'User bookings',
+            icon: <TbUsersGroup className=" text-[1.4rem]"/>,
+            clickEvent: () => navigate('userbookings')
         }, {
             name: 'LogOut',
             icon: <BiLogOutCircle className=" text-[1.4rem]"/>,
@@ -166,7 +171,10 @@ export const AdminSideBar: FC<{ userName: string }> = ({ userName }) => {
 
                 <List>
                     {buttonArr.map((btn, index) => (
-                        <ListItem key={btn.name + index} disablePadding sx={{ 
+                        <ListItem 
+                        key={btn.name + index} 
+                        disablePadding 
+                        sx={{ 
                             display: 'block',
                             backgroundColor: selectedBtn === btn.name ? '#e4e2e2' : 'none',
                         }}>

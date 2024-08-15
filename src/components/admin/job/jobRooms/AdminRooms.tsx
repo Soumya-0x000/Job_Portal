@@ -7,10 +7,17 @@ import axios from "axios";
 import { URL } from "../../../../API";
 import { showToastMsg } from "../../../../common/ToastMsg";
 import { AdminJobRoomTable } from "./AdminJobRoomTable";
-import { demoRoomData, roomDataType } from "../../../../common/DemoData";
 import { DialogComponent } from "../../../../common/DialogComponent";
-import { motion } from "framer-motion";
-import { generateUniqueId } from "../../../../common/UniqID";
+import { Menu, MenuProps } from "@mui/material";
+import styled from "styled-components";
+import Dropdown from "../../../User/Dropdown";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs, { Dayjs } from "dayjs";
+import { initialValue } from "../../../User/Job/UserJobRoomTable";
+import RoomNumDtFilter from "../../../../common/RoomNumDtFilter";
 
 const validationSchema = Yup.object({
     roomName: Yup.string().required('Required'),
@@ -24,18 +31,54 @@ export type roomType = {
     roomNumber: number;
 }
 
-const filterItems = [ 'All data', 'Only date', 'Room number + date' ]
+export const StyledMenu = styled((props: MenuProps) => (
+    <Menu
+        elevation={0}
+        anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+        }}
+        transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+        }}
+        {...props}
+    />
+    ))(() => ({
+        '& .MuiPaper-root': {
+        borderRadius: 6,
+        minWidth: 180,
+        boxShadow:
+            'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
+        '& .MuiMenu-list': {
+            padding: '4px 0',
+        },
+    },
+}));
+
+const filterItems = [ 
+    {
+        label: 'All data',
+        value: 'allTotal',
+    }, {
+        label: 'Room Number',
+        value: 'roomNumber',
+    }, {
+        label: 'Room number + date',
+        value: 'roomNumberNDate',
+    }
+]
 
 const AdminRooms = () => {
     const [open, setOpen] = useState<boolean>(false);
-    const [showFilters, setShowFilters] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(false); //make it true
+    const [roomNumDDopen, setRoomNumDDopen] = useState<boolean>(false);
+    const [showInputs, setShowInputs] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true); //make it false for testing
+    const [isCheckingAvail, setIsCheckingAvail] = useState<boolean>(false);
     const [token, setToken] = useState<string>('');
     const [rooms, setRooms] = useState<roomType[]>([]);
-    const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-    const [fetchingMode, setFetchingMode] = useState<string>(filterItems[0]);
-
-    const toggleDropdown = () => setIsDropdownOpen(prev => !prev)
+    const [fetchingMode, setFetchingMode] = useState<string>(filterItems[0].value);
+    const [filteringData, setFilteringData] = useState<typeof initialValue>(initialValue);
 
     const handleClose = () => setOpen(false)
     
@@ -66,35 +109,40 @@ const AdminRooms = () => {
     };
 
     useEffect(() => {
-        if (token) getAllRoomDetails();
+        if (token !== '') getRoomDetails('room-booking/getRoomDetails');
     }, [token]);
-    
-    const getAllRoomDetails = async () => {
+
+    useEffect(() => {
+        if(fetchingMode === 'allTotal') getRoomDetails('room-booking/getRoomDetails');
+    }, [fetchingMode])
+
+    const getRoomDetails: (endPoint: string) => void = async(endPoint) => {
         const requestHeader = {
             'Content-Type': 'application/json',
             'ngrok-skip-browser-warning': '69420',
             authorization: `token ${token}`,
         }
 
-        const isRoomDataType = (data: unknown): data is roomDataType[] => {
-            return Array.isArray(data) && data.every(room =>
-                typeof room.roomName === 'string' &&
-                typeof room.seatCapacity === 'number' &&
-                typeof room.roomNumber === 'number' &&
-                (room.appliedCandidates === undefined || Array.isArray(room.appliedCandidates))
-            );
-        };
+        const finalURL = `${URL}/${endPoint}`
 
         try {
-            const response = await axios.get(`${URL}/room-booking/getRoomDetails`, {
-                headers: requestHeader
-            });
+            const response = await axios.get(finalURL, { headers: requestHeader });
 
-            if (response.status && isRoomDataType(response.data)) {
-                setRooms(response.data);
+            const fetchedData = Array.isArray(response.data)
+                ? response.data
+                : [response.data]
+
+            if (response.status) {
+                console.log(fetchedData[0]?.data?.rooms)
+                console.log(Object.create(fetchedData))
+                setRooms(fetchedData[0]?.data || [])
                 setLoading(false);
-            } else showToastMsg('Invalid data format received.');
-            setRooms(response.data);
+            } else {
+                console.log(fetchedData)
+                response.data.data === null
+                    ? ''
+                    : showToastMsg(response.data.message)
+            }
         } catch (error: unknown) {
             if (axios.isAxiosError(error)) {
                 console.error('Axios error fetching room details:', error.response?.data?.message || error.message);
@@ -106,19 +154,69 @@ const AdminRooms = () => {
         }
     };
 
-    const handleSelection: (item: string) => void = (item) => {
-        setShowFilters(false)
+    const handleMenuSelection: (item: string) => void = (item) => {
+        setShowInputs(true)
         setFetchingMode(item)
+        setRoomNumDDopen(true)
     };
 
-    useEffect(() => {}, [fetchingMode]);
+    const handleRoomSelection = (roomNumber: number) => {
+        setFilteringData(prev => ({
+            ...prev, roomNumber
+        }))
+    }
+
+    const handleDateSelection = (bookingDate: Dayjs | null) => {
+        setFilteringData(prev => ({
+            ...prev, bookingDate
+        }));
+    };
+
+    useEffect(() => {
+        switch(fetchingMode) {
+            case 'roomNumber':
+                if(filteringData.roomNumber) setIsCheckingAvail(true)
+                break;
+            case 'roomNumberNDate':
+                if(filteringData.roomNumber && filteringData.bookingDate) setIsCheckingAvail(true)
+                break;
+            default:
+                setIsCheckingAvail(false)
+                break;
+        }
+    }, [filteringData]);
+    
+    const fetchConditionalData = () => {
+        switch(fetchingMode) {
+            case 'allTotal':
+                getRoomDetails(`room-booking/getRoomDetails`);
+                break;
+            case 'roomNumber':
+                if(filteringData.roomNumber) {
+                    const newURL = `room-booking/getRoomDetails?roomNumber=${filteringData.roomNumber}`
+                    getRoomDetails(newURL);
+                } else showToastMsg('Enter a room number first')
+                break;
+            case 'roomNumberNDate':
+                if(filteringData.roomNumber && filteringData.bookingDate) {
+                    const newURL = `room-booking/getRoomDetails?roomNumber=${filteringData.roomNumber}&date=${filteringData.bookingDate.format('YYYY-MM-DD')}`
+                    getRoomDetails(newURL);
+                } else showToastMsg('Enter a room number and date first')
+                break;
+            default:
+                showToastMsg('Select a valid filtering mode')
+                break;
+        }
+
+        setShowInputs(false)
+    }
 
     return (
         <div className=" bg-slate-400">
             {loading 
                 ? <Loading /> 
                 : <div className=" w-full h-fit flex items-center flex-col pt-16">
-                    <AdminJobRoomTable rooms={demoRoomData}/> {/* change it to rooms */}
+                    <AdminJobRoomTable rooms={rooms}/> {/* change it to demoRoomData for testing */}
                 </div>
             }
             
@@ -126,12 +224,12 @@ const AdminRooms = () => {
                 <button className=" fixed bottom-3 left-20 bg-blue-900 rounded-full aspect-square w-10 flex items-center justify-center hover:rotate-90 transition-all duration-500 active:scale-90 group z-40 ring-[1px] ring-slate-400"
                 onClick={() => setOpen(true)}>
                     <IoIosAdd className=" w-10 h-10 text-blue-300 group-active:scale-125 transition-all duration-500"/>
-                </button>
+                </button> 
 
-                <button className=" fixed bottom-3 right-3 bg-blue-900 text-blue-200 tracking-wide font-montserrat rounded-lg py-1.5 px-3 flex items-center justify-center hover:bg-blue-950 transition-all duration-500 active:scale-90 group z-40 ring-[1px] ring-slate-400"
-                onClick={() => setShowFilters(true)}>
-                    Filter
-                </button>
+                <RoomNumDtFilter
+                    filterItems={filterItems}
+                    handleMenuSelection={handleMenuSelection}
+                />
             </>
 
             {/* create room */}
@@ -187,52 +285,68 @@ const AdminRooms = () => {
             </DialogComponent>
 
             {/* conditional room */}
-            <DialogComponent
-            open={showFilters}
-            setOpen={setShowFilters}>
-                <div className="relative inline-block text-left h-[11.2rem] px-5 py-3">
-                    <div>
-                        <button
-                        type="button"
-                        className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-12 focus:ring-indigo-500 font-lato tracking-wide text-[.95rem]"
-                        onClick={toggleDropdown}>
-                            Fetching filter
-                            <svg
-                                className={`-mr-1 ml-2 h-5 w-5 ${isDropdownOpen ? ' rotate-180' : ''} transition-all`}
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    fillRule="evenodd"
-                                    d="M5.293 9.293a1 1 0 011.414 0L10 12.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                    clipRule="evenodd"
-                                />
-                            </svg>
-                        </button>
-                    </div>
+            {fetchingMode !== 'allTotal' && (
+                <DialogComponent
+                open={showInputs}
+                setOpen={setShowInputs}>
+                    <>
+                        <div className=" flex flex-col gap-5 p-4 h-96">
+                            {fetchingMode === 'roomNumberNDate' && (
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DemoContainer
+                                        components={[
+                                            "DatePicker",
+                                            "DatePicker",
+                                            "DatePicker",
+                                        ]}
+                                    >
+                                        <DatePicker
+                                            label="Booking date"
+                                            name="startDate"
+                                            onChange={(date) => handleDateSelection(date)}
+                                            minDate={dayjs()}
+                                            value={filteringData?.bookingDate}
+                                        />
+                                    </DemoContainer>
+                                </LocalizationProvider>
+                            )}
 
-                    {isDropdownOpen && (
-                        <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.2 }}
-                        className="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none w-full">
-                            <div className="py-1 w-full h-full overflow-y-scroll flex items-center justify-center flex-col" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                                {filterItems.map((item, indx) => (
-                                    <button className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-[11rem] ring-1 rounded-md gap-2 bg-slate-200 font-lato active:scale-105 transition-all" role="menuitem"
-                                    key={generateUniqueId() + indx}
-                                    onClick={() => handleSelection(item)}>
-                                        <span>{item}</span>
-                                    </button>
-                                ))}
-                            </div>
-                        </motion.div>
-                    )}
-                </div>
-            </DialogComponent>
+                            <Dropdown
+                                mode={'admin'}
+                                heading={"Room number"}
+                                open={roomNumDDopen}
+                                roomSelection={handleRoomSelection}
+                                availData={{}}
+                                roomNum={filteringData.roomNumber}
+                            />
+                        </div>
+
+                        <div className=" flex items-center justify-between gap-4 p-2 font-robotoMono font-bold">
+                            <button
+                                className={`${
+                                    !isCheckingAvail
+                                        ? " cursor-not-allowed bg-indigo-700"
+                                        : "active:scale-95 transition-all cursor-pointer bg-green-300 text-green-950"
+                                } w-full p-2 rounded-lg text-blue-200`}
+                                onClick={fetchConditionalData}
+                                disabled={!isCheckingAvail}
+                            >
+                                Check
+                            </button>
+
+                            <button
+                                className="w-full p-2 rounded-lg bg-red-950 text-red-200 active:scale-95 transition-all"
+                                onClick={() => {
+                                    setShowInputs(false)
+                                    setFilteringData(initialValue)
+                                }}
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </>
+                </DialogComponent>
+            )}
         </div>
     )
 }

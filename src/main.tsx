@@ -17,6 +17,7 @@ import { Provider } from 'react-redux';
 import { store } from './store/Store.tsx';
 import AdminRooms from './components/admin/job/jobRooms/AdminRooms.tsx';
 import UserJobRooms from './components/User/Job/UserJobRooms.tsx';
+import UserBookings from './components/admin/job/jobRooms/UserBookings.tsx';
 
 const router = createBrowserRouter([
     { path: '/', element: <LandingPage /> },
@@ -28,6 +29,7 @@ const router = createBrowserRouter([
         children: [
             { path: '', element: <ShowJobs /> },
             { path: 'rooms', element: <AdminRooms/> },
+            { path: 'userbookings', element: <UserBookings/> },
         ]
     },
     { path: '/error404', element: <Error404 /> },
