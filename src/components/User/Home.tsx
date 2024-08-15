@@ -17,7 +17,7 @@ const Home: FC = () => {
             {loading 
                 ? <Loading />
                 : <div className=' h-full w-full flex items-end pb-4 md:pb-0 md:items-center justify-center'>
-                        <JobApplyForm/>
+                    <JobApplyForm/>
                 </div>
             }
             <BackgroundBeams/>

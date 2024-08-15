@@ -6,20 +6,15 @@ import { Outlet } from "react-router-dom";
 import UserJobRooms from "../User/Job/UserJobRooms";
 
 const PageRender: (selected: string) => ReactElement = (selected) => {
-    switch (selected) {
-        case 'Home':
-            return <HomePageContent />;
-        case 'About Us':
-            return <AboutUs />;
-        case 'Contact Us':
-            return <ContactUs />;
-        case 'Career':
-            return <Outlet />;
-        case 'Room':
-            return <UserJobRooms/>
-        default:
-            return <HomePageContent />;
+    const pageComponents: { [key: string]: ReactElement } = {
+        'Home': <HomePageContent />,
+        'About Us': <AboutUs />,
+        'Contact Us': <ContactUs />,
+        'Career': <Outlet />,
+        'Room book': <UserJobRooms/>
     }
+
+    return pageComponents[selected] || <HomePageContent/>
 };
 
 export default PageRender;

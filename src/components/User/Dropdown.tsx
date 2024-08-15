@@ -7,6 +7,7 @@ import { URL } from '../../API';
 import { Loading } from '../../common/Loading';
 
 const Dropdown: FC<{
+    mode: 'user' | 'admin'
     heading: string;
     open: boolean;
     roomSelection: (roomNumber: number ) => void;
@@ -16,7 +17,7 @@ const Dropdown: FC<{
         numberOfBookings: number,
         availableSeats: number,
     }>
-}> = ({ heading, open, roomSelection, availData, roomNum }) => {
+}> = ({ mode, heading, open, roomSelection, availData, roomNum }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [roomDetails, setRoomDetails] = useState<[]>([]);
     const [optionLoading, setOptionLoading] = useState<boolean>(true)
@@ -30,9 +31,9 @@ const Dropdown: FC<{
 
     useEffect(() => {
         if (open) {
-            const userDetail = localStorage.getItem('userDetails') || '[]'
-            const authToken = JSON.parse(userDetail).token
-            fetchRoomDetails(authToken)
+            mode === 'user'
+                ? fetchRoomDetails(JSON.parse(localStorage.getItem('userDetails') || '[]').token)
+                : fetchRoomDetails(JSON.parse(localStorage.getItem('adminDetails') || '[]').token)
         }
     }, [open])
 
@@ -52,7 +53,7 @@ const Dropdown: FC<{
     }
 
     return (
-        <div className="relative inline-block text-left">
+        <div className="relative inline-block text-left min-w-[15rem]">
             <div>
                 <button
                 type="button"
@@ -89,11 +90,11 @@ const Dropdown: FC<{
                             </div>
                         ) : (<>
                             {roomDetails.map((rooms: Room, indx) => (
-                                <div className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full font-lato" role="menuitem"
+                                <div className=" cursor-pointer flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full font-lato" role="menuitem"
                                 key={generateUniqueId() + indx}
                                 onClick={() => handleSelection(rooms)}>
-                                    <div className=' w-1/2 pl-8'>{rooms?.roomNumber}</div>
-                                    <div className=' w-1/2'>{rooms?.roomName}</div>
+                                    <span className=' w-1/2 pl-8'>{rooms?.roomNumber}</span>
+                                    <span className=' w-1/2'>{rooms?.roomName}</span>
                                 </div>
                             ))}
                         </>)}

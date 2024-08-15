@@ -11,6 +11,7 @@ import {
 import { DataGrid, GridRenderCellParams, GridToolbar } from '@mui/x-data-grid';
 import { Transition } from '../../../../common/DialogComponent';
 import { formatDateTime } from '../../../../common/formatDateTime';
+import { useMediaQuery, useTheme } from '@mui/material';
 
 interface Candidate {
     bookingDate: string;
@@ -108,7 +109,6 @@ const RoomRow: React.FC<{ room: Room }> = ({ room }) => {
     );
 };
 
-import { useMediaQuery, useTheme } from '@mui/material';
 
 export const AdminJobRoomTable: React.FC<JobRoomTableProps> = ({ rooms }) => {
     const theme = useTheme();

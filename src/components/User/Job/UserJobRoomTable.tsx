@@ -1,14 +1,4 @@
-import {
-    Dispatch, FC, SetStateAction, useEffect, useState
-} from "react";
-import { styled } from "@mui/material/styles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -22,52 +12,29 @@ import { formatDateTime } from "../../../common/formatDateTime";
 import { FaArrowRight } from "react-icons/fa6";
 import { boolean } from "yup";
 import { DialogComponent } from "../../../common/DialogComponent";
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-        backgroundColor: theme.palette.common.black,
-        color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
-    },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    "&:nth-of-type(odd)": {
-        backgroundColor: theme.palette.action.hover,
-    },
-    "&:last-child td, &:last-child th": {
-        border: 0,
-    },
-}));
-
-export interface Room {
-    roomName: string;
-    roomNumber: number;
-    roomId?: string;
-    bookingDate: string;
-}
+import { DataGrid, GridColDef, GridRowParams, GridToolbar } from '@mui/x-data-grid';
+import { userBookings } from "../AllUserTypes";
+import { useMediaQuery, useTheme } from '@mui/material';
+import { initialPaginationVal } from "./UserJobRooms";
 
 interface JobRoomTableProps {
-    rooms: Room[];
-    setRooms: Dispatch<SetStateAction<Room[]>>;
-    tableHeaders: string[];
+    rooms: userBookings[];
+    setRooms: Dispatch<SetStateAction<userBookings[]>>;
+    setPaginationData: (paginationData: typeof initialPaginationVal) => void
 }
+
+export const initialValue = {
+    bookingDate: undefined as Dayjs | null | undefined,
+    roomNumber: NaN as number,
+};
 
 export const UserJobRoomTable: FC<JobRoomTableProps> = ({
     rooms,
     setRooms,
-    tableHeaders,
+    setPaginationData
 }) => {
     const [open, setOpen] = useState<boolean>(false);
-    const [selectionDetails, setSelectionDetails] = useState<{
-        bookingDate: Dayjs | null | undefined;
-        roomNumber: number;
-    }>({
-        bookingDate: undefined,
-        roomNumber: NaN,
-    });
+    const [selectionDetails, setSelectionDetails] = useState<typeof initialValue>(initialValue);
     const [userToken, setUserToken] = useState<string>("");
     const [isBookingAvail, setIsBookingAvail] = useState<boolean>(false);
     const [isRoomBooked, setIsRoomBooked] = useState<boolean>(false);
@@ -81,6 +48,41 @@ export const UserJobRoomTable: FC<JobRoomTableProps> = ({
         numberOfBookings: NaN,
         availableSeats: NaN,
     });
+    const theme = useTheme();
+    const isSmToMd = useMediaQuery(theme.breakpoints.between(640, 768));
+    const isMdToLg = useMediaQuery(theme.breakpoints.between(768, 1024));
+    const isLgToXl = useMediaQuery(theme.breakpoints.between(1024, 1280)); 
+    const isLgTo2Xl = useMediaQuery(theme.breakpoints.between(1280, 1536));
+    const isXlUp = useMediaQuery(theme.breakpoints.up(1536));
+
+    const getColumnWidth = (defaultWidth: number) => {
+        if (isSmToMd) return defaultWidth * 0.5;
+        if (isMdToLg) return defaultWidth * 0.74;
+        if (isLgToXl) return defaultWidth * 0.8; 
+        if (isLgTo2Xl) return defaultWidth * 1.12;
+        if (isXlUp) return defaultWidth * 1.26;
+        return defaultWidth;
+    };
+
+    const columns: GridColDef[] = [
+        { 
+            field: 'bookingDate', 
+            headerName: 'Booking Date', 
+            flex: 1, 
+            width: getColumnWidth(150),
+            renderCell: (params) => (
+                <div>{formatDateTime(params.value)}</div>
+            ),
+        },
+        { field: 'roomName', headerName: 'Room Name', flex: 1, width: getColumnWidth(150) },
+        { field: 'roomNumber', headerName: 'Room Number', flex: 1, width: getColumnWidth(150) },
+        { field: 'bookingStatus', headerName: 'Booking Status', flex: 1, width: getColumnWidth(150) },
+    ];
+
+    const getRowClassName = (params: GridRowParams) => {
+        const status = params.row.bookingStatus;
+        return status === 'past' ? 'past-row' : 'upcoming-row';
+    };
 
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem("userDetails") || "");
@@ -116,14 +118,14 @@ export const UserJobRoomTable: FC<JobRoomTableProps> = ({
                     roomName,
                     roomNumber,
                     bookingDate,
-                    roomId: bookingId
+                    bookingId,
+                    bookingStatus: 'upcoming',
                 }
-            ]))
-            setIsRoomBooked(true)
+            ]));
+            setIsRoomBooked(true);
             handleCancelation();
         } catch (error) {
-            if (axios.isAxiosError(error))
-                showToastMsg(error.response?.data?.message || error.message);
+            if (axios.isAxiosError(error)) showToastMsg(error.response?.data?.message || error.message);
             else if (error instanceof Error) showToastMsg(error.message);
             else showToastMsg("An unknown error occurred");
             handleCancelation();
@@ -171,8 +173,10 @@ export const UserJobRoomTable: FC<JobRoomTableProps> = ({
                     },
                 }
             );
+            console.log(response)
 
             if (response?.data?.availableSeats > 0) {
+                console.log(response.data)
                 setAvailData(response?.data);
                 setIsBookingAvail(true);
                 setShowBookingDetail(true);
@@ -191,70 +195,166 @@ export const UserJobRoomTable: FC<JobRoomTableProps> = ({
     };
 
     const handleCancelation = () => {
-        setSelectionDetails({ bookingDate: undefined, roomNumber: NaN });
+        setSelectionDetails(initialValue);
         setIsBookingAvail(false);
         setOpen(false);
         setShowBookingDetail(false);
     };
 
+    const demoUserRooms = [
+        {
+            "roomName": "Testing8",
+            "roomNumber": 112,
+            "bookingDate": "2024-08-18T18:30:00.000Z",
+            "bookingId": "66b49a163bb303f4fc4fc962",
+            "bookingStatus": "upcoming"
+        }, {
+            "roomName": "Testing8",
+            "roomNumber": 112,
+            "bookingDate": "2024-08-19T18:30:00.000Z",
+            "bookingId": "66b9bb8b35a175b6a34be9a9",
+            "bookingStatus": "upcoming"
+        }, {
+            "roomName": "Testing9",
+            "roomNumber": 113,
+            "bookingDate": "2024-08-21T00:00:00.000Z",
+            "bookingId": "66b9e8a63a469136a13e67ae",
+            "bookingStatus": "upcoming"
+        }, {
+            "roomName": "Testing10",
+            "roomNumber": 123,
+            "bookingDate": "2024-08-04T00:00:00.000Z",
+            "bookingId": "66b9e8a6sgfbs4576513e67af",
+            "bookingStatus": "past"
+        }, {
+            "roomName": "Testing11",
+            "roomNumber": 124,
+            "bookingDate": "2024-08-04T00:00:00.000Z",
+            "bookingId": "66b9e8a6sgfbs4576513e67ag",
+            "bookingStatus": "upcoming"
+        }, {
+            "roomName": "Testing12",
+            "roomNumber": 125,
+            "bookingDate": "2024-08-04T00:00:00.000Z",
+            "bookingId": "66b9e8a6sgfbs4576513e67he",
+            "bookingStatus": "past"
+        }, {
+            "roomName": "Testing13",
+            "roomNumber": 126,
+            "bookingDate": "2024-08-04T00:00:00.000Z",
+            "bookingId": "66b9e8a6sgfbs4576513i67ae",
+            "bookingStatus": "past"
+        }, {
+            "roomName": "Testing14",
+            "roomNumber": 127,
+            "bookingDate": "2024-08-04T00:00:00.000Z",
+            "bookingId": "66b9e8a6sgfbs4376513e67ae",
+            "bookingStatus": "upcoming"
+        }, {
+            "roomName": "Testing15",
+            "roomNumber": 128,
+            "bookingDate": "2024-08-04T00:00:00.000Z",
+            "bookingId": "66b9e8a6sgfbs45j6513e67ae",
+            "bookingStatus": "past"
+        }, {
+            "roomName": "Testing16",
+            "roomNumber": 129,
+            "bookingDate": "2024-08-04T00:00:00.000Z",
+            "bookingId": "66b9e8a6sgfbs45765gfdsdfhdstr3e67ae",
+            "bookingStatus": "upcoming"
+        }, {
+            "roomName": "Testing17",
+            "roomNumber": 130,
+            "bookingDate": "2024-08-04T00:00:00.000Z",
+            "bookingId": "66b9e8a6sgfbthaets4576513e67ae",
+            "bookingStatus": "past"
+        }, {
+            "roomName": "Testing18",
+            "roomNumber": 131,
+            "bookingDate": "2024-08-04T00:00:00.000Z",
+            "bookingId": "66b9e8a6sgfbs4576513e67gakenriotae",
+            "bookingStatus": "upcoming"
+        }
+    ]
+
+    const handlePaginationPgCount = (value) => {
+        console.log(value)
+    }
+
     return (
         <>
-            <TableContainer component={Paper} sx={{ width: "900px" }}>
-                <Table aria-label="customized table">
-                    <TableHead>
-                        <TableRow>
-                            {tableHeaders.map((name, indx) => (
-                                <StyledTableCell
-                                    key={name + indx}
-                                    sx={{
-                                        fontWeight: "bold",
-                                        textTransform: "uppercase",
-                                        fontSize: "0.8rem",
-                                        letterSpacing: "0.5px",
-                                        color: "#333",
-                                        textAlign: "center",
-                                        borderRight:
-                                            indx < tableHeaders.length - 1
-                                                ? "1px solid #f7ff3b"
-                                                : "",
-                                    }}
-                                >
-                                    {name}
-                                </StyledTableCell>
-                            ))}
-                        </TableRow>
-                    </TableHead>
+            <div className=" max-w-[100%] overflow-auto">
+                <DataGrid
+                    rows={demoUserRooms} // change to rooms
+                    columns={columns}
+                    onPaginationModelChange={handlePaginationPgCount}
+                    initialState={{
+                        pagination: {
+                            paginationModel: { page: 0, pageSize: 10 },
+                        },
+                    }}
+                    pageSizeOptions={[10, 20]}
+                    slots={{ toolbar: GridToolbar }}
+                    slotProps={{
+                        toolbar: { showQuickFilter: true },
+                    }}
+                    sx={{
+                        width: 1200,
+                        '& .MuiDataGrid-toolbarContainer': {
+                            marginBottom: 1,
+                            paddingBottom: 1,
+                            backgroundColor: 'rgb(201, 224, 255)',
+                        },
+                        '& .MuiDataGrid-columnHeader': {
+                            backgroundColor: '#d0fdeb',
+                        },
+                        '& .MuiDataGrid-cell': {
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '17px'
+                        },
+                        '& .MuiDataGrid-root': {
+                            border: 'none',
+                            outline: 'none'
+                        },
+                        '& .past-row': {
+                            border: 'none',
+                            backgroundColor: '#037346',
+                            color: '#e0fefc',
+                            '&:hover': {
+                                backgroundColor: '#42b084',
+                                color: '#ffffff', 
+                            },
+                            '&:active': {
+                                backgroundColor: '#037346',
+                            }
+                        },
+                        '& .upcoming-row': {
+                            border: 'none',
+                            backgroundColor: '#e6fefd',
+                            color: '#037346',
+                            '&:hover': {
+                                backgroundColor: '#d4ffff',
+                                color: '#024d3b', 
+                            },
+                        },
+                        '& .MuiDataGrid-row.Mui-selected': {
+                            backgroundColor: '#d0fdeb',
+                        },
+                        '&  .MuiDataGrid-row.Mui-selected:hover': {
+                            backgroundColor: '#d0fdeb',  
+                        },
+                        '& .MuiDataGrid-footerContainer ': {
+                            backgroundColor: 'rgb(201, 224, 255)',
+                        },
+                    }}
+                    getRowId={(row) => row.bookingId}
+                    getRowClassName={getRowClassName}
+                />
+            </div>
 
-                    <TableBody>
-                        {rooms.map((row) => (
-                            <StyledTableRow key={row.roomId}>
-                                <StyledTableCell
-                                    sx={{
-                                        textAlign: "center",
-                                    }}
-                                >
-                                    {formatDateTime(row.bookingDate)}
-                                </StyledTableCell>
-                                <StyledTableCell
-                                    sx={{
-                                        textAlign: "center",
-                                    }}
-                                >
-                                    {row.roomName}
-                                </StyledTableCell>
-                                <StyledTableCell
-                                    sx={{
-                                        textAlign: "center",
-                                    }}
-                                >
-                                    {row.roomNumber}
-                                </StyledTableCell>
-                            </StyledTableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-
+            {/* room booking */}
             <DialogComponent open={open} setOpen={setOpen}>
                 <>
                     <div className=" flex flex-col gap-5 p-4 h-96">
@@ -277,6 +377,7 @@ export const UserJobRoomTable: FC<JobRoomTableProps> = ({
                         </LocalizationProvider>
 
                         <DropdownMenu
+                            mode={'user'}
                             heading={"Room number"}
                             open={open}
                             roomSelection={handleRoomSelection}
@@ -308,6 +409,7 @@ export const UserJobRoomTable: FC<JobRoomTableProps> = ({
                 </>
             </DialogComponent>
 
+            {/* room booking button */}
             <button
                 className={` w-fit text-[1rem] flex items-center justify-center px-3 py-2 rounded-l-lg active:scale-105 transition-all bg-slate-900 text-yellow-300 fixed top-1/2 -translate-y-1/2 -right-[3rem] hover:right-0 group gap-x-4 font-onest font-bold tracking-wider`}
                 onClick={() => setOpen(true)}
@@ -316,6 +418,7 @@ export const UserJobRoomTable: FC<JobRoomTableProps> = ({
                 <FaArrowRight className=" text-lg hidden group-hover:block" />
             </button>
 
+            {/* room booking successful dialog */}
             <DialogComponent open={isRoomBooked} setOpen={setIsRoomBooked}>
                 <div className="relative p-4 w-full max-w-md h-full md:h-auto">
                     <div className="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">

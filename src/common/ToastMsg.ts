@@ -2,9 +2,9 @@ import { Bounce, toast } from "react-toastify";
 
 export const showToastMsg: (msg: string) => void = (msg) => {
     toast(msg, {
-        position: "top-right",
+        position: "bottom-right",
         autoClose: 2000,
-        hideProgressBar: false,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,

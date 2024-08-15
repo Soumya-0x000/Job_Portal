@@ -1,12 +1,13 @@
 import React, { useState, MouseEvent as ReactMouseEvent } from 'react';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { CiLock, CiMail, CiUnlock } from "react-icons/ci";
-import { MdOutlineAccountCircle } from "react-icons/md";
 import { showToastMsg } from '../../common/ToastMsg';
 import axios from 'axios';
 import { URL } from '../../API';
+import HomePgBtnNav from '../../common/HomePgBtnNav';
+import { MdOutlineAccountCircle } from 'react-icons/md';
 
 export interface FormValues {
     email: string;
@@ -81,7 +82,11 @@ const LoginPage: React.FC = () => {
 
     return (
         <div className="h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-900">
-            <div className="flex flex-col w-full lg:w-1/2 px-8 md:px-32 lg:px-24 justify-center items-center space-y-8">
+            <HomePgBtnNav
+                navArr={{label: 'SignUp', link: '/signup', icon: <MdOutlineAccountCircle className=' text-xl text-emerald-300'/>}}
+            />
+
+            <div className="flex flex-col w-full sm:w-[30rem] md:w-[40rem] px-8 md:px-32 lg:px-24 justify-center items-center space-y-8">
                 <div className="w-full">
                     <Formik
                     initialValues={{ email: '', password: '' }}
@@ -89,9 +94,6 @@ const LoginPage: React.FC = () => {
                     onSubmit={(values: FormValues) => handleNavigation(values)}>
                         {({ errors, touched }) => (
                             <Form className="bg-slate-700 rounded-md shadow-2xl p-5">
-                                <h1 className="text-gray-300 font-bold text-2xl mb-1">Hello Again!</h1>
-                                <p className="text-sm font-normal text-gray-100 mb-8">Welcome Back</p>
-
                                 {fields.map(({ id, type, placeholder, icon }) => (
                                     <div key={id} className="flex items-center ring-1 bg-slate-900 mb-8 p-2 rounded-lg">
                                         <span onClick={id === 'password' ? togglePasswordVisibility : undefined} className=' cursor-pointer'>
@@ -127,15 +129,6 @@ const LoginPage: React.FC = () => {
                                         <span style={{ borderTopColor: "transparent" }} className=" aspect-square h-4 border-2 border-blue-200 rounded-full animate-spin"></span>
                                     )}
                                 </button>
-                                
-                                <div className="flex items-center justify-between mt-4">
-                                    <div className="text-sm ml-2 text-slate-200 hover:text-blue-300 cursor-pointer hover:-translate-y-1 duration-500 transition-all">
-                                        Don't have an account yet?
-                                    </div>
-                                    <Link to={'/signup'} className='bg-gradient-to-r from-green-800 to-green-700 text-green-300 text-[.9rem] flex items-center justify-center gap-x-2 rounded-lg py-2 px-3'>
-                                        SignUp <MdOutlineAccountCircle className=' text-xl'/>
-                                    </Link>
-                                </div>
                             </Form>
                         )}
                     </Formik>

@@ -62,17 +62,18 @@ const App = () => {
                 icon: <PiBuildingOffice />,
                 path: 'career'
             }, {
-                text: 'Room',
+                text: 'Room book',
                 icon: <LuReplace />,
                 path: 'userroom'
             }
         ]
 
         const newAccArr: accType[] = [
+            // {
+            //     name: 'Delete account',
+            //     path: '/'
+            // }, 
             {
-                name: 'Delete account',
-                path: '/'
-            }, {
                 name: 'Sign Out',
                 path: '/'
             }
