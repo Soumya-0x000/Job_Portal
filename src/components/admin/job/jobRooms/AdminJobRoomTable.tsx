@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useState } from 'react';
+import { ChangeEvent, Dispatch, FC, SetStateAction, useState } from 'react';
 import {
     Dialog,
     DialogActions,
@@ -7,11 +6,13 @@ import {
     DialogTitle,
     Button,
     Box,
+    Pagination,
 } from '@mui/material';
-import { DataGrid, GridRenderCellParams, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid, GridRenderCellParams, GridRowParams, GridToolbar } from '@mui/x-data-grid';
 import { Transition } from '../../../../common/DialogComponent';
 import { formatDateTime } from '../../../../common/formatDateTime';
 import { useMediaQuery, useTheme } from '@mui/material';
+import { adminPaginationType } from './AdminRooms';
 
 interface Candidate {
     bookingDate: string;
@@ -32,6 +33,8 @@ interface Room {
 
 interface JobRoomTableProps {
     rooms: Room[];
+    setPaginationData: Dispatch<SetStateAction<adminPaginationType>>;
+    paginationData: adminPaginationType;
 }
 
 const AppliedCandidatesDialog: React.FC<{
@@ -39,6 +42,7 @@ const AppliedCandidatesDialog: React.FC<{
     onClose: () => void;
     candidates: Candidate[];
 }> = ({ open, onClose, candidates }) => {
+    const [page, setPage] = useState<number>(1);
     const candidateColumns = [
         { field: 'bookingDate', headerName: 'Booking Date', width: 250 },
         { field: 'username', headerName: 'Name', width: 300 },
@@ -67,15 +71,57 @@ const AppliedCandidatesDialog: React.FC<{
                                 showQuickFilter: true,
                             },
                         }}
+                        className='dialog-custom-class'
                         sx={{
+                            '& .MuiDataGrid-toolbarContainer': {
+                                marginBottom: 1,
+                                paddingBottom: 1,
+                                backgroundColor: 'rgb(201, 224, 255)',
+                            },
+                            '& .MuiDataGrid-columnHeader': {
+                                backgroundColor: '#d0fdeb',
+                            },
                             '& .MuiDataGrid-cell': {
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontSize: '0.9rem',
+                                fontSize: '17px'
+                            },
+                            '& .MuiDataGrid-root': {
+                                border: 'none',
+                                outline: 'none'
+                            },
+                            '& .dialog-custom-class': {
+                                border: 'none',
+                                backgroundColor: '#e6fefd',
+                                color: '#037346',
+                                '&:hover': {
+                                    backgroundColor: '#d4ffff',
+                                    color: '#024d3b', 
+                                },
+                            },
+                            '& .MuiDataGrid-row.Mui-selected': {
+                                backgroundColor: '#d0fdeb',
+                            },
+                            '&  .MuiDataGrid-row.Mui-selected:hover': {
+                                backgroundColor: '#d0fdeb',  
+                            },
+                            '& .MuiDataGrid-footerContainer ': {
+                                display: 'none',
+                                backgroundColor: 'rgb(201, 224, 255)',
                             },
                         }}
                     />
+
+                    <div className=" fixed left-1/2 -translate-x-1/2 bottom-2 bg-slate-100 px-2 py-1.5 rounded-lg overflow-hidden">
+                        <Pagination 
+                            count={Math.ceil(paginationData.totalRooms/paginationData.limit)} 
+                            page={page} 
+                            onChange={handlePaginationPgCount} 
+                            variant="outlined" 
+                            shape="rounded"
+                        />
+                    </div>
                 </Box>
             </DialogContent>
 
@@ -110,13 +156,15 @@ const RoomRow: React.FC<{ room: Room }> = ({ room }) => {
 };
 
 
-export const AdminJobRoomTable: React.FC<JobRoomTableProps> = ({ rooms }) => {
+export const AdminJobRoomTable: FC<JobRoomTableProps> = ({ rooms, setPaginationData, paginationData, setBookingPaginationData, bookingPaginationData }) => {
     const theme = useTheme();
     const isSmToMd = useMediaQuery(theme.breakpoints.between(640, 768));
     const isMdToLg = useMediaQuery(theme.breakpoints.between(768, 1024));
     const isLgToXl = useMediaQuery(theme.breakpoints.between(1024, 1280)); 
     const isLgTo2Xl = useMediaQuery(theme.breakpoints.between(1280, 1536));
     const isXlUp = useMediaQuery(theme.breakpoints.up(1536));
+
+    const [page, setPage] = useState<number>(1);
 
     const getColumnWidth = (defaultWidth: number) => {
         if (isSmToMd) return defaultWidth * 0.5;
@@ -149,19 +197,41 @@ export const AdminJobRoomTable: React.FC<JobRoomTableProps> = ({ rooms }) => {
         appliedCandidates: room.appliedCandidates,
     }));
 
+    const getRowClassName = (params: GridRowParams) => {
+        console.log(params.row)
+        const status = params.row.bookingStatus;
+        return status === 'pending' ? 'pending-row' : 'approved-row';
+    };
+
+    const handlePaginationPgCount = (event: ChangeEvent<unknown>, page: number) => {
+        console.log(page)
+        setPage(page)
+        setPaginationData((prev: adminPaginationType) => ({
+            ...prev,
+            offset: (page-1) * (prev.limit)
+        }));
+    }
+
     return (
-        <div className=' w-screen sm:w-[35rem] md:w-[50rem] lg:w-[58rem] xl:w-[75rem] Lxl:w-[80rem] 2xl:w-[87rem]'>
+        <div className='w-[100%] overflow-auto'>
             <DataGrid
                 rows={roomRows}
                 columns={roomColumns}
                 pageSizeOptions={[15, 30, 50, 70, 100]}
                 slots={{ toolbar: GridToolbar }}
                 slotProps={{
-                    toolbar: {
-                        showQuickFilter: true,
-                    },
+                    toolbar: { showQuickFilter: true },
                 }}
+                className='custom-class'
                 sx={{
+                    '& .MuiDataGrid-toolbarContainer': {
+                        marginBottom: 1,
+                        paddingBottom: 1,
+                        backgroundColor: 'rgb(201, 224, 255)',
+                    },
+                    '& .MuiDataGrid-columnHeader': {
+                        backgroundColor: '#d0fdeb',
+                    },
                     '& .MuiDataGrid-cell': {
                         display: 'flex',
                         alignItems: 'center',
@@ -169,10 +239,43 @@ export const AdminJobRoomTable: React.FC<JobRoomTableProps> = ({ rooms }) => {
                         fontSize: '17px'
                     },
                     '& .MuiDataGrid-root': {
-                        border: 'none'
-                    }
+                        border: 'none',
+                        outline: 'none'
+                    },
+                    '& .approved-row': {
+                        border: 'none',
+                        backgroundColor: '#e6fefd',
+                        color: '#037346',
+                        '&:hover': {
+                            backgroundColor: '#d4ffff',
+                            color: '#024d3b', 
+                        },
+                    },
+                    '& .MuiDataGrid-row.Mui-selected': {
+                        backgroundColor: '#3f99b8',
+                        color: '#dff6fe'
+                    },
+                    '&  .MuiDataGrid-row.Mui-selected:hover': {
+                        backgroundColor: '#d0fdeb',  
+                        color: '#024d3b',
+                    },
+                    '& .MuiDataGrid-footerContainer ': {
+                        display: 'none',
+                        backgroundColor: 'rgb(201, 224, 255)',
+                    },
                 }}
+                getRowClassName={getRowClassName}
             />
+
+            <div className=" fixed left-1/2 -translate-x-1/2 bottom-2 bg-slate-100 px-2 py-1.5 rounded-lg overflow-hidden">
+                <Pagination 
+                    count={Math.ceil(paginationData.totalRooms/paginationData.limit)} 
+                    page={page} 
+                    onChange={handlePaginationPgCount} 
+                    variant="outlined" 
+                    shape="rounded"
+                />
+            </div>
         </div>
     );
 };

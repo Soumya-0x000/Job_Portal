@@ -43,6 +43,7 @@ const RoomNumDtFilter: FC<RoomNumDtFilterProps> = ({
     handleMenuSelection 
 }) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [selected, setSelected] = useState<string>('');
     const openMenu = Boolean(anchorEl);
 
     const handleFilterClick = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
@@ -73,10 +74,11 @@ const RoomNumDtFilter: FC<RoomNumDtFilterProps> = ({
                         key={generateUniqueId() + indx}
                     >
                         <button
-                            className="flex px-4 py-2 text-sm text-gray-700 hover:bg-slate-600 hover:text-slate-200 w-[11rem] ring-1 rounded-md gap-2 bg-slate-200 font-lato active:scale-105 transition-all"
+                            className={`flex px-4 py-2 text-sm text-gray-700 hover:bg-slate-600 hover:text-slate-200 w-[11rem] ring-1 rounded-md gap-2 bg-slate-200 font-lato active:scale-105 transition-all ${(item.value === selected) ? ' bg-slate-900 text-slate-200' : ''} `}
                             role="menuitem"
                             onClick={() => {
                                 handleMenuSelection(item.value);
+                                setSelected(item.value)
                                 handleMenuClose();
                             }}
                         >

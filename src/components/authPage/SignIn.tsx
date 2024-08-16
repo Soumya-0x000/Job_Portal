@@ -6,8 +6,7 @@ import { CiLock, CiMail, CiUnlock } from "react-icons/ci";
 import { showToastMsg } from '../../common/ToastMsg';
 import axios from 'axios';
 import { URL } from '../../API';
-import HomePgBtnNav from '../../common/HomePgBtnNav';
-import { MdOutlineAccountCircle } from 'react-icons/md';
+import HomePgBtnNav from './HomePgBtnNav';
 
 export interface FormValues {
     email: string;
@@ -58,7 +57,6 @@ const LoginPage: React.FC = () => {
                 setIsSubmitting(false)
                 
                 if(resData?.token) {
-                    showToastMsg('Login Successful');
                     if (resData?.usersType === 1) {
                         localStorage.setItem('adminDetails', JSON.stringify(resData))
                         navigate(`/admin`, {state: resData?.token});
@@ -83,7 +81,7 @@ const LoginPage: React.FC = () => {
     return (
         <div className="h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-900">
             <HomePgBtnNav
-                navArr={{label: 'SignUp', link: '/signup', icon: <MdOutlineAccountCircle className=' text-xl text-emerald-300'/>}}
+                navArr={{label: 'SignUp', link: '/signup'}}
             />
 
             <div className="flex flex-col w-full sm:w-[30rem] md:w-[40rem] px-8 md:px-32 lg:px-24 justify-center items-center space-y-8">

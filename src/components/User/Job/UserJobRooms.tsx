@@ -13,7 +13,6 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import Dropdown from "../Dropdown";
-import { toast } from "react-toastify";
 
 const initialRoomState: userBookings[] = [
     {
@@ -38,32 +37,44 @@ const filterItems = [
     }
 ]
 
-export const initialPaginationVal = {
-    limit: 10,
+export type paginationType = {
+    'limit': number,
+    'offset': number,
+}
+export const initialPaginationVal: paginationType = {
+    limit: 5,
     offset: 0
 }
 
 const UserJobRooms = () => {
     const [rooms, setRooms] = useState<userBookings[]>(initialRoomState);
     const [loading, setLoading] = useState<boolean>(true);
-    const [fetchingMode, setFetchingMode] = useState<string>('');
+    const [fetchingMode, setFetchingMode] = useState<string>('allTotal');
     const [showInputs, setShowInputs] = useState<boolean>(false);
     const [filteringData, setFilteringData] = useState<typeof initialValue>(initialValue);
     const [roomNumDDopen, setRoomNumDDopen] = useState<boolean>(false);
     const [isCheckingAvail, setIsCheckingAvail] = useState<boolean>(false);
-    const [adminToken, setAdminToken] = useState<string>('');
-    const [paginationData, setPaginationData] = useState<typeof initialPaginationVal>(initialPaginationVal);
+    const [adminToken, setAdminToken] = useState<string>(JSON.parse(localStorage.getItem('userDetails') || '{}')?.token);
+    const [paginationData, setPaginationData] = useState<paginationType>(initialPaginationVal);
+    const [moreData, setMoreData] = useState<boolean>(true);
+    const [dataCount, setDataCount] = useState<{
+        totalBookings: number;
+        limit: number
+    }>({
+        totalBookings: 0,
+        limit: 0
+    })
     const toastShown = useRef<boolean>(false);
     // const [isPgLoaded, setIsPgLoaded] = useState<boolean>(false);
+
+    const primaryEndpoint = (limit: number, offset: number) => `room-booking/getBookingDetails?limit=${limit}&offset=${offset}`;
 
     useEffect(() => {
         const userDetail = localStorage.getItem('userDetails') || '{}';
         const authToken = JSON.parse(userDetail)?.token;
 
-        if (authToken) {
-            setAdminToken(authToken)
-            fetchBookingDetails('room-booking/getBookingDetails', authToken);
-        } else {
+        if (authToken) setAdminToken(authToken)
+        else {
             showToastMsg('Authentication token is missing');
             setLoading(false);
         }
@@ -74,24 +85,32 @@ const UserJobRooms = () => {
             if (loading) {
                 showToastMsg('Loading is taking too long');
             }
-        }, 5000);
+        }, 2000);
 
         return () => clearTimeout(timer);
     }, [loading]);
 
-    const fetchBookingDetails = async (endpoint: string, authToken?: string) => {
+    const fetchBookingDetails = async (endpoint: string) => {
         try {
             const finalUrl = `${URL}/${endpoint}`
             const rqstHeader = {
                 'Content-Type': 'application/json',
                 'ngrok-skip-browser-warning': '69420',
-                authorization: `token ${authToken || adminToken}`
+                authorization: `token ${adminToken}`
             }
-
-            const response = await axios.get(finalUrl, { headers: rqstHeader });
-            if (response.status === 200) {
-                if(response.data.data === null) showToastMsg(response.data.message)
-                else setRooms(response.data.data.bookings);
+            // console.log(finalUrl)
+            const { data, status } = await axios.get(finalUrl, { headers: rqstHeader });
+            if (status === 200) {
+                if(data.data === null) showToastMsg(data.message)
+                else {
+                    setDataCount({
+                        totalBookings: data.data.totalBookings,
+                        limit: data.data.limit
+                    })
+                    const isMoreData = data.data.totalBookings-data.data.limit
+                    setMoreData(isMoreData > 0 ? true : false)
+                    setRooms(data.data.bookings);
+                }
             } else showToastMsg('Failed to fetch booking details');
         } catch (error: unknown) {
             if (!toastShown.current) {
@@ -124,7 +143,6 @@ const UserJobRooms = () => {
         setFetchingMode(value);
         setShowInputs(true);
         setRoomNumDDopen(true);
-        console.log(value);
     }, []);
 
     const handleRoomSelection = (roomNumber: number) => {
@@ -139,20 +157,20 @@ const UserJobRooms = () => {
         }));
     };
 
-    const fetchConditionalData = () => {
+    const fetchConditionalData = (createdURL: string) => {
         switch(fetchingMode) {
             case 'allTotal':
-                fetchBookingDetails(`room-booking/getRoomDetails`);
+                fetchBookingDetails(createdURL);
                 break;
             case 'roomNumber':
                 if(filteringData.roomNumber) {
-                    const newURL = `room-booking/getRoomDetails?roomNumber=${filteringData.roomNumber}`
+                    const newURL = `${createdURL}&roomNumber=${filteringData.roomNumber}`
                     fetchBookingDetails(newURL);
                 } else showToastMsg('Enter a room number first')
                 break;
             case 'roomNumberNDate':
                 if(filteringData.roomNumber && filteringData.bookingDate) {
-                    const newURL = `room-booking/getRoomDetails?roomNumber=${filteringData.roomNumber}&date=${filteringData.bookingDate.format('YYYY-MM-DD')}`
+                    const newURL = `${createdURL}&roomNumber=${filteringData.roomNumber}&date=${filteringData.bookingDate.format('YYYY-MM-DD')}`
                     fetchBookingDetails(newURL);
                 } else showToastMsg('Enter a room number and date first')
                 break;
@@ -163,6 +181,24 @@ const UserJobRooms = () => {
 
         setShowInputs(false)
     }
+
+    useEffect(() => {
+        if(moreData) {
+            const createURL = primaryEndpoint(paginationData.limit, paginationData.offset)
+            
+            fetchConditionalData(createURL)
+        }
+    }, [paginationData.limit, paginationData.offset]);
+
+    const handleCancelation = () => {
+        setShowInputs(false)
+        setFilteringData(initialValue)
+    }
+
+    const handleCheckClick = () => {
+        const createURL = primaryEndpoint(paginationData.limit, paginationData.offset)
+        fetchConditionalData(createURL)
+    };
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -176,6 +212,9 @@ const UserJobRooms = () => {
                                 rooms={rooms} 
                                 setRooms={setRooms}
                                 setPaginationData={setPaginationData}
+                                moreData={moreData}
+                                paginationData={paginationData}
+                                dataCount={dataCount}
                             />
 
                             <RoomNumDtFilter
@@ -234,7 +273,7 @@ const UserJobRooms = () => {
                                         ? " cursor-not-allowed bg-indigo-700"
                                         : "active:scale-95 transition-all cursor-pointer bg-green-300 text-green-950"
                                 } w-full p-2 rounded-lg text-blue-200`}
-                                onClick={fetchConditionalData}
+                                onClick={handleCheckClick}
                                 disabled={!isCheckingAvail}
                             >
                                 Check
@@ -242,10 +281,7 @@ const UserJobRooms = () => {
 
                             <button
                                 className="w-full p-2 rounded-lg bg-red-950 text-red-200 active:scale-95 transition-all"
-                                onClick={() => {
-                                    setShowInputs(false)
-                                    setFilteringData(initialValue)
-                                }}
+                                onClick={handleCancelation}
                             >
                                 Close
                             </button>
