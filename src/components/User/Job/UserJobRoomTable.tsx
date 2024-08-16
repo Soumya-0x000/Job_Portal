@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import { ChangeEvent, Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -14,13 +14,19 @@ import { boolean } from "yup";
 import { DialogComponent } from "../../../common/DialogComponent";
 import { DataGrid, GridColDef, GridRowParams, GridToolbar } from '@mui/x-data-grid';
 import { userBookings } from "../AllUserTypes";
-import { useMediaQuery, useTheme } from '@mui/material';
-import { initialPaginationVal } from "./UserJobRooms";
+import { Pagination, useMediaQuery, useTheme } from '@mui/material';
+import { paginationType } from "./UserJobRooms";
 
 interface JobRoomTableProps {
     rooms: userBookings[];
     setRooms: Dispatch<SetStateAction<userBookings[]>>;
-    setPaginationData: (paginationData: typeof initialPaginationVal) => void
+    setPaginationData: Dispatch<SetStateAction<paginationType>>;
+    moreData: boolean;
+    paginationData: paginationType;
+    dataCount: {
+        totalBookings: number;
+        limit: number
+    }
 }
 
 export const initialValue = {
@@ -31,10 +37,14 @@ export const initialValue = {
 export const UserJobRoomTable: FC<JobRoomTableProps> = ({
     rooms,
     setRooms,
-    setPaginationData
+    setPaginationData,
+    paginationData,
+    dataCount,
+    moreData,
 }) => {
     const [open, setOpen] = useState<boolean>(false);
     const [selectionDetails, setSelectionDetails] = useState<typeof initialValue>(initialValue);
+    const [page, setPage] = useState<number>(1)
     const [userToken, setUserToken] = useState<string>("");
     const [isBookingAvail, setIsBookingAvail] = useState<boolean>(false);
     const [isRoomBooked, setIsRoomBooked] = useState<boolean>(false);
@@ -201,99 +211,20 @@ export const UserJobRoomTable: FC<JobRoomTableProps> = ({
         setShowBookingDetail(false);
     };
 
-    const demoUserRooms = [
-        {
-            "roomName": "Testing8",
-            "roomNumber": 112,
-            "bookingDate": "2024-08-18T18:30:00.000Z",
-            "bookingId": "66b49a163bb303f4fc4fc962",
-            "bookingStatus": "upcoming"
-        }, {
-            "roomName": "Testing8",
-            "roomNumber": 112,
-            "bookingDate": "2024-08-19T18:30:00.000Z",
-            "bookingId": "66b9bb8b35a175b6a34be9a9",
-            "bookingStatus": "upcoming"
-        }, {
-            "roomName": "Testing9",
-            "roomNumber": 113,
-            "bookingDate": "2024-08-21T00:00:00.000Z",
-            "bookingId": "66b9e8a63a469136a13e67ae",
-            "bookingStatus": "upcoming"
-        }, {
-            "roomName": "Testing10",
-            "roomNumber": 123,
-            "bookingDate": "2024-08-04T00:00:00.000Z",
-            "bookingId": "66b9e8a6sgfbs4576513e67af",
-            "bookingStatus": "past"
-        }, {
-            "roomName": "Testing11",
-            "roomNumber": 124,
-            "bookingDate": "2024-08-04T00:00:00.000Z",
-            "bookingId": "66b9e8a6sgfbs4576513e67ag",
-            "bookingStatus": "upcoming"
-        }, {
-            "roomName": "Testing12",
-            "roomNumber": 125,
-            "bookingDate": "2024-08-04T00:00:00.000Z",
-            "bookingId": "66b9e8a6sgfbs4576513e67he",
-            "bookingStatus": "past"
-        }, {
-            "roomName": "Testing13",
-            "roomNumber": 126,
-            "bookingDate": "2024-08-04T00:00:00.000Z",
-            "bookingId": "66b9e8a6sgfbs4576513i67ae",
-            "bookingStatus": "past"
-        }, {
-            "roomName": "Testing14",
-            "roomNumber": 127,
-            "bookingDate": "2024-08-04T00:00:00.000Z",
-            "bookingId": "66b9e8a6sgfbs4376513e67ae",
-            "bookingStatus": "upcoming"
-        }, {
-            "roomName": "Testing15",
-            "roomNumber": 128,
-            "bookingDate": "2024-08-04T00:00:00.000Z",
-            "bookingId": "66b9e8a6sgfbs45j6513e67ae",
-            "bookingStatus": "past"
-        }, {
-            "roomName": "Testing16",
-            "roomNumber": 129,
-            "bookingDate": "2024-08-04T00:00:00.000Z",
-            "bookingId": "66b9e8a6sgfbs45765gfdsdfhdstr3e67ae",
-            "bookingStatus": "upcoming"
-        }, {
-            "roomName": "Testing17",
-            "roomNumber": 130,
-            "bookingDate": "2024-08-04T00:00:00.000Z",
-            "bookingId": "66b9e8a6sgfbthaets4576513e67ae",
-            "bookingStatus": "past"
-        }, {
-            "roomName": "Testing18",
-            "roomNumber": 131,
-            "bookingDate": "2024-08-04T00:00:00.000Z",
-            "bookingId": "66b9e8a6sgfbs4576513e67gakenriotae",
-            "bookingStatus": "upcoming"
-        }
-    ]
-
-    const handlePaginationPgCount = (value) => {
-        console.log(value)
+    const handlePaginationPgCount = (event: ChangeEvent<unknown>, page: number) => {
+        setPage(page)
+        setPaginationData((prev: paginationType) => ({
+            ...prev,
+            offset: (page-1) * (paginationData.limit)
+        }));
     }
 
     return (
         <>
             <div className=" max-w-[100%] overflow-auto">
                 <DataGrid
-                    rows={demoUserRooms} // change to rooms
+                    rows={rooms} // change to demoUserRooms for testing
                     columns={columns}
-                    onPaginationModelChange={handlePaginationPgCount}
-                    initialState={{
-                        pagination: {
-                            paginationModel: { page: 0, pageSize: 10 },
-                        },
-                    }}
-                    pageSizeOptions={[10, 20]}
                     slots={{ toolbar: GridToolbar }}
                     slotProps={{
                         toolbar: { showQuickFilter: true },
@@ -316,42 +247,59 @@ export const UserJobRoomTable: FC<JobRoomTableProps> = ({
                         },
                         '& .MuiDataGrid-root': {
                             border: 'none',
-                            outline: 'none'
+                            borderWidth: '0px',
+                            outline: 'none',
                         },
                         '& .past-row': {
                             border: 'none',
-                            backgroundColor: '#037346',
-                            color: '#e0fefc',
+                            backgroundColor: '#eafffa',
+                            color: '#353938',
                             '&:hover': {
-                                backgroundColor: '#42b084',
-                                color: '#ffffff', 
+                                backgroundColor: '#eafffa',
+                                color: '#353938', 
                             },
-                            '&:active': {
-                                backgroundColor: '#037346',
-                            }
                         },
                         '& .upcoming-row': {
                             border: 'none',
-                            backgroundColor: '#e6fefd',
-                            color: '#037346',
+                            backgroundColor: '#d8f9ff',
+                            color: '#003d48',
                             '&:hover': {
-                                backgroundColor: '#d4ffff',
-                                color: '#024d3b', 
+                                backgroundColor: '#e1fff8',
+                                color: '#003d48', 
                             },
+                            '&:active': {
+                                backgroundColor: '#e1fff8',
+                            }
                         },
                         '& .MuiDataGrid-row.Mui-selected': {
-                            backgroundColor: '#d0fdeb',
+                            backgroundColor: '#fcfff4',
+                            color: '#000059'
                         },
                         '&  .MuiDataGrid-row.Mui-selected:hover': {
-                            backgroundColor: '#d0fdeb',  
+                            backgroundColor: '#fcfff4',  
                         },
                         '& .MuiDataGrid-footerContainer ': {
-                            backgroundColor: 'rgb(201, 224, 255)',
+                            display: 'none',
+                            border: 'none',
                         },
+                        
                     }}
+                    className="custom-class"
                     getRowId={(row) => row.bookingId}
                     getRowClassName={getRowClassName}
                 />
+
+                {moreData && (
+                    <div className=" fixed left-1/2 -translate-x-1/2 bottom-2 bg-slate-100 px-2 py-1.5 rounded-lg overflow-hidden">
+                        <Pagination 
+                            count={Math.ceil(dataCount.totalBookings/dataCount.limit)} 
+                            page={page} 
+                            onChange={handlePaginationPgCount} 
+                            variant="outlined" 
+                            shape="rounded"
+                        />
+                    </div>
+                )}
             </div>
 
             {/* room booking */}

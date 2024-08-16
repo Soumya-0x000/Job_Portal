@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Loading } from "../../../../common/Loading";
 import { IoIosAdd } from "react-icons/io";
 import * as Yup from 'yup';
@@ -69,6 +69,18 @@ const filterItems = [
     }
 ]
 
+export type adminPaginationType = {
+    'totalRooms': number,
+    'limit': number,
+    'offset': number,
+}
+
+export type bookingPaginationType = {
+    'totalBookings': number,
+    'bookingLimit': number,
+    'bookingOffset': number
+}
+
 const AdminRooms = () => {
     const [open, setOpen] = useState<boolean>(false);
     const [roomNumDDopen, setRoomNumDDopen] = useState<boolean>(false);
@@ -79,7 +91,19 @@ const AdminRooms = () => {
     const [rooms, setRooms] = useState<roomType[]>([]);
     const [fetchingMode, setFetchingMode] = useState<string>(filterItems[0].value);
     const [filteringData, setFilteringData] = useState<typeof initialValue>(initialValue);
+    const [paginationData, setPaginationData] = useState<adminPaginationType>({
+        totalRooms: 0,
+        limit: 10,
+        offset: 0
+    });
+    const [bookingPaginationData, setBookingPaginationData] = useState<bookingPaginationType>({
+        totalBookings: 0,
+        bookingLimit: 8,
+        bookingOffset: 0
+    });
+    const showToast = useRef<boolean>(false)
 
+    const primaryURL = () => `room-booking/getRoomDetails?limit=${paginationData.limit}&offset=${paginationData.offset}&bookingLimit=${bookingPaginationData.bookingLimit}&bookingOffset=${bookingPaginationData.bookingOffset}`
     const handleClose = () => setOpen(false)
     
     useEffect(() => {
@@ -93,7 +117,7 @@ const AdminRooms = () => {
         { id: 'roomName', type: 'text', placeholder: 'Room Name' },
     ]
 
-    const handleSubmit = async(value: roomType) => {
+    const handleCreateRoom = async(value: roomType) => {
         const response = await axios.post(`${URL}/room-booking/create-room`, value, {
             headers: {
                 'Content-Type': 'application/json',
@@ -108,12 +132,16 @@ const AdminRooms = () => {
         if (response && response.data) setRooms((prev) => ([ ...prev, value ]))
     };
 
-    useEffect(() => {
-        if (token !== '') getRoomDetails('room-booking/getRoomDetails');
-    }, [token]);
+    // useEffect(() => {
+    //     if (token !== '') getRoomDetails(primaryURL());
+    // }, [token]);
 
     useEffect(() => {
-        if(fetchingMode === 'allTotal') getRoomDetails('room-booking/getRoomDetails');
+        if(fetchingMode === 'allTotal') {
+            setTimeout(() => {
+                fetchConditionalData()
+            }, 150);
+        }
     }, [fetchingMode])
 
     const getRoomDetails: (endPoint: string) => void = async(endPoint) => {
@@ -126,31 +154,30 @@ const AdminRooms = () => {
         const finalURL = `${URL}/${endPoint}`
 
         try {
-            const response = await axios.get(finalURL, { headers: requestHeader });
+            const { data, status } = await axios.get(finalURL, { headers: requestHeader });
 
-            const fetchedData = Array.isArray(response.data)
-                ? response.data
-                : [response.data]
-
-            if (response.status) {
-                console.log(fetchedData[0]?.data?.rooms)
-                console.log(Object.create(fetchedData))
-                setRooms(fetchedData[0]?.data || [])
+            if (status === 200) {
+                setPaginationData(prev => ({
+                    ...prev, 
+                    totalRooms: data?.data?.totalRooms,
+                    limit: data?.data?.limit || 10,
+                    offset: data?.data?.offset
+                }))
+                
+                setRooms(data?.data?.rooms || [])
                 setLoading(false);
+                console.log(data.data)
+                // if(data.data === null && !showToast.current){
+                //     showToastMsg(data.message)
+                //     showToast.current=true
+                // }
             } else {
-                console.log(fetchedData)
-                response.data.data === null
-                    ? ''
-                    : showToastMsg(response.data.message)
+                showToastMsg('Failed to fetch room details');
             }
         } catch (error: unknown) {
-            if (axios.isAxiosError(error)) {
-                console.error('Axios error fetching room details:', error.response?.data?.message || error.message);
-            } else if (error instanceof Error) {
-                console.error('Error fetching room details:', error.message);
-            } else {
-                console.error('An unknown error occurred while fetching room details');
-            }
+            if (axios.isAxiosError(error)) console.error('Axios error fetching room details:', error.response?.data?.message || error.message);
+            else if (error instanceof Error) console.error('Error fetching room details:', error.message);
+            else console.error('An unknown error occurred while fetching room details');
         }
     };
 
@@ -189,17 +216,17 @@ const AdminRooms = () => {
     const fetchConditionalData = () => {
         switch(fetchingMode) {
             case 'allTotal':
-                getRoomDetails(`room-booking/getRoomDetails`);
+                getRoomDetails(primaryURL());
                 break;
             case 'roomNumber':
                 if(filteringData.roomNumber) {
-                    const newURL = `room-booking/getRoomDetails?roomNumber=${filteringData.roomNumber}`
+                    const newURL = `${primaryURL()}&roomNumber=${filteringData.roomNumber}`
                     getRoomDetails(newURL);
                 } else showToastMsg('Enter a room number first')
                 break;
             case 'roomNumberNDate':
                 if(filteringData.roomNumber && filteringData.bookingDate) {
-                    const newURL = `room-booking/getRoomDetails?roomNumber=${filteringData.roomNumber}&date=${filteringData.bookingDate.format('YYYY-MM-DD')}`
+                    const newURL = `${primaryURL()}&roomNumber=${filteringData.roomNumber}&date=${filteringData.bookingDate.format('YYYY-MM-DD')}`
                     getRoomDetails(newURL);
                 } else showToastMsg('Enter a room number and date first')
                 break;
@@ -211,12 +238,23 @@ const AdminRooms = () => {
         setShowInputs(false)
     }
 
+    useEffect(() => {
+        console.log(primaryURL())
+        fetchConditionalData()
+    }, [paginationData.offset])
+
     return (
         <div className=" bg-slate-400">
             {loading 
                 ? <Loading /> 
                 : <div className=" w-full h-fit flex items-center flex-col pt-16">
-                    <AdminJobRoomTable rooms={rooms}/> {/* change it to demoRoomData for testing */}
+                    <AdminJobRoomTable 
+                        rooms={rooms}
+                        setPaginationData={setPaginationData}
+                        paginationData={paginationData}
+                        setBookingPaginationData={setBookingPaginationData}
+                        bookingPaginationData={bookingPaginationData}
+                    /> {/* change it to demoRoomData for testing */}
                 </div>
             }
             
@@ -241,7 +279,7 @@ const AdminRooms = () => {
                         <Formik
                         initialValues={{ roomName: '', seatCapacity: NaN, roomNumber: NaN }}
                         validationSchema={validationSchema}
-                        onSubmit={(values: roomType) => handleSubmit(values)}>
+                        onSubmit={(values: roomType) => handleCreateRoom(values)}>
                             <Form className="bg-slate-700 rounded-md shadow-2xl p-5">
                                 <h1 className="text-gray-300 font-bold text-2xl mb-1">Create Room</h1>
                                 <p className="text-sm font-normal text-gray-100 mb-8">Enter room details</p>

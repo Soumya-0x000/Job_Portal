@@ -3,12 +3,11 @@ import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import PersonIcon from '@mui/icons-material/Person';
-import { PiSignInBold } from "react-icons/pi";
 import { CiLock, CiMail, CiUnlock } from 'react-icons/ci';
 import axios from 'axios';
 import { showToastMsg } from '../../common/ToastMsg';
 import { URL } from '../../API';
-import HomePgBtn from '../../common/HomePgBtnNav';
+import HomePgBtn from './HomePgBtnNav';
 
 interface FormValues {
     name: string;
@@ -116,7 +115,7 @@ const Register: React.FC = () => {
     return (
         <div className="h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-900">
             <HomePgBtn
-                navArr={{label: 'SignIn', link: '/login', icon: <PiSignInBold className=' text-xl text-emerald-300'/>}}
+                navArr={{label: 'SignIn', link: '/login' }}
             />
             <div className="flex flex-col w-full lg:w-1/2 px-8 md:px-32 lg:px-24 justify-center items-center">
                 <div className="w-full">

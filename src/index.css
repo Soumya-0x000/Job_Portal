@@ -20,8 +20,26 @@
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
+.MuiDataGrid-cell {
+  outline: none !important;
+  border: none !important;
+}
 .MuiDataGrid-columnHeader {
     font-size: large;
+}
+
+.custom-class {
+  border-width: 0px !important;
+}
+
+.dialog-custom-class {
+  border: none;
+  background-color: '#e6fefd';
+  color: '#037346'; 
+}
+.dialog-custom-class:hover {
+  backgroundColor: '#d4ffff';
+  color: '#024d3b';
 }
 
 .actionBtnBend {

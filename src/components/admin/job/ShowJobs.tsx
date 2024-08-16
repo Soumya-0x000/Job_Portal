@@ -1,5 +1,5 @@
 import { useState, useEffect, FC } from "react";
-import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRowParams, GridToolbar } from "@mui/x-data-grid";
 import { useMediaQuery, useTheme } from "@mui/material";
 import { Candidate } from "../../../common/DemoData";
 import { Loading } from "../../../common/Loading";
@@ -55,6 +55,11 @@ const ShowJobs: FC = () => {
         }, 600);
     }, []);
 
+    const getRowClassName = (params: GridRowParams) => {
+        const status = params.row.status;
+        return status === 'pending' ? 'pending-row' : 'approved-row';
+    };
+
     return (
         <div className="flex items-center justify-center overflow-y-auto px-4 pt-20 pb-6">
             {loading ? (
@@ -62,7 +67,7 @@ const ShowJobs: FC = () => {
                     <Loading />
                 </div>
             ) : (
-                <div className="w-screen sm:w-[32rem] md:w-[39rem] lg:w-[55rem] xl:w-[72rem] Lxl:w-[80rem] 2xl:w-[88rem]">
+                <div className="max-w-[97%] overflow-auto">
                     <DataGrid
                         rows={rows}
                         columns={columns}
@@ -74,6 +79,15 @@ const ShowJobs: FC = () => {
                             },
                         }}
                         sx={{
+                            width: 1200,
+                            '& .MuiDataGrid-toolbarContainer': {
+                                marginBottom: 1,
+                                paddingBottom: 1,
+                                backgroundColor: 'rgb(201, 224, 255)',
+                            },
+                            '& .MuiDataGrid-columnHeader': {
+                                backgroundColor: '#d0fdeb',
+                            },
                             '& .MuiDataGrid-cell': {
                                 display: 'flex',
                                 alignItems: 'center',
@@ -81,9 +95,46 @@ const ShowJobs: FC = () => {
                                 fontSize: '17px'
                             },
                             '& .MuiDataGrid-root': {
-                                border: 'none'
-                            }
+                                border: 'none',
+                                borderWidth: '0px',
+                                outline: 'none',
+                            },
+                            '& .pending-row': {
+                                border: 'none',
+                                backgroundColor: '#eafffa',
+                                color: '#353938',
+                                '&:hover': {
+                                    backgroundColor: '#eafffa',
+                                    color: '#353938', 
+                                },
+                            },
+                            '& .approved-row': {
+                                border: 'none',
+                                backgroundColor: '#d8f9ff',
+                                color: '#003d48',
+                                '&:hover': {
+                                    backgroundColor: '#e1fff8',
+                                    color: '#003d48', 
+                                },
+                                '&:active': {
+                                    backgroundColor: '#e1fff8',
+                                }
+                            },
+                            '& .MuiDataGrid-row.Mui-selected': {
+                                backgroundColor: '#fcfff4',
+                                color: '#000059'
+                            },
+                            '&  .MuiDataGrid-row.Mui-selected:hover': {
+                                backgroundColor: '#fcfff4',  
+                            },
+                            '& .MuiDataGrid-footerContainer ': {
+                                display: 'none',
+                                border: 'none',
+                            },
+                            
                         }}
+                        className="custom-class"
+                        getRowClassName={getRowClassName}
                     />
                 </div>
             )}
