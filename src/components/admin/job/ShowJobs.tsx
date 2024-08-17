@@ -67,7 +67,7 @@ const ShowJobs: FC = () => {
                     <Loading />
                 </div>
             ) : (
-                <div className=" ">
+                <div className="w-screen sm:w-[32rem] md:w-[39rem] lg:w-[55rem] xl:w-[72rem] Lxl:w-[80rem] 2xl:w-[88rem]">
                     <DataGrid
                         rows={rows}
                         columns={columns}
