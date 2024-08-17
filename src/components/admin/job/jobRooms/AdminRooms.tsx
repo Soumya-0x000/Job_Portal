@@ -244,7 +244,7 @@ const AdminRooms = () => {
     }, [paginationData.offset])
 
     return (
-        <div className=" bg-slate-400">
+        <div className=" bg-slate-400 overflow-auto">
             {loading 
                 ? <Loading /> 
                 : <div className=" w-full h-fit flex items-center flex-col pt-16">

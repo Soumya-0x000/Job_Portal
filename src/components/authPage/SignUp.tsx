@@ -13,7 +13,7 @@ interface FormValues {
     name: string;
     email: string;
     password: string;
-    confirmPassword?: string;
+    confirmPassword: string;
 }
 
 const validationSchema = Yup.object({
@@ -30,6 +30,8 @@ const Register: React.FC = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
     const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [focusField, setFocusField] = useState<{ [key: string]: boolean }>({});
+    const [isLottieLoading, setIsLottieLoading] = useState(true);
 
     useEffect(() => {
         const users = JSON.parse(localStorage.getItem('user') || '[]');
@@ -112,30 +114,40 @@ const Register: React.FC = () => {
         if (id === 'confirmPassword') setShowConfirmPassword(!showConfirmPassword);
     };
 
+    const handleFocus = (field: string) => {
+        setFocusField(prev => ({ ...prev, [field]: true }));
+    };
+
+    const handleBlur = (field: string) => {
+        setFocusField(prev => ({ ...prev, [field]: false }));
+    };
+
     return (
-        <div className="h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-900">
+        <div className="h-screen flex flex-col items-center pt-4 bg-gradient-to-bl from-[#000000] to-slate-900">
             <HomePgBtn
                 navArr={{label: 'SignIn', link: '/login' }}
             />
-            <div className="flex flex-col w-full lg:w-1/2 px-8 md:px-32 lg:px-24 justify-center items-center">
-                <div className="w-full">
-                    <Formik
-                    initialValues={{ name: '', email: '', password: '', confirmPassword: '' }}
-                    validationSchema={validationSchema}
-                    onSubmit={(values) => handleSubmit(values)}>
-                        {({ errors, touched }) => (
-                            <Form className="bg-slate-700 rounded-md shadow-2xl p-5">
-                                <h1 className="text-gray-300 font-bold text-2xl mb-1">Register</h1>
-                                <p className="text-sm font-normal text-gray-100 mb-8">Create your account</p>
+            <div className="flex flex-col w-full px-8 md:px-32 lg:px-24 justify-center items-center h-full">
+                <Formik
+                initialValues={{ name: '', email: '', password: '', confirmPassword: '' }}
+                validationSchema={validationSchema}
+                onSubmit={(values) => handleSubmit(values)}>
+                    {({ errors, touched, values }) => (
+                        <div className=' flex w-fit p-2 rounded-lg justify-center gap-x-3 lg:gap-x-16 bg-slate-900 ring-1 ring-slate-800'>
+                            <Form className="bg-slate-800 rounded-md shadow-2xl p-5 w-[22rem] lsm:w-[26rem] lg:w-[30rem]">
+                                <h1 className="text-white font-onest tracking-wider font-bold text-2xl mb-12">Register</h1>
 
-                                <div className=' grid md:grid-col s-2 gap-x-4'>
+                                <div className=' grid gap-3'>
                                     {fields.map(({ id, type, placeholder, icon }) => (
-                                        <div key={id} className="flex items-center ring-1 bg-slate-900 mb-5 p-2 rounded-lg">
-                                            <span 
-                                            onClick={() => togglePswdVisibility(id)} 
-                                            className=' cursor-pointer'>
-                                                {icon}
-                                            </span>
+                                        <div key={id} className="flex items-center mb-5 rounded-lg relative group">
+                                            {((id === 'password') || (id === 'confirmPassword' )) && (
+                                                <span 
+                                                    onClick={() => togglePswdVisibility(id)} 
+                                                    className=' cursor-pointer absolute right-3'>
+                                                    {icon}
+                                                </span>
+                                            )}
+
                                             <Field
                                                 id={id}
                                                 name={id}
@@ -146,11 +158,17 @@ const Register: React.FC = () => {
                                                             ? showConfirmPassword ? 'text' : type
                                                             : type
                                                 }
-                                                placeholder={placeholder}
-                                                className=" w-full bg-slate-800 pl-3 text-slate-200 border-none outline-none focus:outline-none rounded-lg py-1 ml-2"
+                                                className={`w-full bg-black pl-3 pr-10 text-slate-200 border-none outline-none focus:outline-none rounded-lg py-3 ${focusField[id] || values[id as keyof FormValues] ? 'ring-1 ring-cyan-400 bg-slate-950' : ''} transition-all peer`}
+                                                onFocus={() => handleFocus(id)}
+                                                onBlur={() => handleBlur(id)}
                                             />
+
+                                            <label htmlFor={id} className={`absolute transition-all left-4 text-slate-300 text-md ${focusField[id] || values[id as keyof FormValues] ? 'left-2 -top-[1.25rem] text-sm font-bold text-white' : 'top-1/2 -translate-y-1/2'}`}>
+                                                {placeholder}
+                                            </label>
+
                                             {errors[id as keyof FormValues] && touched[id as keyof FormValues] && (
-                                                <div className="text-red-500 text-sm">{errors[id as keyof FormValues]}</div>
+                                                <div className="text-red-500 text-sm absolute -bottom-[1.1rem] right-2">{errors[id as keyof FormValues]}</div>
                                             )}
                                         </div>
                                     ))}
@@ -165,9 +183,20 @@ const Register: React.FC = () => {
                                     )}
                                 </button>
                             </Form>
-                        )}
-                    </Formik>
-                </div>
+
+                            {isLottieLoading && (
+                                <div className=" hidden md:flex items-center justify-center pr-10 w-[20rem] lg:w-[25rem]">
+                                    <span style={{ borderTopColor: "transparent" }} className="aspect-square h-10 border-4 border-blue-200 rounded-full animate-spin"></span>
+                                </div>
+                            )}
+
+                            <iframe 
+                                src="https://lottie.host/embed/db689947-eadf-4366-8580-774883f23e7f/pRnRZ8YKSx.json" 
+                                className={`hidden ${!isLottieLoading ? 'md:block' : ''} pr-10 w-[20rem] lg:w-[25rem]`}
+                                onLoad={() => setIsLottieLoading(false)}                            />
+                        </div>
+                    )}
+                </Formik>
             </div>
         </div>
     );
