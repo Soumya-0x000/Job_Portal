@@ -217,7 +217,6 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({ rooms, setPaginationD
             <DataGrid
                 rows={roomRows}
                 columns={roomColumns}
-                // pageSizeOptions={[15, 30, 50, 70, 100]}
                 slots={{ toolbar: GridToolbar }}
                 slotProps={{
                     toolbar: { showQuickFilter: true },
