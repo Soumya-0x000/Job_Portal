@@ -1,4 +1,4 @@
-import React, { useState, MouseEvent as ReactMouseEvent } from 'react';
+import React, { useState } from 'react';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +21,9 @@ const validationSchema = Yup.object({
 const LoginPage: React.FC = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [focusField, setFocusField] = useState<{ [key: string]: boolean }>({});
+    const [isLottieLoading, setIsLottieLoading] = useState(true);
+
     const navigate = useNavigate();
     const togglePasswordVisibility = () => setPasswordVisible(!passwordVisible);
 
@@ -41,7 +44,16 @@ const LoginPage: React.FC = () => {
         }
     ];
 
-    const handleNavigation = async(values: FormValues) => {
+    const handleFocus = (field: string) => {
+        setFocusField(prev => ({ ...prev, [field]: true }));
+    };
+
+    const handleBlur = (field: string) => {
+        setFocusField(prev => ({ ...prev, [field]: false }));
+    };
+
+    const handleNavigation = async (values: FormValues) => {
+        console.log(values);
         setIsSubmitting(true);
 
         try {
@@ -50,87 +62,107 @@ const LoginPage: React.FC = () => {
                     'Content-Type': 'application/json',
                     'ngrok-skip-browser-warning': '69420'
                 }
-            })
+            });
 
             if (loginUser.status) {
-                const resData = loginUser?.data
-                setIsSubmitting(false)
-                
-                if(resData?.token) {
+                const resData = loginUser?.data;
+                setIsSubmitting(false);
+
+                if (resData?.token) {
                     if (resData?.usersType === 1) {
-                        localStorage.setItem('adminDetails', JSON.stringify(resData))
-                        navigate(`/admin`, {state: resData?.token});
+                        localStorage.setItem('adminDetails', JSON.stringify(resData));
+                        navigate(`/admin`, { state: resData?.token });
                     } else if (resData?.usersType === 2) {
-                        localStorage.setItem('userDetails', JSON.stringify(resData))
-                        navigate(`/home`, {state: resData?.token});
+                        localStorage.setItem('userDetails', JSON.stringify(resData));
+                        navigate(`/home`, { state: resData?.token });
                     }
                 }
             }
         } catch (error) {
-            setIsSubmitting(false)
+            setIsSubmitting(false);
             if (axios.isAxiosError(error)) {
-                const errMsg = error?.response?.data?.message
-                showToastMsg(errMsg)
+                const errMsg = error?.response?.data?.message;
+                showToastMsg(errMsg);
             } else {
-                console.error(error)
-                showToastMsg('Error in logging in')
+                console.error(error);
+                showToastMsg('Error in logging in');
             }
         }
     };
 
     return (
-        <div className="h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-900">
+        <div className="h-screen flex flex-col items-center pt-4 bg-gradient-to-bl from-black to-slate-900">
             <HomePgBtnNav
-                navArr={{label: 'SignUp', link: '/signup'}}
+                navArr={{ label: 'SignUp', link: '/signup' }}
             />
-
-            <div className="flex flex-col w-full sm:w-[30rem] md:w-[40rem] px-8 md:px-32 lg:px-24 justify-center items-center space-y-8">
-                <div className="w-full">
-                    <Formik
+            <div className="flex flex-col w-full px-8 md:px-32 lg:px-24 justify-center items-center h-full">
+                <Formik
                     initialValues={{ email: '', password: '' }}
                     validationSchema={validationSchema}
-                    onSubmit={(values: FormValues) => handleNavigation(values)}>
-                        {({ errors, touched }) => (
-                            <Form className="bg-slate-700 rounded-md shadow-2xl p-5">
-                                {fields.map(({ id, type, placeholder, icon }) => (
-                                    <div key={id} className="flex items-center ring-1 bg-slate-900 mb-8 p-2 rounded-lg">
-                                        <span onClick={id === 'password' ? togglePasswordVisibility : undefined} className=' cursor-pointer'>
-                                            {icon}
-                                        </span>
+                    onSubmit={handleNavigation}
+                >
+                    {({ errors, touched, values }) => (
+                        <div className='flex w-fit p-2 rounded-lg justify-center gap-x-3 lg:gap-x-16 bg-slate-900'>
+                            <Form className="bg-slate-800 rounded-md shadow-2xl p-5 w-[22rem] lsm:w-[26rem] lg:w-[30rem]">
+                                <h1 className="text-white font-onest tracking-wider font-bold text-2xl mb-12">Sign In</h1>
 
-                                        <Field
-                                            id={id}
-                                            name={id} 
-                                            type={id === 'password' && passwordVisible ? 'text' : type}
-                                            placeholder={placeholder}
-                                            className=" w-full bg-slate-800 pl-3 text-slate-200 border-none outline-none focus:outline-none rounded-lg py-1 ml-2"
-                                            autoComplete="off"
-                                            spellCheck="false"
-                                            onPaste={(e: ReactMouseEvent<HTMLButtonElement>) => type === 'password' ? e.preventDefault() : undefined}
-                                            onCopy={(e: ReactMouseEvent<HTMLButtonElement>) => type === 'password' ? e.preventDefault() : undefined}
-                                            onCut={(e: ReactMouseEvent<HTMLButtonElement>) => type === 'password' ? e.preventDefault() : undefined}
-                                            onDrag={(e: ReactMouseEvent<HTMLButtonElement>) => type === 'password' ? e.preventDefault() : undefined}
-                                            onDrop={(e: ReactMouseEvent<HTMLButtonElement>) => type === 'password' ? e.preventDefault() : undefined}
-                                        />
-                                        
-                                        {errors[id as keyof FormValues] && touched[id as keyof FormValues] ? (
-                                            <div className="text-red-600 text-sm">{errors[id as keyof FormValues]}</div>
-                                        ) : null}
-                                    </div>
-                                ))}
+                                <div className='grid gap-5'>
+                                    {fields.map(({ id, type, placeholder, icon }) => (
+                                        <div key={id} className="flex items-center mb-5 rounded-lg relative group">
+                                            {id === 'password' && (
+                                                <span
+                                                    onClick={id === 'password' ? togglePasswordVisibility : undefined}
+                                                    className='cursor-pointer absolute right-3'>
+                                                    {icon}
+                                                </span>
+                                            )}
+
+                                            <Field
+                                                id={id}
+                                                name={id}
+                                                type={id === 'password' && passwordVisible ? 'text' : type}
+                                                className={`w-full bg-black pl-3 pr-10 text-slate-200 border-none outline-none focus:outline-none rounded-lg py-3 ${focusField[id] || values[id as keyof FormValues] ? 'ring-1 ring-cyan-400 bg-slate-950' : ''} transition-all peer`}
+                                                autoComplete="off"
+                                                spellCheck="false"
+                                                onFocus={() => handleFocus(id)}
+                                                onBlur={() => handleBlur(id)}
+                                            />
+
+                                            <label htmlFor={id} className={`absolute transition-all left-4 text-slate-300 text-md ${focusField[id] || values[id as keyof FormValues] ? 'left-2 -top-[1.25rem] text-sm font-bold text-white' : 'top-1/2 -translate-y-1/2'}`}>
+                                                {placeholder}
+                                            </label>
+
+                                            {errors[id as keyof FormValues] && touched[id as keyof FormValues] ? (
+                                                <div className="text-red-500 text-sm absolute -bottom-[1.1rem] right-2">{errors[id as keyof FormValues]}</div>
+                                            ) : null}
+                                        </div>
+                                    ))}
+                                </div>
 
                                 <button
-                                type="submit"
-                                className="flex items-center justify-center gap-x-2 w-full bg-indigo-600 mt-4 py-2 rounded-lg hover:bg-indigo-700 hover:-translate-y-1 transition-all duration-500 text-white font-semibold">
+                                    type="submit"
+                                    className="flex items-center justify-center gap-x-2 w-full bg-indigo-600 mt-4 py-2 rounded-lg hover:bg-indigo-700 hover:-translate-y-1 transition-all duration-500 text-white font-semibold">
                                     LogIn
                                     {isSubmitting && (
-                                        <span style={{ borderTopColor: "transparent" }} className=" aspect-square h-4 border-2 border-blue-200 rounded-full animate-spin"></span>
+                                        <span style={{ borderTopColor: "transparent" }} className="aspect-square h-4 border-2 border-blue-200 rounded-full animate-spin"></span>
                                     )}
                                 </button>
                             </Form>
-                        )}
-                    </Formik>
-                </div>
+
+                            {isLottieLoading && (
+                                <div className=" hidden md:flex items-center justify-center pr-10 w-[20rem] lg:w-[25rem]">
+                                    <span style={{ borderTopColor: "transparent" }} className="aspect-square h-10 border-4 border-blue-200 rounded-full animate-spin"></span>
+                                </div>
+                            )}
+
+                            <iframe
+                                src="https://lottie.host/embed/aacfed6c-8090-48f4-b636-dcf3b9387b9f/TIUiD67yCc.json"
+                                className={`hidden ${!isLottieLoading ? 'md:block' : ''} pr-10 w-[20rem] lg:w-[25rem]`}
+                                onLoad={() => setIsLottieLoading(false)}
+                            />
+                        </div>
+                    )}
+                </Formik>
             </div>
         </div>
     );

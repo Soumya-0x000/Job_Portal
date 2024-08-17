@@ -217,7 +217,7 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({ rooms, setPaginationD
             <DataGrid
                 rows={roomRows}
                 columns={roomColumns}
-                pageSizeOptions={[15, 30, 50, 70, 100]}
+                // pageSizeOptions={[15, 30, 50, 70, 100]}
                 slots={{ toolbar: GridToolbar }}
                 slotProps={{
                     toolbar: { showQuickFilter: true },
@@ -247,8 +247,8 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({ rooms, setPaginationD
                         backgroundColor: '#e6fefd',
                         color: '#037346',
                         '&:hover': {
-                            backgroundColor: '#d4ffff',
-                            color: '#024d3b', 
+                            backgroundColor: '#7e8e01',
+                            color: '#f8ffc1', 
                         },
                     },
                     '& .MuiDataGrid-row.Mui-selected': {
@@ -256,8 +256,8 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({ rooms, setPaginationD
                         color: '#dff6fe'
                     },
                     '&  .MuiDataGrid-row.Mui-selected:hover': {
-                        backgroundColor: '#d0fdeb',  
-                        color: '#024d3b',
+                        backgroundColor: '#3f99b8',
+                        color: '#dff6fe'
                     },
                     '& .MuiDataGrid-footerContainer ': {
                         display: 'none',

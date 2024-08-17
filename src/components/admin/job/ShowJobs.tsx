@@ -67,7 +67,8 @@ const ShowJobs: FC = () => {
                     <Loading />
                 </div>
             ) : (
-                <div className="max-w-[97%] overflow-auto">
+
+                <div className=" ">
                     <DataGrid
                         rows={rows}
                         columns={columns}
@@ -104,8 +105,8 @@ const ShowJobs: FC = () => {
                                 backgroundColor: '#eafffa',
                                 color: '#353938',
                                 '&:hover': {
-                                    backgroundColor: '#eafffa',
-                                    color: '#353938', 
+                                    backgroundColor: '#7e8e01',
+                                    color: '#f8ffc1', 
                                 },
                             },
                             '& .approved-row': {
@@ -113,19 +114,20 @@ const ShowJobs: FC = () => {
                                 backgroundColor: '#d8f9ff',
                                 color: '#003d48',
                                 '&:hover': {
-                                    backgroundColor: '#e1fff8',
-                                    color: '#003d48', 
+                                    backgroundColor: '#7e8e01',
+                                    color: '#f8ffc1', 
                                 },
                                 '&:active': {
                                     backgroundColor: '#e1fff8',
                                 }
                             },
                             '& .MuiDataGrid-row.Mui-selected': {
-                                backgroundColor: '#fcfff4',
-                                color: '#000059'
+                                backgroundColor: '#3f99b8',
+                                color: '#dff6fe'
                             },
                             '&  .MuiDataGrid-row.Mui-selected:hover': {
-                                backgroundColor: '#fcfff4',  
+                                 backgroundColor: '#3f99b8',
+                                color: '#dff6fe'
                             },
                             '& .MuiDataGrid-footerContainer ': {
                                 display: 'none',
