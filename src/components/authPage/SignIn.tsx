@@ -91,7 +91,7 @@ const LoginPage: React.FC = () => {
     };
 
     return (
-        <div className="h-screen flex flex-col items-center pt-4 bg-gradient-to-bl from-black to-slate-900">
+        <div className="h-screen flex flex-col items-center pt-4 bg-gradient-to-bl from-black via-slate-900 to-black">
             <HomePgBtnNav
                 navArr={{ label: 'SignUp', link: '/signup' }}
             />
@@ -102,7 +102,7 @@ const LoginPage: React.FC = () => {
                     onSubmit={handleNavigation}
                 >
                     {({ errors, touched, values }) => (
-                        <div className='flex w-fit p-2 rounded-lg justify-center gap-x-3 lg:gap-x-16 bg-slate-900'>
+                        <div className='flex w-fit p-2 rounded-lg justify-center gap-x-3 lg:gap-x-16 bg-slate-900 ring-1 ring-slate-700'>
                             <Form className="bg-slate-800 rounded-md shadow-2xl p-5 w-[22rem] lsm:w-[26rem] lg:w-[30rem]">
                                 <h1 className="text-white font-onest tracking-wider font-bold text-2xl mb-12">Sign In</h1>
 
@@ -141,7 +141,7 @@ const LoginPage: React.FC = () => {
 
                                 <button
                                     type="submit"
-                                    className="flex items-center justify-center gap-x-2 w-full bg-indigo-600 mt-4 py-2 rounded-lg hover:bg-indigo-700 hover:-translate-y-1 transition-all duration-500 text-white font-semibold">
+                                    className="flex items-center justify-center gap-x-2 w-full mt-4 py-2 rounded-lg bg-[#2b385c] ring-1 ring-slate-900 hover:bg-slate-900 active:scale-95 transition-all duration-200 text-white font-semibold font-mavenPro tracking-wider">
                                     LogIn
                                     {isSubmitting && (
                                         <span style={{ borderTopColor: "transparent" }} className="aspect-square h-4 border-2 border-blue-200 rounded-full animate-spin"></span>

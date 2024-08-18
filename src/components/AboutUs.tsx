@@ -14,7 +14,7 @@ interface aboutUsType {
 const AboutUsCard: FC<aboutUsType> = ({ link, title, details }) => {
     return (
         <div className={` flex items-center justify-between gap-x-10 bg-[#e7fff3] hover:bg-[#e5f5fc] ring-[1px] ring-green-700 hover:ring-blue-700 hover:shadow-md hover:shadow-blue-700 rounded-md overflow-hidden p-3 cursor-pointer group`}>
-            <div className=' min-w-20 max-w-20 min-h-20 max-h-20'>
+            <div className=' min-w-20 max-w-20 min-h-20 max-h-20 bg-fixed bg-cover bg-top'>
                 <img 
                     src={link} 
                     className='w-full h-full '
@@ -40,7 +40,7 @@ const AboutUs = () => {
         <div className='relative h-screen scroll-smooth'>
             {/* banner */}
             <div
-            className={`h-full flex flex-col items-start justify-center pl-4 pr-4 sm:pl-12 md:pl-32 bg-fixed bg-cover bg-left`}
+            className={`h-full flex flex-col items-start justify-center pl-4 pr-4 sm:pl-12 md:pl-32 bg-fixed bg-cover bg-top`}
             style={{
                 backgroundImage: `url('${banner}')`,
             }}>

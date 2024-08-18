@@ -1,8 +1,10 @@
 import { Dispatch, FC, ReactElement, SetStateAction, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { tabsType } from "./DemoData";
 import { AnimatePresence, motion } from "framer-motion";
 import { accType } from "../components/Home/LandingPage";
+import fullLogo from '../assets/sentientFullLogo.png';
+import logo from '../assets/sentientLogo.png';
 
 interface NavbarType {
     accountArr: accType[];
@@ -17,7 +19,12 @@ export const NavBar: FC<NavbarType> = ({ tabsArr, accountArr, selected, setSelec
     const navigate = useNavigate();
 
     return (
-        <div className={` flex items-center justify-between w-full h-[4rem] backdrop-blur-xl pl-4 sm:pl-3 xl:pl-8 rounded-lg ${selected === 'Career' ? ' bg-[#4e5b6b7d]' : ''}`}>
+        <div className={` flex items-center justify-between w-full h-[4rem] backdrop-blur-xl pl-4 sm:pl-3 xl:pl-8 ${selected === 'Career' ? ' bg-[#4e5b6b7d]' : ''}`}>
+            <Link to={'/'} className='hidden pl-4 md:block'>
+                <img src={fullLogo} className=' h-10 scale-125 hidden Lmd:block'/>
+                <img src={logo} className=' h-10 scale-125 block Lmd:hidden'/>
+            </Link>
+
             {/* hamburger icon in less than 1024 screen width */}
             <div className="relative block md:hidden">
                 <div onClick={() => setIsDropdownOpen((pv) => !pv)}>
@@ -30,7 +37,7 @@ export const NavBar: FC<NavbarType> = ({ tabsArr, accountArr, selected, setSelec
                 <div className="absolute flex items-center justify-center -right-11">
                     <motion.div animate={isDropdownOpen ? "open" : "closed"} className="relative">
                         <motion.ul
-                        className="flex flex-col gap-2 p-2 rounded-lg bg-slate-900 shadow-xl absolute top-[120%] left-[50%] w-48 overflow-hidden z-50 ring-1 ring-blue-400"
+                        className="flex flex-col gap-2 p-2 ml-2 rounded-lg bg-slate-900 shadow-xl absolute top-[120%] left-1/2 w-48 overflow-hidden z-50 ring-1 ring-blue-400"
                         initial={wrapperVariants.closed}
                         variants={wrapperVariants}
                         style={{ originY: "top", translateX: "-50%" }}>
@@ -63,7 +70,7 @@ export const NavBar: FC<NavbarType> = ({ tabsArr, accountArr, selected, setSelec
             </div>
 
             {/* account section */}
-            <div className='relative flex items-center h-full px-4 rounded-r-lg bg-slate-900 gap-x-8 sm:gap-x-5 lg:gap-x-5 xl:gap-x-10 sm:px-3 xl:px-8 text-yellow-200'>
+            <div className='relative flex items-center h-full pr-4 gap-x-8 sm:gap-x-5 lg:gap-x-5 xl:gap-x-10 sm:pr-3 xl:pr-8 text-yellow-200'>
                 {accountArr.map((account, indx) => (
                     <div className="flex justify-center cursor-pointer lg:text-lg"
                     key={indx}
@@ -74,7 +81,7 @@ export const NavBar: FC<NavbarType> = ({ tabsArr, accountArr, selected, setSelec
                     </div>
                 ))}
 
-                <div className='absolute top-0 w-5 h-full -left-4 bg-slate-900 actionBtnBend'/>
+                <div className='absolute top-0 w-5 h-full -left-4'/>
             </div>
         </div>
     );
@@ -100,12 +107,19 @@ const Chip: FC<chipType> = ({
         className={`${
         selected
             ? "text-white"
-            : "text-slate-300 hover:text-slate-200 hover:bg-slate-800"
-        } transition-colors px-3 py-1.5 rounded-md relative flex items-center group`}>
-            <span className="relative z-10 flex items-center justify-center gap-x-2">
-                <span className='font-robotoMono lg:text-[1rem] text-white hidden md:block'>{text}</span>
-                <span className=' text-[1.3rem] text-white hidden lg:block'>{icon}</span>
-            </span>
+            : "text-slate-300 hover:text-slate-200 hover:bg-slate-700"
+        } transition-colors px-3 py-1.5 rounded-md overflow-hidden relative flex items-center justify-center group`}>
+            <div className="z-10 flex items-center justify-center gap-x-2 group overflow-hidden">
+                <div className='font-robotoMono lg:text-[1rem] text-white hidden Lmd:block'>
+                    {text}
+                </div>
+                <div className='text-[1.3rem] text-white hidden md:block Lmd:hidden group-hover:-translate-y-8 duration-200 transition-all'>
+                    {icon}
+                </div>
+                <div className=" text-[1.3rem] absolute left-1/2 -translate-x-1/2 translate-y-8 group-hover:scale-110 group-hover:translate-y-0 duration-200 transition-all Lmd:hidden">
+                    {icon}
+                </div>
+            </div>
 
             {selected && (
                 <motion.span
@@ -208,7 +222,7 @@ const AnimatedHamburgerButton: FC<hamburgerMenuType> = ({ hamburgerActive, setHa
         <button
         className="relative w-10 h-20 transition-colors"
         onClick={() => setHamburgerActive((pv) => !pv)}>
-            <div className={`flex items-center justify-center flex-col gap-y-[.4rem] rounded-full w-10 h-[2.4rem] p-1 bg-slate-800 transition-all cursor-pointer`}>
+            <div className={`flex items-center justify-center flex-col gap-y-[.4rem] rounded-full w-10 h-[2.4rem] p-1 bg-slate-900 ring-1 ring-slate-600 transition-all cursor-pointer`}>
                 <div className={`w-7 h-[1.5px] transition-all ${hamburgerActive ? 'rotate-45 translate-y-[4px]' : 'rotate-0'}  bg-cyan-300`}/>
                 <div className={`w-7 h-[1.5px] ${!hamburgerActive ? 'block' : 'hidden'} bg-cyan-300`}/>
                 <div className={`w-7 h-[1.5px] ${hamburgerActive ? '-rotate-45 -translate-y-[4px]' : 'rotate-0'}  transition-all bg-cyan-300`}/>

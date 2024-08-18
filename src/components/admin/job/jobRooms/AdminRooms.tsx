@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Loading } from "../../../../common/Loading";
 import { IoIosAdd } from "react-icons/io";
 import * as Yup from 'yup';
@@ -101,7 +101,6 @@ const AdminRooms = () => {
         bookingLimit: 8,
         bookingOffset: 0
     });
-    const showToast = useRef<boolean>(false)
 
     const primaryURL = () => `room-booking/getRoomDetails?limit=${paginationData.limit}&offset=${paginationData.offset}&bookingLimit=${bookingPaginationData.bookingLimit}&bookingOffset=${bookingPaginationData.bookingOffset}`
     const handleClose = () => setOpen(false)
@@ -167,13 +166,7 @@ const AdminRooms = () => {
                 setRooms(data?.data?.rooms || [])
                 setLoading(false);
                 console.log(data.data)
-                // if(data.data === null && !showToast.current){
-                //     showToastMsg(data.message)
-                //     showToast.current=true
-                // }
-            } else {
-                showToastMsg('Failed to fetch room details');
-            }
+            } else showToastMsg('Failed to fetch room details')
         } catch (error: unknown) {
             if (axios.isAxiosError(error)) console.error('Axios error fetching room details:', error.response?.data?.message || error.message);
             else if (error instanceof Error) console.error('Error fetching room details:', error.message);
@@ -239,9 +232,9 @@ const AdminRooms = () => {
     }
 
     useEffect(() => {
-        console.log(primaryURL())
+        primaryURL()
         fetchConditionalData()
-    }, [paginationData.offset])
+    }, [paginationData.offset, bookingPaginationData.bookingOffset])
 
     return (
         <div className=" bg-slate-400 overflow-auto">
@@ -254,7 +247,7 @@ const AdminRooms = () => {
                         paginationData={paginationData}
                         setBookingPaginationData={setBookingPaginationData}
                         bookingPaginationData={bookingPaginationData}
-                    /> {/* change it to demoRoomData for testing */}
+                    />
                 </div>
             }
             
