@@ -12,7 +12,7 @@ import { DataGrid, GridRenderCellParams, GridRowParams, GridToolbar } from '@mui
 import { Transition } from '../../../../common/DialogComponent';
 import { formatDateTime } from '../../../../common/formatDateTime';
 import { useMediaQuery, useTheme } from '@mui/material';
-import { adminPaginationType } from './AdminRooms';
+import { adminPaginationType, bookingPaginationType } from './AdminRooms';
 
 interface Candidate {
     bookingDate: string;
@@ -35,14 +35,21 @@ interface JobRoomTableProps {
     rooms: Room[];
     setPaginationData: Dispatch<SetStateAction<adminPaginationType>>;
     paginationData: adminPaginationType;
+    setBookingPaginationData: Dispatch<SetStateAction<bookingPaginationType>>;
+    bookingPaginationData: bookingPaginationType;
 }
 
 const AppliedCandidatesDialog: React.FC<{
     open: boolean;
     onClose: () => void;
     candidates: Candidate[];
-}> = ({ open, onClose, candidates }) => {
+    setBookingPaginationData: Dispatch<SetStateAction<bookingPaginationType>>;
+    bookingPaginationData: bookingPaginationType;
+}> = ({ 
+    open, onClose, candidates, setBookingPaginationData, bookingPaginationData
+}) => {
     const [page, setPage] = useState<number>(1);
+
     const candidateColumns = [
         { field: 'bookingDate', headerName: 'Booking Date', width: 250 },
         { field: 'username', headerName: 'Name', width: 300 },
@@ -55,16 +62,25 @@ const AppliedCandidatesDialog: React.FC<{
         email: candidate.userDetails?.email || "N/A",
     }));
 
+    const handlePaginationPgCount = (event: ChangeEvent<unknown>, page: number) => {
+        console.log(page)
+        setPage(page)
+        setBookingPaginationData((prev: bookingPaginationType) => ({
+            ...prev,
+            bookingOffset: (page-1) * (prev.bookingLimit)
+        }));
+    }
+
     return (
         <Dialog open={open} onClose={onClose}  maxWidth="md" TransitionComponent={Transition}>
             <DialogTitle>Applied Candidates</DialogTitle>
 
             <DialogContent>
-                <Box sx={{ height: 500, width: '100%' }}>
+                <Box sx={{ height: 500, width: '100%', position: 'relative' }}>
                     <DataGrid
                         rows={candidateRows}
                         columns={candidateColumns}
-                        pageSizeOptions={[15, 30, 60, 100]}
+                        // pageSizeOptions={[15, 30, 60, 100]}
                         slots={{ toolbar: GridToolbar }}
                         slotProps={{
                             toolbar: {
@@ -115,7 +131,7 @@ const AppliedCandidatesDialog: React.FC<{
 
                     <div className=" fixed left-1/2 -translate-x-1/2 bottom-2 bg-slate-100 px-2 py-1.5 rounded-lg overflow-hidden">
                         <Pagination 
-                            count={Math.ceil(paginationData.totalRooms/paginationData.limit)} 
+                            count={Math.ceil(bookingPaginationData.totalBookings/bookingPaginationData.bookingLimit)} 
                             page={page} 
                             onChange={handlePaginationPgCount} 
                             variant="outlined" 
@@ -134,7 +150,13 @@ const AppliedCandidatesDialog: React.FC<{
     );
 };
 
-const RoomRow: React.FC<{ room: Room }> = ({ room }) => {
+const RoomRow: React.FC<{ 
+    room: Room;
+    setBookingPaginationData: Dispatch<SetStateAction<bookingPaginationType>>;
+    bookingPaginationData: bookingPaginationType; 
+}> = ({ 
+    room, setBookingPaginationData, bookingPaginationData 
+}) => {
     const [dialogOpen, setDialogOpen] = useState(false);
 
     return (
@@ -146,10 +168,13 @@ const RoomRow: React.FC<{ room: Room }> = ({ room }) => {
                     Applied Candidates
                 </button>
             </div>
+
             <AppliedCandidatesDialog
                 open={dialogOpen}
                 onClose={() => setDialogOpen(false)}
                 candidates={room.appliedCandidates || []}
+                setBookingPaginationData={setBookingPaginationData}
+                bookingPaginationData={bookingPaginationData}
             />
         </>
     );
@@ -184,7 +209,12 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({ rooms, setPaginationD
             field: 'actions',
             headerName: 'Applied Candidates',
             width: getColumnWidth(350),
-            renderCell: (params: GridRenderCellParams<Room>) => <RoomRow room={params.row} />,
+            renderCell: (params: GridRenderCellParams<Room>) => 
+                <RoomRow 
+                    setBookingPaginationData={setBookingPaginationData}
+                    bookingPaginationData={bookingPaginationData}
+                    room={params.row} 
+                />,
         },
     ];
 
@@ -204,7 +234,6 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({ rooms, setPaginationD
     };
 
     const handlePaginationPgCount = (event: ChangeEvent<unknown>, page: number) => {
-        console.log(page)
         setPage(page)
         setPaginationData((prev: adminPaginationType) => ({
             ...prev,

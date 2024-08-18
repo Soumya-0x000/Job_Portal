@@ -132,7 +132,6 @@ const ShowJobs: FC = () => {
                                 display: 'none',
                                 border: 'none',
                             },
-                            
                         }}
                         className="custom-class"
                         getRowClassName={getRowClassName}
