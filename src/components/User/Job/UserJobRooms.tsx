@@ -42,7 +42,7 @@ export type paginationType = {
     'offset': number,
 }
 export const initialPaginationVal: paginationType = {
-    limit: 5,
+    limit: 10,
     offset: 0
 }
 
@@ -63,11 +63,12 @@ const UserJobRooms = () => {
     }>({
         totalBookings: 0,
         limit: 0
-    })
+    });
+   
     const toastShown = useRef<boolean>(false);
     // const [isPgLoaded, setIsPgLoaded] = useState<boolean>(false);
 
-    const primaryEndpoint = (limit: number, offset: number) => `room-booking/getBookingDetails?limit=${limit}&offset=${offset}`;
+    const primaryEndpoint = (limit: number, offset: number) => `room-booking/get-booking-details?limit=${limit}&offset=${offset}`;
 
     useEffect(() => {
         const userDetail = localStorage.getItem('userDetails') || '{}';
@@ -98,7 +99,7 @@ const UserJobRooms = () => {
                 'ngrok-skip-browser-warning': '69420',
                 authorization: `token ${adminToken}`
             }
-            // console.log(finalUrl)
+
             const { data, status } = await axios.get(finalUrl, { headers: rqstHeader });
             if (status === 200) {
                 if(data.data === null) showToastMsg(data.message)
@@ -207,37 +208,37 @@ const UserJobRooms = () => {
                     <Loading />
                 ) : (
                     <div className="w-full h-screen ring flex items-center flex-col pt-32 pb-10 px-3 md:px-5 xl:px-8 overflow-y-scroll">
-                        {!loading ? (<>
-                            <UserJobRoomTable 
-                                rooms={rooms} 
-                                setRooms={setRooms}
-                                setPaginationData={setPaginationData}
-                                moreData={moreData}
-                                paginationData={paginationData}
-                                dataCount={dataCount}
-                            />
+                        {!loading ? (
+                            <>
+                                <UserJobRoomTable
+                                    rooms={rooms}
+                                    setRooms={setRooms}
+                                    setPaginationData={setPaginationData}
+                                    moreData={moreData}
+                                    paginationData={paginationData}
+                                    dataCount={dataCount}
+                                />
 
-                            <RoomNumDtFilter
-                                filterItems={filterItems}
-                                handleMenuSelection={handleMenuSelection}
-                            />
-                        </>) : (
-                            <div>
-
-                            </div>
+                                <RoomNumDtFilter
+                                    filterItems={filterItems}
+                                    handleMenuSelection={handleMenuSelection}
+                                />
+                            </>
+                        ) : (
+                            <div></div>
                         )}
                     </div>
                 )}
             </div>
 
-            {fetchingMode !== 'allTotal' && (
-                <DialogComponent
-                open={showInputs}
-                setOpen={setShowInputs}>
+            {fetchingMode !== "allTotal" && (
+                <DialogComponent open={showInputs} setOpen={setShowInputs}>
                     <>
                         <div className=" flex flex-col gap-5 p-4 h-96">
-                            {fetchingMode === 'roomNumberNDate' && (
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            {fetchingMode === "roomNumberNDate" && (
+                                <LocalizationProvider
+                                    dateAdapter={AdapterDayjs}
+                                >
                                     <DemoContainer
                                         components={[
                                             "DatePicker",
@@ -248,7 +249,9 @@ const UserJobRooms = () => {
                                         <DatePicker
                                             label="Booking date"
                                             name="startDate"
-                                            onChange={(date) => handleDateSelection(date)}
+                                            onChange={(date) =>
+                                                handleDateSelection(date)
+                                            }
                                             minDate={dayjs()}
                                             value={filteringData?.bookingDate}
                                         />
@@ -257,7 +260,7 @@ const UserJobRooms = () => {
                             )}
 
                             <Dropdown
-                                mode={'user'}
+                                mode={"user"}
                                 heading={"Room number"}
                                 open={roomNumDDopen}
                                 roomSelection={handleRoomSelection}

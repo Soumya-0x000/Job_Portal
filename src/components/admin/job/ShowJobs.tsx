@@ -67,7 +67,7 @@ const ShowJobs: FC = () => {
                     <Loading />
                 </div>
             ) : (
-                <div className="w-screen sm:w-[32rem] md:w-[39rem] lg:w-[55rem] xl:w-[72rem] Lxl:w-[80rem] 2xl:w-[88rem]">
+                <div className="w-full flex items-center justify-center rounded-lg overflow-hidden">
                     <DataGrid
                         rows={rows}
                         columns={columns}
@@ -81,7 +81,7 @@ const ShowJobs: FC = () => {
                         sx={{
                             width: 1200,
                             '& .MuiDataGrid-toolbarContainer': {
-                                marginBottom: 1,
+                                marginBottom: .3,
                                 paddingBottom: 1,
                                 backgroundColor: 'rgb(201, 224, 255)',
                             },

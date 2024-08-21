@@ -108,7 +108,7 @@ export const UserJobRoomTable: FC<JobRoomTableProps> = ({
                     selectionDetails.bookingDate?.format("YYYY-MM-DD"),
             };
             const response = await axios.post(
-                `${URL}/room-booking/book`,
+                `${URL}/room-booking/book-room`,
                 newDetails,
                 {
                     headers: {
@@ -221,7 +221,7 @@ export const UserJobRoomTable: FC<JobRoomTableProps> = ({
 
     return (
         <>
-            <div className=" max-w-[100%] overflow-auto">
+            <div className=" max-w-[100%] overflow-auto rounded-lg">
                 <DataGrid
                     rows={rooms} // change to demoUserRooms for testing
                     columns={columns}
@@ -282,9 +282,10 @@ export const UserJobRoomTable: FC<JobRoomTableProps> = ({
                             display: 'none',
                             border: 'none',
                         },
-                        
+                        '& .MuiDataGrid-filler': {
+                            display: 'none',
+                        }
                     }}
-                    className="custom-class"
                     getRowId={(row) => row.bookingId}
                     getRowClassName={getRowClassName}
                 />

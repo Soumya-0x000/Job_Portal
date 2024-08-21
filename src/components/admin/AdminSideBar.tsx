@@ -144,7 +144,12 @@ export const AdminSideBar: FC<{ userName: string }> = ({ userName }) => {
                     sx={{
                         marginRight: 5,
                         ...(open && { display: 'none' }),
-                        backgroundColor: '#bcfffe'
+                        '& .MuiSvgIcon-root': {
+                            color: "#bcfffe",
+                            '&:hover': {
+                                color: '#bcfffe',
+                            },
+                        }
                     }}>
                         <MenuIcon />
                     </IconButton>
