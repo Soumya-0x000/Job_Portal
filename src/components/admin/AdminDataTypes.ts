@@ -46,3 +46,41 @@ export interface noFilterRoomDataType {
     },
     message: string
 }
+
+
+// userBookings
+
+export type userBookedSeats = {
+    roomName?: string;
+    roomNumber?: number;
+    bookingDate: string;
+    bookingId: string;
+    bookingStatus: string;
+};
+  
+export type UserBooking = {
+    username: string;
+    email: string;
+};
+
+export type initialBooking = {
+    totalUsers: number,
+    limit: number,
+    offset: number
+}
+
+export type UserBookingsResponse = {
+    data: {
+        allUserBookings: UserBooking[];
+        totalUsers: number;
+        limit: number;
+        offset: number;
+    };
+    message: string;
+};
+  
+export interface userBookingPaginationType {
+    totalUsers: number;
+    limit: number;
+    offset: number;
+}

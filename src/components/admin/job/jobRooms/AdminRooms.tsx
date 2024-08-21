@@ -29,6 +29,9 @@ export type roomType = {
     roomName: string;
     seatCapacity: number;
     roomNumber: number;
+    totalBookings?: 0;
+    bookingLimit?: 8;
+    bookingOffset?: 0;
 }
 
 export const StyledMenu = styled((props: MenuProps) => (
@@ -76,9 +79,15 @@ export type adminPaginationType = {
 }
 
 export type bookingPaginationType = {
-    'totalBookings': number,
-    'bookingLimit': number,
-    'bookingOffset': number
+    totalBookings: number,
+    bookingLimit: number,
+    bookingOffset: number
+}
+ 
+export const initialBookingsData = {
+    totalBookings: 0,
+    bookingLimit: 8,
+    bookingOffset: 0
 }
 
 const AdminRooms = () => {
@@ -96,13 +105,9 @@ const AdminRooms = () => {
         limit: 10,
         offset: 0
     });
-    const [bookingPaginationData, setBookingPaginationData] = useState<bookingPaginationType>({
-        totalBookings: 0,
-        bookingLimit: 8,
-        bookingOffset: 0
-    });
+    const [bookingPaginationData, setBookingPaginationData] = useState<bookingPaginationType>(initialBookingsData);
 
-    const primaryURL = () => `room-booking/getRoomDetails?limit=${paginationData.limit}&offset=${paginationData.offset}&bookingLimit=${bookingPaginationData.bookingLimit}&bookingOffset=${bookingPaginationData.bookingOffset}`
+    const primaryURL = () => `room-booking/get-room-details?limit=${paginationData.limit}&offset=${paginationData.offset}&bookingLimit=${bookingPaginationData.bookingLimit}&bookingOffset=${bookingPaginationData.bookingOffset}`
     const handleClose = () => setOpen(false)
     
     useEffect(() => {
@@ -131,10 +136,6 @@ const AdminRooms = () => {
         if (response && response.data) setRooms((prev) => ([ ...prev, value ]))
     };
 
-    // useEffect(() => {
-    //     if (token !== '') getRoomDetails(primaryURL());
-    // }, [token]);
-
     useEffect(() => {
         if(fetchingMode === 'allTotal') {
             setTimeout(() => {
@@ -154,7 +155,7 @@ const AdminRooms = () => {
 
         try {
             const { data, status } = await axios.get(finalURL, { headers: requestHeader });
-
+            
             if (status === 200) {
                 setPaginationData(prev => ({
                     ...prev, 
@@ -165,7 +166,6 @@ const AdminRooms = () => {
                 
                 setRooms(data?.data?.rooms || [])
                 setLoading(false);
-                console.log(data.data)
             } else showToastMsg('Failed to fetch room details')
         } catch (error: unknown) {
             if (axios.isAxiosError(error)) console.error('Axios error fetching room details:', error.response?.data?.message || error.message);

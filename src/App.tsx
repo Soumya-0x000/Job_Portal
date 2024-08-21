@@ -88,7 +88,7 @@ const App = () => {
                 ? <Loading/>
                 : <div> 
                     <div className={`fixed top-0 ${isScrolled ? '' : ''} transition-all duration-500 flex flex-col items-center w-full gap-y-4 z-50`}>
-                        <div className='w-full bg-gradient-to-b from-black via-slate-900 to-transparent backdrop-blur-md'>
+                        <div className='w-full backdrop-blur-md'>
                             <NavBar
                                 accountArr={account}
                                 tabsArr={tabsArr}

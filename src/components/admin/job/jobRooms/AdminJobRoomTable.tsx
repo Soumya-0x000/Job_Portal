@@ -12,7 +12,7 @@ import { DataGrid, GridRenderCellParams, GridRowParams, GridToolbar } from '@mui
 import { Transition } from '../../../../common/DialogComponent';
 import { formatDateTime } from '../../../../common/formatDateTime';
 import { useMediaQuery, useTheme } from '@mui/material';
-import { adminPaginationType, bookingPaginationType } from './AdminRooms';
+import { adminPaginationType, bookingPaginationType, initialBookingsData } from './AdminRooms';
 
 interface Candidate {
     bookingDate: string;
@@ -21,6 +21,7 @@ interface Candidate {
         username: string;
         email: string;
     };
+    bookingStatus: string;
 }
 
 interface Room {
@@ -29,6 +30,9 @@ interface Room {
     seatCapacity: number;
     _id?: string;
     appliedCandidates?: Candidate[];
+    totalBookings?: number;
+    bookingLimit?: number;
+    bookingOffset?: number;
 }
 
 interface JobRoomTableProps {
@@ -54,16 +58,17 @@ const AppliedCandidatesDialog: React.FC<{
         { field: 'bookingDate', headerName: 'Booking Date', width: 250 },
         { field: 'username', headerName: 'Name', width: 300 },
         { field: 'email', headerName: 'Email', width: 300 },
+        { field: 'status', headerName: 'Status', width: 300 },
     ];
     const candidateRows = candidates.map(candidate => ({
         id: candidate.bookingId,
         bookingDate: formatDateTime(candidate.bookingDate),
         username: candidate.userDetails?.username || "N/A",
         email: candidate.userDetails?.email || "N/A",
+        status: candidate.bookingStatus
     }));
 
-    const handlePaginationPgCount = (event: ChangeEvent<unknown>, page: number) => {
-        console.log(page)
+    const handlePaginationPgCount = (_event: ChangeEvent<unknown>, page: number) => {
         setPage(page)
         setBookingPaginationData((prev: bookingPaginationType) => ({
             ...prev,
@@ -80,7 +85,6 @@ const AppliedCandidatesDialog: React.FC<{
                     <DataGrid
                         rows={candidateRows}
                         columns={candidateColumns}
-                        // pageSizeOptions={[15, 30, 60, 100]}
                         slots={{ toolbar: GridToolbar }}
                         slotProps={{
                             toolbar: {
@@ -142,7 +146,10 @@ const AppliedCandidatesDialog: React.FC<{
             </DialogContent>
 
             <DialogActions>
-                <Button onClick={onClose} color="primary">
+                <Button onClick={() => (
+                    onClose(),
+                    setBookingPaginationData(initialBookingsData)
+                )} color="primary">
                     Close
                 </Button>
             </DialogActions>
@@ -159,11 +166,24 @@ const RoomRow: React.FC<{
 }) => {
     const [dialogOpen, setDialogOpen] = useState(false);
 
+    const handleCandidateClick = () => {
+        if (room.totalBookings !== undefined && room.bookingOffset !== undefined && room.bookingLimit !== undefined) {
+            setBookingPaginationData({
+                totalBookings: room.totalBookings,
+                bookingOffset: room.bookingOffset,
+                bookingLimit: room.bookingLimit,
+            });
+        } else {
+            console.error("One or more values from room are undefined");
+        }
+        setDialogOpen(true);
+    };
+
     return (
         <>
             <div className=' flex items-center justify-center w-full h-full'>
                 <button className=' text-indigo-900 font-mono font-bold bg-indigo-200 rounded-lg h-9 flex items-center justify-center px-4'
-                    onClick={() => setDialogOpen(true)}
+                    onClick={handleCandidateClick}
                 >
                     Applied Candidates
                 </button>
@@ -218,22 +238,24 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({ rooms, setPaginationD
         },
     ];
 
-    const roomRows = rooms.map((room, index) => ({
+    const roomRows = (Array.isArray(rooms) ? rooms : [rooms]).map((room, index) => ({
         count: index + 1,
         id: room._id,
         roomName: room.roomName,
         roomNumber: room.roomNumber,
         seatCapacity: room.seatCapacity,
         appliedCandidates: room.appliedCandidates,
+        totalBookings: room.totalBookings,
+        bookingLimit: room.bookingLimit,
+        bookingOffset: room.bookingOffset
     }));
 
     const getRowClassName = (params: GridRowParams) => {
-        console.log(params.row)
         const status = params.row.bookingStatus;
         return status === 'pending' ? 'pending-row' : 'approved-row';
     };
 
-    const handlePaginationPgCount = (event: ChangeEvent<unknown>, page: number) => {
+    const handlePaginationPgCount = (_event: ChangeEvent<unknown>, page: number) => {
         setPage(page)
         setPaginationData((prev: adminPaginationType) => ({
             ...prev,
@@ -242,7 +264,7 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({ rooms, setPaginationD
     }
 
     return (
-        <div className='w-[100%] overflow-auto'>
+        <div className='w-[100%] overflow-auto rounded-lg'>
             <DataGrid
                 rows={roomRows}
                 columns={roomColumns}
@@ -253,7 +275,7 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({ rooms, setPaginationD
                 className='custom-class'
                 sx={{
                     '& .MuiDataGrid-toolbarContainer': {
-                        marginBottom: 1,
+                        marginBottom: .4,
                         paddingBottom: 1,
                         backgroundColor: 'rgb(201, 224, 255)',
                     },
@@ -275,22 +297,25 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({ rooms, setPaginationD
                         backgroundColor: '#e6fefd',
                         color: '#037346',
                         '&:hover': {
-                            backgroundColor: '#7e8e01',
-                            color: '#f8ffc1', 
+                            backgroundColor: '#f8ffc1',
+                            color: '#7e8e01', 
                         },
                     },
                     '& .MuiDataGrid-row.Mui-selected': {
-                        backgroundColor: '#3f99b8',
+                        backgroundColor: '#5ebfe0',
                         color: '#dff6fe'
                     },
                     '&  .MuiDataGrid-row.Mui-selected:hover': {
-                        backgroundColor: '#3f99b8',
+                        backgroundColor: '#5ebfe0',
                         color: '#dff6fe'
                     },
                     '& .MuiDataGrid-footerContainer ': {
                         display: 'none',
                         backgroundColor: 'rgb(201, 224, 255)',
                     },
+                    '& .MuiDataGrid-filler': {
+                        display: 'none'
+                    }
                 }}
                 getRowClassName={getRowClassName}
             />

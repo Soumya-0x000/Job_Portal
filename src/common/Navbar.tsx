@@ -70,7 +70,7 @@ export const NavBar: FC<NavbarType> = ({ tabsArr, accountArr, selected, setSelec
             </div>
 
             {/* account section */}
-            <div className='relative flex items-center h-full pr-4 gap-x-8 sm:gap-x-5 lg:gap-x-5 xl:gap-x-10 sm:pr-3 xl:pr-8 text-yellow-200'>
+            <div className='relative flex items-center h-full pr-4 gap-x-8 sm:gap-x-5 lg:gap-x-5 sm:pr-3 xl:pr-8 text-yellow-600 '>
                 {accountArr.map((account, indx) => (
                     <div className="flex justify-center cursor-pointer lg:text-lg"
                     key={indx}
@@ -241,12 +241,12 @@ const FlyoutLink: FC<{children: string}> = ({children}) => {
         className="relative w-fit h-fit"
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}>
-            <span className="relative text-yellow-300 font-onest">
+            <span className="relative text-white hover:text-white font-onest px-2.5 py-1.5 rounded-lg hover:bg-slate-700 transition-all">
                 {children}
-                <span
+                {/* <span
                     style={{ transform: showFlyout ? "scaleX(1)" : "scaleX(0)" }}
                     className="absolute h-1 transition-transform duration-300 ease-out origin-left scale-x-0 bg-yellow-300 rounded-full -bottom-2 -left-2 -right-2"
-                />
+                /> */}
             </span>
 
             <AnimatePresence>
