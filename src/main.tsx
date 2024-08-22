@@ -16,12 +16,12 @@ import LandingPage from "./components/Home/LandingPage.tsx";
 import Error404 from "./common/Error404.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ShowJobs from "./components/admin/job/ShowJobs.tsx";
 import { Provider } from "react-redux";
 import { store } from "./store/Store.tsx";
 import AdminRooms from "./components/admin/job/jobRooms/AdminRooms.tsx";
 import UserJobRooms from "./components/User/Job/UserJobRooms.tsx";
 import UserBookings from "./components/admin/job/bookings/UserBookings.tsx";
+import ShowJobs from "./components/admin/job/ShowJobs.tsx";
 
 const router = createBrowserRouter([
     { path: "/", element: <LandingPage /> },

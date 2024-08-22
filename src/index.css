@@ -20,6 +20,11 @@
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
+.MuiDataGrid-root {
+    outline: none !important;
+    border: none !important;
+    border-width: 0 !important;
+}
 .MuiDataGrid-cell {
   outline: none !important;
   border: none !important;
@@ -226,4 +231,15 @@
 
 ::-webkit-scrollbar {
   display: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }

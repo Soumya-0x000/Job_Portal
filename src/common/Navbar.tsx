@@ -103,20 +103,35 @@ const Chip: FC<chipType> = ({
     
     return (
         <button
-        onClick={() => handleClick(text)}
-        className={`${
-        selected
-            ? "text-white"
-            : "text-slate-300 hover:text-slate-200 hover:bg-slate-700"
-        } transition-colors px-3 py-1.5 rounded-md overflow-hidden relative flex items-center justify-center group`}>
+            onClick={() => handleClick(text)}
+            className={`${
+                selected
+                    ? "text-white"
+                    : "text-slate-300 hover:text-slate-200 hover:bg-slate-100"
+            } transition-colors px-3 py-1.5 rounded-md overflow-hidden relative flex items-center justify-center group`}
+        >
             <div className="z-10 flex items-center justify-center gap-x-2 group overflow-hidden">
-                <div className='font-robotoMono lg:text-[1rem] text-white hidden Lmd:block'>
+                <div
+                    className={`font-robotoMono lg:text-[1rem] ${
+                        selected ? " text-white" : "text-slate-800"
+                    } font-bold hidden Lmd:block`}
+                >
                     {text}
                 </div>
-                <div className='text-[1.3rem] text-white hidden md:block Lmd:hidden group-hover:-translate-y-8 duration-200 transition-all'>
+                <div
+                    className={`text-[1.3rem] ${
+                        selected ? " text-white" : "text-slate-800"
+                    } font-bold hidden md:block Lmd:hidden group-hover:-translate-y-8 duration-200 transition-all`}
+                >
                     {icon}
                 </div>
-                <div className=" text-[1.3rem] absolute left-1/2 -translate-x-1/2 translate-y-8 group-hover:scale-110 group-hover:translate-y-0 duration-200 transition-all Lmd:hidden">
+                <div
+                    className={` ${
+                        selected
+                            ? "text-slate-800 group-hover:text-white"
+                            : "text-slate-800 "
+                    }  text-[1.3rem] absolute left-1/2 -translate-x-1/2 translate-y-8 group-hover:scale-110 group-hover:translate-y-0 duration-200 transition-all Lmd:hidden`}
+                >
                     {icon}
                 </div>
             </div>
@@ -129,7 +144,7 @@ const Chip: FC<chipType> = ({
                 />
             )}
 
-            <span className='z-20 hidden ml-1 group-hover:block md:group-hover:hidden'>
+            <span className="z-20 hidden ml-1 group-hover:block md:group-hover:hidden">
                 {text}
             </span>
         </button>
@@ -241,7 +256,7 @@ const FlyoutLink: FC<{children: string}> = ({children}) => {
         className="relative w-fit h-fit"
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}>
-            <span className="relative text-white hover:text-white font-onest px-2.5 py-1.5 rounded-lg hover:bg-slate-700 transition-all">
+            <span className="relative text-slate-800 font-onest px-2.5 py-1.5 rounded-lg hover:bg-slate-100 hover:text-slate-700 transition-all">
                 {children}
                 {/* <span
                     style={{ transform: showFlyout ? "scaleX(1)" : "scaleX(0)" }}

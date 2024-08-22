@@ -11,5 +11,9 @@ export const showToastMsg: (msg: string) => void = (msg) => {
         progress: undefined,
         theme: "dark",
         transition: Bounce,
+        style: {
+            backgroundColor: "#606c82",
+            color: "#fff",
+        },
     });
 };

@@ -56,6 +56,7 @@ const UserBookings = () => {
     const [paginationData, setPaginationData] = useState<userBookingPaginationType>(initialPaginateData);
     const [loading, setLoading] = useState<boolean>(true);
     const [isCheckingAvail, setIsCheckingAvail] = useState<boolean>(false);
+    const [isMoreData, setIsMoreData] = useState<boolean>(false);
 
     const primaryURL: () => string = () =>
         `room-booking/get-booking-details?limit=${paginationData.limit}&offset=${paginationData.offset}`;
@@ -99,12 +100,15 @@ const UserBookings = () => {
                     totalUsers, limit, offset
                 }))
 
+                const moreData = totalUsers - limit
+                setIsMoreData(moreData > 0 ? true : false)
+
                 setBookings(data?.data?.allUserBookings || [])
                 setLoading(false);
             } else showToastMsg('Failed to fetch room details')
         } catch (error: unknown) {
-            if (axios.isAxiosError(error)) console.error('Axios error fetching room details:', error.response?.data?.message || error.message);
-            else if (error instanceof Error) console.error('Error fetching room details:', error.message);
+            if (axios.isAxiosError(error)) showToastMsg("No bookings for this day");
+            else if (error instanceof Error) showToastMsg("No bookings for this day");
             else console.error('An unknown error occurred while fetching room details');
         }
     };
@@ -170,18 +174,20 @@ const UserBookings = () => {
 
     return (
         <div>
-            {loading 
-                ? <div className=" w-full h-full flex items-center justify-center bg-black">
-                    <Loading /> 
+            {loading ? (
+                <div className=" w-full h-full flex items-center justify-center bg-black">
+                    <Loading />
                 </div>
-                : <div className=" w-full h-fit flex items-center flex-col pt-16">
-                    <BookingTable 
+            ) : (
+                <div className=" w-full h-fit flex items-center flex-col pt-16">
+                    <BookingTable
                         bookings={bookings}
                         setPaginationData={setPaginationData}
                         paginationData={paginationData}
+                        isMoreData={isMoreData}
                     />
                 </div>
-            }
+            )}
 
             <RoomNumDtFilter
                 filterItems={filterItems}
@@ -189,14 +195,14 @@ const UserBookings = () => {
             />
 
             {/* conditional room */}
-            {fetchingMode !== 'allTotal' && (
-                <DialogComponent
-                open={showInputs}
-                setOpen={setShowInputs}>
+            {fetchingMode !== "allTotal" && (
+                <DialogComponent open={showInputs} setOpen={setShowInputs}>
                     <>
                         <div className=" flex flex-col gap-5 p-4 h-96">
-                            {fetchingMode === 'roomNumberNDate' && (
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            {fetchingMode === "roomNumberNDate" && (
+                                <LocalizationProvider
+                                    dateAdapter={AdapterDayjs}
+                                >
                                     <DemoContainer
                                         components={[
                                             "DatePicker",
@@ -207,7 +213,9 @@ const UserBookings = () => {
                                         <DatePicker
                                             label="Booking date"
                                             name="startDate"
-                                            onChange={(date) => handleDateSelection(date)}
+                                            onChange={(date) =>
+                                                handleDateSelection(date)
+                                            }
                                             value={filteringData?.bookingDate}
                                         />
                                     </DemoContainer>
@@ -215,7 +223,7 @@ const UserBookings = () => {
                             )}
 
                             <Dropdown
-                                mode={'admin'}
+                                mode={"admin"}
                                 heading={"Room number"}
                                 open={roomNumDDopen}
                                 roomSelection={handleRoomSelection}
@@ -240,8 +248,8 @@ const UserBookings = () => {
                             <button
                                 className="w-full p-2 rounded-lg bg-red-950 text-red-200 active:scale-95 transition-all"
                                 onClick={() => {
-                                    setShowInputs(false)
-                                    setFilteringData(initialValue)
+                                    setShowInputs(false);
+                                    setFilteringData(initialValue);
                                 }}
                             >
                                 Close
