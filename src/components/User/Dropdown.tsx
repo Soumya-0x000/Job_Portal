@@ -1,30 +1,30 @@
-import { FC, useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { generateUniqueId } from '../../common/UniqID';
-import axios from 'axios';
-import { URL } from '../../API';
-import { Loading } from '../../common/Loading';
+import { FC, useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { generateUniqueId } from "../../common/UniqID";
+import axios from "axios";
+import { URL } from "../../API";
+import { Loading } from "../../common/Loading";
 
 type RoomType = {
     roomNumber: number;
     roomName: string;
-}
+};
 
 const Dropdown: FC<{
-    mode: 'user' | 'admin'
+    mode: "user" | "admin";
     heading: string;
     open: boolean;
-    roomSelection: (roomNumber: number ) => void;
+    roomSelection: (roomNumber: number) => void;
     roomNum: number;
     availData: Partial<{
-        seatCapacity: number,
-        numberOfBookings: number,
-        availableSeats: number,
-    }>
+        seatCapacity: number;
+        numberOfBookings: number;
+        availableSeats: number;
+    }>;
 }> = ({ mode, heading, open, roomSelection, availData, roomNum }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [roomDetails, setRoomDetails] = useState<[]>([]);
-    const [optionLoading, setOptionLoading] = useState<boolean>(true)
+    const [roomDetails, setRoomDetails] = useState<RoomType[]>([]);
+    const [optionLoading, setOptionLoading] = useState<boolean>(true);
 
     const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -35,29 +35,41 @@ const Dropdown: FC<{
 
     useEffect(() => {
         if (open) {
-            mode === 'user'
-                ? fetchRoomDetails(JSON.parse(localStorage.getItem('userDetails') || '[]').token)
-                : fetchRoomDetails(JSON.parse(localStorage.getItem('adminDetails') || '[]').token)
+            mode === "user"
+                ? fetchRoomDetails(
+                      JSON.parse(localStorage.getItem("userDetails") || "[]")
+                          .token
+                  )
+                : fetchRoomDetails(
+                      JSON.parse(localStorage.getItem("adminDetails") || "[]")
+                          .token
+                  );
         }
-    }, [open])
+    }, [open, mode]);
 
-    const fetchRoomDetails: (authToken: string) => void = async(authToken) => {
-        const response = await axios.get(
-            `${URL}/room-booking/check-existing-rooms`,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    "ngrok-skip-browser-warning": "69420",
-                    authorization: `token ${authToken}`,
-                },
+    const fetchRoomDetails: (authToken: string) => void = async (authToken) => {
+        try {
+            const response = await axios.get(
+                `${URL}/room-booking/check-existing-rooms`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "ngrok-skip-browser-warning": "69420",
+                        authorization: `token ${authToken}`,
+                    },
+                }
+            );
+
+            if (response.status === 200) {
+                setRoomDetails(response.data.data);
+                setOptionLoading(false);
             }
-        );
-
-        if (response.status === 200) {
-            setRoomDetails(response.data)
-            setOptionLoading(false)
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error)) {
+                console.log(error.response?.data?.message);
+            }
         }
-    }
+    };
 
     return (
         <div className="relative inline-block text-left min-w-[15rem]">
@@ -106,21 +118,30 @@ const Dropdown: FC<{
                             </div>
                         ) : (
                             <>
-                                {roomDetails.map((rooms: RoomType, indx) => (
-                                    <div
-                                        className=" cursor-pointer flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full font-lato"
-                                        role="menuitem"
-                                        key={generateUniqueId() + indx}
-                                        onClick={() => handleSelection(rooms) }
-                                    >
-                                        <span className=" w-1/2 pl-8">
-                                            {rooms?.roomNumber}
-                                        </span>
-                                        <span className=" w-1/2">
-                                            {rooms?.roomName}
-                                        </span>
+                                {Array.isArray(roomDetails) &&
+                                roomDetails.length > 0 ? (
+                                    roomDetails.map((rooms: RoomType, indx) => (
+                                        <div
+                                            className="cursor-pointer flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full font-lato"
+                                            role="menuitem"
+                                            key={generateUniqueId() + indx}
+                                            onClick={() =>
+                                                handleSelection(rooms)
+                                            }
+                                        >
+                                            <span className="w-1/2 pl-8">
+                                                {rooms?.roomNumber}
+                                            </span>
+                                            <span className="w-1/2">
+                                                {rooms?.roomName}
+                                            </span>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-gray-500">
+                                        No rooms available
                                     </div>
-                                ))}
+                                )}
                             </>
                         )}
                     </div>

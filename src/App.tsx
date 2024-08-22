@@ -25,7 +25,7 @@ const App = () => {
         const user = JSON.parse(localStorage.getItem('userDetails') || '');
         const savedToken = user?.token
         
-        if(uniqueId !== savedToken) navigate('/home') //change it to '/'
+        if(uniqueId !== savedToken) navigate('/') //change it to '/'
         else {
             const getUser = async() => {
                 const response = await axios.get(`${URL}/users/me`, {

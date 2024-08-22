@@ -54,7 +54,7 @@ import c7 from '../images/courses/c7.png';
 import c8 from '../images/courses/c8.png';
 import c9 from '../images/courses/c9.png';
 
-import { CiHome } from "react-icons/ci";
+import { FiHome } from "react-icons/fi";
 import { MdOutlineAccountCircle } from "react-icons/md";
 import { AiOutlineContacts } from "react-icons/ai";
 import { ReactElement } from 'react';
@@ -640,7 +640,7 @@ export interface tabsType {
 export const tabs: tabsType[] = [
   {
     text: "Home",
-    icon: <CiHome />,
+    icon: <FiHome />,
     path: "home"
   },
   {

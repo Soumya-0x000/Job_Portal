@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Loading } from "../../../common/Loading";
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { initialValue, UserJobRoomTable } from "./UserJobRoomTable";
 import { URL } from "../../../API";
 import axios from "axios";
@@ -16,67 +16,86 @@ import Dropdown from "../Dropdown";
 
 const initialRoomState: userBookings[] = [
     {
-        roomName: '',
+        roomName: "",
         roomNumber: NaN,
-        bookingDate: '',
-        bookingId: '',
-        bookingStatus: 'upcoming'
-    }
+        bookingDate: "",
+        bookingId: "",
+        bookingStatus: "upcoming",
+    },
 ];
 
-const filterItems = [ 
+type roomNumBooking = {
+    bookingDate: string;
+    bookingId: string;
+    bookingStatus: string;
+};
+
+type roomNumBookingArr = {
+    roomName: string;
+    roomNumber: number;
+    bookings: roomNumBooking[];
+};
+
+const filterItems = [
     {
-        label: 'All data',
-        value: 'allTotal',
-    }, {
-        label: 'Room Number',
-        value: 'roomNumber',
-    }, {
-        label: 'Room number + date',
-        value: 'roomNumberNDate',
-    }
-]
+        label: "All data",
+        value: "allTotal",
+    },
+    {
+        label: "Room Number",
+        value: "roomNumber",
+    },
+    {
+        label: "Room number + date",
+        value: "roomNumberNDate",
+    },
+];
 
 export type paginationType = {
-    'limit': number,
-    'offset': number,
-}
+    limit: number;
+    offset: number;
+};
+
 export const initialPaginationVal: paginationType = {
     limit: 10,
-    offset: 0
-}
+    offset: 0,
+};
 
 const UserJobRooms = () => {
     const [rooms, setRooms] = useState<userBookings[]>(initialRoomState);
     const [loading, setLoading] = useState<boolean>(true);
-    const [fetchingMode, setFetchingMode] = useState<string>('allTotal');
+    const [fetchingMode, setFetchingMode] = useState<string>("allTotal");
     const [showInputs, setShowInputs] = useState<boolean>(false);
-    const [filteringData, setFilteringData] = useState<typeof initialValue>(initialValue);
+    const [filteringData, setFilteringData] =
+        useState<typeof initialValue>(initialValue);
     const [roomNumDDopen, setRoomNumDDopen] = useState<boolean>(false);
     const [isCheckingAvail, setIsCheckingAvail] = useState<boolean>(false);
-    const [adminToken, setAdminToken] = useState<string>(JSON.parse(localStorage.getItem('userDetails') || '{}')?.token);
-    const [paginationData, setPaginationData] = useState<paginationType>(initialPaginationVal);
+    const [adminToken, setAdminToken] = useState<string>(
+        JSON.parse(localStorage.getItem("userDetails") || "{}")?.token
+    );
+    const [paginationData, setPaginationData] =
+        useState<paginationType>(initialPaginationVal);
     const [moreData, setMoreData] = useState<boolean>(true);
     const [dataCount, setDataCount] = useState<{
         totalBookings: number;
-        limit: number
+        limit: number;
     }>({
         totalBookings: 0,
-        limit: 0
+        limit: 0,
     });
-   
-    const toastShown = useRef<boolean>(false);
-    // const [isPgLoaded, setIsPgLoaded] = useState<boolean>(false);
 
-    const primaryEndpoint = (limit: number, offset: number) => `room-booking/get-booking-details?limit=${limit}&offset=${offset}`;
+    const toastShown = useRef<boolean>(false);
+
+    const primaryEndpoint = (limit: number, offset: number) =>
+        `room-booking/get-booking-details?limit=${limit}&offset=${offset}`;
 
     useEffect(() => {
-        const userDetail = localStorage.getItem('userDetails') || '{}';
+        const userDetail = localStorage.getItem("userDetails") || "{}";
         const authToken = JSON.parse(userDetail)?.token;
 
-        if (authToken) setAdminToken(authToken)
+        if (authToken) setAdminToken(authToken);
         else {
-            showToastMsg('Authentication token is missing');
+            showToastMsg("Authentication token is missing");
             setLoading(false);
         }
     }, []);
@@ -84,7 +103,7 @@ const UserJobRooms = () => {
     useEffect(() => {
         const timer = setTimeout(() => {
             if (loading) {
-                showToastMsg('Loading is taking too long');
+                showToastMsg("Loading is taking too long");
             }
         }, 2000);
 
@@ -93,33 +112,80 @@ const UserJobRooms = () => {
 
     const fetchBookingDetails = async (endpoint: string) => {
         try {
-            const finalUrl = `${URL}/${endpoint}`
+            const finalUrl = `${URL}/${endpoint}`;
             const rqstHeader = {
-                'Content-Type': 'application/json',
-                'ngrok-skip-browser-warning': '69420',
-                authorization: `token ${adminToken}`
-            }
+                "Content-Type": "application/json",
+                "ngrok-skip-browser-warning": "69420",
+                authorization: `token ${adminToken}`,
+            };
 
-            const { data, status } = await axios.get(finalUrl, { headers: rqstHeader });
+            const { data, status } = await axios.get(finalUrl, {
+                headers: rqstHeader,
+            });
+
             if (status === 200) {
-                if(data.data === null) showToastMsg(data.message)
+                if (data.data === null) showToastMsg(data.message);
                 else {
+                    const mainData = data.data;
                     setDataCount({
-                        totalBookings: data.data.totalBookings,
-                        limit: data.data.limit
-                    })
-                    const isMoreData = data.data.totalBookings-data.data.limit
-                    setMoreData(isMoreData > 0 ? true : false)
-                    setRooms(data.data.bookings);
+                        totalBookings: mainData.totalBookings,
+                        limit: mainData.limit,
+                    });
+                    const isMoreData = mainData.totalBookings - mainData.limit;
+                    setMoreData(isMoreData > 0 ? true : false);
+
+                    const formatRoomData = (
+                        data: userBookings[] | roomNumBookingArr
+                    ): userBookings[] => {
+                        if (Array.isArray(data)) {
+                            return data.map((room) => ({
+                                roomName: room.roomName,
+                                roomNumber: room.roomNumber,
+                                bookingDate: room.bookingDate,
+                                bookingId: room.bookingId,
+                                bookingStatus: room.bookingStatus as
+                                    | "upcoming"
+                                    | "past",
+                            }));
+                        } else {
+                            return data.bookings.map((booking) => ({
+                                roomName: data.roomName,
+                                roomNumber: data.roomNumber,
+                                bookingDate: booking.bookingDate,
+                                bookingId: booking.bookingId,
+                                bookingStatus: booking.bookingStatus as
+                                    | "upcoming"
+                                    | "past",
+                            }));
+                        }
+                    };
+
+                    if (fetchingMode === "allTotal") {
+                        const formattedRooms = formatRoomData(
+                            mainData.bookings as userBookings[]
+                        );
+                        setRooms(formattedRooms);
+                    } else if (fetchingMode === 'roomNumber'){
+                        const formattedRoom = formatRoomData(
+                            mainData as roomNumBookingArr
+                        );
+                        setRooms(formattedRoom);
+                    } else {
+                        const formattedRoom = formatRoomData(
+                            [mainData] as userBookings[]
+                        );
+                        setRooms(formattedRoom);
+                    }
                 }
-            } else showToastMsg('Failed to fetch booking details');
+            } else showToastMsg("Failed to fetch booking details");
         } catch (error: unknown) {
             if (!toastShown.current) {
                 if (axios.isAxiosError(error)) {
-                    const errorMessage = error.response?.data?.message || error.message;
+                    const errorMessage =
+                        error.response?.data?.message || error.message;
                     showToastMsg(errorMessage);
-                } else showToastMsg('An unexpected error occurred');
-                toastShown.current = true; 
+                } else showToastMsg("An unexpected error occurred");
+                toastShown.current = true;
             }
         } finally {
             setLoading(false);
@@ -127,15 +193,26 @@ const UserJobRooms = () => {
     };
 
     useEffect(() => {
-        switch(fetchingMode) {
-            case 'roomNumber':
-                if(filteringData.roomNumber) setIsCheckingAvail(true)
+        if (fetchingMode === "allTotal") {
+            const createURL = primaryEndpoint(
+                initialPaginationVal.limit,
+                initialPaginationVal.offset
+            );
+            fetchBookingDetails(createURL);
+        }
+    }, [fetchingMode]);
+
+    useEffect(() => {
+        switch (fetchingMode) {
+            case "roomNumber":
+                if (filteringData.roomNumber) setIsCheckingAvail(true);
                 break;
-            case 'roomNumberNDate':
-                if(filteringData.roomNumber && filteringData.bookingDate) setIsCheckingAvail(true)
+            case "roomNumberNDate":
+                if (filteringData.roomNumber && filteringData.bookingDate)
+                    setIsCheckingAvail(true);
                 break;
             default:
-                setIsCheckingAvail(false)
+                setIsCheckingAvail(false);
                 break;
         }
     }, [filteringData]);
@@ -147,58 +224,68 @@ const UserJobRooms = () => {
     }, []);
 
     const handleRoomSelection = (roomNumber: number) => {
-        setFilteringData(prev => ({
-            ...prev, roomNumber
-        }))
-    }
+        setFilteringData((prev) => ({
+            ...prev,
+            roomNumber,
+        }));
+    };
 
     const handleDateSelection = (bookingDate: Dayjs | null) => {
-        setFilteringData(prev => ({
-            ...prev, bookingDate
+        setFilteringData((prev) => ({
+            ...prev,
+            bookingDate,
         }));
     };
 
     const fetchConditionalData = (createdURL: string) => {
-        switch(fetchingMode) {
-            case 'allTotal':
+        switch (fetchingMode) {
+            case "allTotal":
                 fetchBookingDetails(createdURL);
                 break;
-            case 'roomNumber':
-                if(filteringData.roomNumber) {
-                    const newURL = `${createdURL}&roomNumber=${filteringData.roomNumber}`
+            case "roomNumber":
+                if (filteringData.roomNumber) {
+                    const newURL = `${createdURL}&roomNumber=${filteringData.roomNumber}`;
                     fetchBookingDetails(newURL);
-                } else showToastMsg('Enter a room number first')
+                } else showToastMsg("Enter a room number first");
                 break;
-            case 'roomNumberNDate':
-                if(filteringData.roomNumber && filteringData.bookingDate) {
-                    const newURL = `${createdURL}&roomNumber=${filteringData.roomNumber}&date=${filteringData.bookingDate.format('YYYY-MM-DD')}`
+            case "roomNumberNDate":
+                if (filteringData.roomNumber && filteringData.bookingDate) {
+                    const newURL = `${createdURL}&roomNumber=${
+                        filteringData.roomNumber
+                    }&date=${filteringData.bookingDate.format("YYYY-MM-DD")}`;
                     fetchBookingDetails(newURL);
-                } else showToastMsg('Enter a room number and date first')
+                } else showToastMsg("Enter a room number and date first");
                 break;
             default:
-                showToastMsg('Select a valid filtering mode')
+                showToastMsg("Select a valid filtering mode");
                 break;
         }
 
-        setShowInputs(false)
-    }
+        setShowInputs(false);
+    };
 
     useEffect(() => {
-        if(moreData) {
-            const createURL = primaryEndpoint(paginationData.limit, paginationData.offset)
-            
-            fetchConditionalData(createURL)
+        if (moreData) {
+            const createURL = primaryEndpoint(
+                paginationData.limit,
+                paginationData.offset
+            );
+
+            fetchConditionalData(createURL);
         }
-    }, [paginationData.limit, paginationData.offset]);
+    }, [paginationData.offset]);
 
     const handleCancelation = () => {
-        setShowInputs(false)
-        setFilteringData(initialValue)
-    }
+        setShowInputs(false);
+        setFilteringData(initialValue);
+    };
 
     const handleCheckClick = () => {
-        const createURL = primaryEndpoint(paginationData.limit, paginationData.offset)
-        fetchConditionalData(createURL)
+        const createURL = primaryEndpoint(
+            paginationData.limit,
+            paginationData.offset
+        );
+        fetchConditionalData(createURL);
     };
 
     return (

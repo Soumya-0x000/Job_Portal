@@ -9,7 +9,7 @@ const AdminPanel: FC = () => {
 
     const location = useLocation();
     const uniqueId = location?.state
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const admin = JSON.parse(localStorage.getItem('adminDetails') || '');

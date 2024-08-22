@@ -1,4 +1,4 @@
-import { ChangeEvent, Dispatch, FC, SetStateAction, useState } from 'react';
+import { ChangeEvent, Dispatch, FC, SetStateAction, useState } from "react";
 import {
     Dialog,
     DialogActions,
@@ -7,12 +7,21 @@ import {
     Button,
     Box,
     Pagination,
-} from '@mui/material';
-import { DataGrid, GridRenderCellParams, GridRowParams, GridToolbar } from '@mui/x-data-grid';
-import { Transition } from '../../../../common/DialogComponent';
-import { formatDateTime } from '../../../../common/formatDateTime';
-import { useMediaQuery, useTheme } from '@mui/material';
-import { adminPaginationType, bookingPaginationType, initialBookingsData } from './AdminRooms';
+} from "@mui/material";
+import {
+    DataGrid,
+    GridRenderCellParams,
+    GridRowParams,
+    GridToolbar,
+} from "@mui/x-data-grid";
+import { Transition } from "../../../../common/DialogComponent";
+import { formatDateTime } from "../../../../common/formatDateTime";
+import { useMediaQuery, useTheme } from "@mui/material";
+import {
+    adminPaginationType,
+    bookingPaginationType,
+    initialBookingsData,
+} from "./AdminRooms";
 
 interface Candidate {
     bookingDate: string;
@@ -49,39 +58,52 @@ const AppliedCandidatesDialog: React.FC<{
     candidates: Candidate[];
     setBookingPaginationData: Dispatch<SetStateAction<bookingPaginationType>>;
     bookingPaginationData: bookingPaginationType;
-}> = ({ 
-    open, onClose, candidates, setBookingPaginationData, bookingPaginationData
+}> = ({
+    open,
+    onClose,
+    candidates,
+    setBookingPaginationData,
+    bookingPaginationData,
 }) => {
     const [page, setPage] = useState<number>(1);
 
     const candidateColumns = [
-        { field: 'bookingDate', headerName: 'Booking Date', width: 250 },
-        { field: 'username', headerName: 'Name', width: 300 },
-        { field: 'email', headerName: 'Email', width: 300 },
-        { field: 'status', headerName: 'Status', width: 300 },
+        { field: "bookingDate", headerName: "Booking Date", width: 250 },
+        { field: "username", headerName: "Name", width: 300 },
+        { field: "email", headerName: "Email", width: 300 },
+        { field: "status", headerName: "Status", width: 300 },
     ];
-    const candidateRows = candidates.map(candidate => ({
+
+    const candidateRows = candidates.map((candidate) => ({
         id: candidate.bookingId,
         bookingDate: formatDateTime(candidate.bookingDate),
         username: candidate.userDetails?.username || "N/A",
         email: candidate.userDetails?.email || "N/A",
-        status: candidate.bookingStatus
+        status: candidate.bookingStatus,
     }));
 
-    const handlePaginationPgCount = (_event: ChangeEvent<unknown>, page: number) => {
-        setPage(page)
+    const handlePaginationPgCount = (
+        _event: ChangeEvent<unknown>,
+        page: number
+    ) => {
+        setPage(page);
         setBookingPaginationData((prev: bookingPaginationType) => ({
             ...prev,
-            bookingOffset: (page-1) * (prev.bookingLimit)
+            bookingOffset: (page - 1) * prev.bookingLimit,
         }));
-    }
+    };
 
     return (
-        <Dialog open={open} onClose={onClose}  maxWidth="md" TransitionComponent={Transition}>
+        <Dialog
+            open={open}
+            onClose={onClose}
+            maxWidth="md"
+            TransitionComponent={Transition}
+        >
             <DialogTitle>Applied Candidates</DialogTitle>
 
             <DialogContent>
-                <Box sx={{ height: 500, width: '100%', position: 'relative' }}>
+                <Box sx={{ height: 500, width: "100%", position: "relative" }}>
                     <DataGrid
                         rows={candidateRows}
                         columns={candidateColumns}
@@ -91,54 +113,57 @@ const AppliedCandidatesDialog: React.FC<{
                                 showQuickFilter: true,
                             },
                         }}
-                        className='dialog-custom-class'
+                        className="dialog-custom-class"
                         sx={{
-                            '& .MuiDataGrid-toolbarContainer': {
-                                marginBottom: 1,
+                            "& .MuiDataGrid-toolbarContainer": {
+                                marginBottom: 0.3,
                                 paddingBottom: 1,
-                                backgroundColor: 'rgb(201, 224, 255)',
+                                backgroundColor: "rgb(201, 224, 255)",
                             },
-                            '& .MuiDataGrid-columnHeader': {
-                                backgroundColor: '#d0fdeb',
+                            "& .MuiDataGrid-columnHeader": {
+                                backgroundColor: "#d0fdeb",
                             },
-                            '& .MuiDataGrid-cell': {
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '17px'
+                            "& .MuiDataGrid-cell": {
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "17px",
                             },
-                            '& .MuiDataGrid-root': {
-                                border: 'none',
-                                outline: 'none'
+                            "& .MuiDataGrid-root": {
+                                border: "none",
+                                outline: "none",
                             },
-                            '& .dialog-custom-class': {
-                                border: 'none',
-                                backgroundColor: '#e6fefd',
-                                color: '#037346',
-                                '&:hover': {
-                                    backgroundColor: '#d4ffff',
-                                    color: '#024d3b', 
+                            "& .dialog-custom-class": {
+                                border: "none",
+                                backgroundColor: "#e6fefd",
+                                color: "#037346",
+                                "&:hover": {
+                                    backgroundColor: "#d4ffff",
+                                    color: "#024d3b",
                                 },
                             },
-                            '& .MuiDataGrid-row.Mui-selected': {
-                                backgroundColor: '#d0fdeb',
+                            "& .MuiDataGrid-row.Mui-selected": {
+                                backgroundColor: "#d0fdeb",
                             },
-                            '&  .MuiDataGrid-row.Mui-selected:hover': {
-                                backgroundColor: '#d0fdeb',  
+                            "&  .MuiDataGrid-row.Mui-selected:hover": {
+                                backgroundColor: "#d0fdeb",
                             },
-                            '& .MuiDataGrid-footerContainer ': {
-                                display: 'none',
-                                backgroundColor: 'rgb(201, 224, 255)',
+                            "& .MuiDataGrid-footerContainer ": {
+                                display: "none",
+                                backgroundColor: "rgb(201, 224, 255)",
                             },
                         }}
                     />
 
                     <div className=" fixed left-1/2 -translate-x-1/2 bottom-2 bg-slate-100 px-2 py-1.5 rounded-lg overflow-hidden">
-                        <Pagination 
-                            count={Math.ceil(bookingPaginationData.totalBookings/bookingPaginationData.bookingLimit)} 
-                            page={page} 
-                            onChange={handlePaginationPgCount} 
-                            variant="outlined" 
+                        <Pagination
+                            count={Math.ceil(
+                                bookingPaginationData.totalBookings /
+                                    bookingPaginationData.bookingLimit
+                            )}
+                            page={page}
+                            onChange={handlePaginationPgCount}
+                            variant="outlined"
                             shape="rounded"
                         />
                     </div>
@@ -146,10 +171,12 @@ const AppliedCandidatesDialog: React.FC<{
             </DialogContent>
 
             <DialogActions>
-                <Button onClick={() => (
-                    onClose(),
-                    setBookingPaginationData(initialBookingsData)
-                )} color="primary">
+                <Button
+                    onClick={() => (
+                        onClose(), setBookingPaginationData(initialBookingsData)
+                    )}
+                    color="primary"
+                >
                     Close
                 </Button>
             </DialogActions>
@@ -157,17 +184,19 @@ const AppliedCandidatesDialog: React.FC<{
     );
 };
 
-const RoomRow: React.FC<{ 
+const RoomRow: React.FC<{
     room: Room;
     setBookingPaginationData: Dispatch<SetStateAction<bookingPaginationType>>;
-    bookingPaginationData: bookingPaginationType; 
-}> = ({ 
-    room, setBookingPaginationData, bookingPaginationData 
-}) => {
+    bookingPaginationData: bookingPaginationType;
+}> = ({ room, setBookingPaginationData, bookingPaginationData }) => {
     const [dialogOpen, setDialogOpen] = useState(false);
 
     const handleCandidateClick = () => {
-        if (room.totalBookings !== undefined && room.bookingOffset !== undefined && room.bookingLimit !== undefined) {
+        if (
+            room.totalBookings !== undefined &&
+            room.bookingOffset !== undefined &&
+            room.bookingLimit !== undefined
+        ) {
             setBookingPaginationData({
                 totalBookings: room.totalBookings,
                 bookingOffset: room.bookingOffset,
@@ -181,8 +210,9 @@ const RoomRow: React.FC<{
 
     return (
         <>
-            <div className=' flex items-center justify-center w-full h-full'>
-                <button className=' text-indigo-900 font-mono font-bold bg-indigo-200 rounded-lg h-9 flex items-center justify-center px-4'
+            <div className=" flex items-center justify-center w-full h-full">
+                <button
+                    className=" text-indigo-900 font-mono font-bold bg-indigo-200 rounded-lg h-9 flex items-center justify-center px-4"
                     onClick={handleCandidateClick}
                 >
                     Applied Candidates
@@ -200,12 +230,17 @@ const RoomRow: React.FC<{
     );
 };
 
-
-export const AdminJobRoomTable: FC<JobRoomTableProps> = ({ rooms, setPaginationData, paginationData, setBookingPaginationData, bookingPaginationData }) => {
+export const AdminJobRoomTable: FC<JobRoomTableProps> = ({
+    rooms,
+    setPaginationData,
+    paginationData,
+    setBookingPaginationData,
+    bookingPaginationData,
+}) => {
     const theme = useTheme();
     const isSmToMd = useMediaQuery(theme.breakpoints.between(640, 768));
     const isMdToLg = useMediaQuery(theme.breakpoints.between(768, 1024));
-    const isLgToXl = useMediaQuery(theme.breakpoints.between(1024, 1280)); 
+    const isLgToXl = useMediaQuery(theme.breakpoints.between(1024, 1280));
     const isLgTo2Xl = useMediaQuery(theme.breakpoints.between(1280, 1536));
     const isXlUp = useMediaQuery(theme.breakpoints.up(1536));
 
@@ -214,57 +249,78 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({ rooms, setPaginationD
     const getColumnWidth = (defaultWidth: number) => {
         if (isSmToMd) return defaultWidth * 0.5;
         if (isMdToLg) return defaultWidth * 0.74;
-        if (isLgToXl) return defaultWidth * 0.8; 
+        if (isLgToXl) return defaultWidth * 0.8;
         if (isLgTo2Xl) return defaultWidth * 1.12;
         if (isXlUp) return defaultWidth * 1.26;
         return defaultWidth;
     };
 
     const roomColumns = [
-        { field: 'count', headerName: 'Index', width: getColumnWidth(130) },
-        { field: 'roomName', headerName: 'Room Name', width: getColumnWidth(300) },
-        { field: 'roomNumber', headerName: 'Room Number', width: getColumnWidth(200) },
-        { field: 'seatCapacity', headerName: 'Seat Capacity', width: getColumnWidth(200) },
+        { field: "count", headerName: "Index", width: getColumnWidth(130) },
         {
-            field: 'actions',
-            headerName: 'Applied Candidates',
-            width: getColumnWidth(350),
-            renderCell: (params: GridRenderCellParams<Room>) => 
-                <RoomRow 
+            field: "roomName",
+            headerName: "Room Name",
+            width: getColumnWidth(300),
+        },
+        {
+            field: "roomNumber",
+            headerName: "Room Number",
+            width: getColumnWidth(200),
+        },
+        {
+            field: "seatCapacity",
+            headerName: "Seat Capacity",
+            width: getColumnWidth(200),
+        },
+        {
+            field: "actions",
+            headerName: "Applied Candidates",
+            width: getColumnWidth(360),
+            renderCell: (params: GridRenderCellParams<Room>) => (
+                <RoomRow
                     setBookingPaginationData={setBookingPaginationData}
                     bookingPaginationData={bookingPaginationData}
-                    room={params.row} 
-                />,
+                    room={params.row}
+                />
+            ),
         },
     ];
 
-    const roomRows = (Array.isArray(rooms) ? rooms : [rooms]).map((room, index) => ({
-        count: index + 1,
-        id: room._id,
-        roomName: room.roomName,
-        roomNumber: room.roomNumber,
-        seatCapacity: room.seatCapacity,
-        appliedCandidates: room.appliedCandidates,
-        totalBookings: room.totalBookings,
-        bookingLimit: room.bookingLimit,
-        bookingOffset: room.bookingOffset
-    }));
+    const roomRows = (Array.isArray(rooms) ? rooms : [rooms]).map(
+        (room, index) => ({
+            count: index + 1,
+            id: room._id,
+            roomName: room.roomName,
+            roomNumber: room.roomNumber,
+            seatCapacity: room.seatCapacity,
+            appliedCandidates: room.appliedCandidates,
+            totalBookings:
+                room.totalBookings || initialBookingsData.totalBookings,
+            bookingLimit:
+                room.bookingLimit || initialBookingsData.bookingLimit,
+            bookingOffset:
+                room.bookingOffset || initialBookingsData.bookingOffset,
+        })
+    );
 
     const getRowClassName = (params: GridRowParams) => {
         const status = params.row.bookingStatus;
-        return status === 'pending' ? 'pending-row' : 'approved-row';
+        return status === "pending" ? "pending-row" : "approved-row";
     };
 
-    const handlePaginationPgCount = (_event: ChangeEvent<unknown>, page: number) => {
-        setPage(page)
+    const handlePaginationPgCount = (
+        _event: ChangeEvent<unknown>,
+        page: number
+    ) => {
+        setPage(page);
         setPaginationData((prev: adminPaginationType) => ({
             ...prev,
-            offset: (page-1) * (prev.limit)
+            offset: (page - 1) * prev.limit,
         }));
-    }
+    };
 
     return (
-        <div className='w-[100%] overflow-auto rounded-lg'>
+        <div className="w-[100%] overflow-auto rounded-lg">
             <DataGrid
                 rows={roomRows}
                 columns={roomColumns}
@@ -272,60 +328,65 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({ rooms, setPaginationD
                 slotProps={{
                     toolbar: { showQuickFilter: true },
                 }}
-                className='custom-class'
+                className="custom-class"
                 sx={{
-                    '& .MuiDataGrid-toolbarContainer': {
-                        marginBottom: .4,
+                    "& .MuiDataGrid-toolbarContainer": {
+                        marginBottom: 0.4,
                         paddingBottom: 1,
-                        backgroundColor: 'rgb(201, 224, 255)',
+                        backgroundColor: "rgb(201, 224, 255)",
                     },
-                    '& .MuiDataGrid-columnHeader': {
-                        backgroundColor: '#d0fdeb',
+                    "& .MuiDataGrid-columnHeader": {
+                        backgroundColor: "#d0fdeb",
                     },
-                    '& .MuiDataGrid-cell': {
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '17px'
+                    "& .MuiDataGrid-cell": {
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "17px",
                     },
-                    '& .MuiDataGrid-root': {
-                        border: 'none',
-                        outline: 'none'
+                    "& .MuiDataGrid-root": {
+                        border: "none",
+                        outline: "none",
                     },
-                    '& .approved-row': {
-                        border: 'none',
-                        backgroundColor: '#e6fefd',
-                        color: '#037346',
-                        '&:hover': {
-                            backgroundColor: '#f8ffc1',
-                            color: '#7e8e01', 
+                    "& .approved-row": {
+                        border: "none",
+                        backgroundColor: "#e6fefd",
+                        color: "#037346",
+                        "&:hover": {
+                            backgroundColor: "#f8ffc1",
+                            color: "#7e8e01",
                         },
                     },
-                    '& .MuiDataGrid-row.Mui-selected': {
-                        backgroundColor: '#5ebfe0',
-                        color: '#dff6fe'
+                    "& .MuiDataGrid-row": {
+                        border: "0.2px solid #eaeaea",
                     },
-                    '&  .MuiDataGrid-row.Mui-selected:hover': {
-                        backgroundColor: '#5ebfe0',
-                        color: '#dff6fe'
+                    "& .MuiDataGrid-row.Mui-selected": {
+                        backgroundColor: "#5ebfe0",
+                        color: "#dff6fe",
                     },
-                    '& .MuiDataGrid-footerContainer ': {
-                        display: 'none',
-                        backgroundColor: 'rgb(201, 224, 255)',
+                    "&  .MuiDataGrid-row.Mui-selected:hover": {
+                        backgroundColor: "#5ebfe0",
+                        color: "#dff6fe",
                     },
-                    '& .MuiDataGrid-filler': {
-                        display: 'none'
-                    }
+                    "& .MuiDataGrid-footerContainer ": {
+                        display: "none",
+                        backgroundColor: "rgb(201, 224, 255)",
+                    },
+                    "& .MuiDataGrid-filler": {
+                        display: "none",
+                    },
                 }}
                 getRowClassName={getRowClassName}
             />
 
             <div className=" fixed left-1/2 -translate-x-1/2 bottom-2 bg-slate-100 px-2 py-1.5 rounded-lg overflow-hidden">
-                <Pagination 
-                    count={Math.ceil(paginationData.totalRooms/paginationData.limit)} 
-                    page={page} 
-                    onChange={handlePaginationPgCount} 
-                    variant="outlined" 
+                <Pagination
+                    count={Math.ceil(
+                        paginationData.totalRooms / paginationData.limit
+                    )}
+                    page={page}
+                    onChange={handlePaginationPgCount}
+                    variant="outlined"
                     shape="rounded"
                 />
             </div>

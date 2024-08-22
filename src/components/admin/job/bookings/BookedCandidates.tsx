@@ -16,6 +16,7 @@ import { IoClose } from "react-icons/io5";
 import { DataGrid, GridRowParams, GridToolbar } from "@mui/x-data-grid";
 import RoomNumDtFilter from "../../../../common/RoomNumDtFilter";
 import { URL } from "../../../../API";
+import { showToastMsg } from "../../../../common/ToastMsg";
 
 const filterItems = [
     {
@@ -110,12 +111,9 @@ const BookedCandidates: FC<{
             }
         } catch (error: unknown) {
             if (axios.isAxiosError(error))
-                console.error(
-                    "Axios error fetching room details:",
-                    error.response?.data?.message || error.message
-                );
+                showToastMsg(error.response?.data?.message || error.message);
             else if (error instanceof Error)
-                console.error("Error fetching room details:", error.message);
+                showToastMsg(error.message);
             else
                 console.error(
                     "An unknown error occurred while fetching room details"
@@ -193,41 +191,36 @@ const BookedCandidates: FC<{
             maxWidth="md"
             TransitionComponent={Transition}
         >
-            <div className=" w-full py-2 px-3">
-                <div className=" w-full bg-slate-500 flex items-center justify-between px-2 rounded-lg">
-                    <IoClose
-                        className=" text-slate-50 text-[2rem] rounded-full bg-slate-800 p-1 cursor-pointer"
-                        onClick={() => onClose()}
-                    />
-
-                    <span className=" text-slate-50 text-lg">
-                        Applied Candidates
-                    </span>
-
-                    <DialogActions>
-                        <Button
-                            onClick={() => (
-                                onClose(),
-                                setBookingPaginationData(initialBookingData)
-                            )}
-                            sx={{
-                                color: "#fff",
-                                backgroundColor: "#000",
-                                "&:hover": {
-                                    backgroundColor: "#000",
-                                },
-                            }}
-                        >
-                            Close
-                        </Button>
-                    </DialogActions>
-                </div>
-            </div>
-
             <DialogContent>
                 <Box sx={{ height: 500, width: "100%", position: "relative" }}>
                     <div className=" w-full flex items-center justify-center overflow-auto">
                         <div className=" max-w-[70rem] overflow-auto rounded-lg">
+                            <div className=" w-full bg-slate-400 flex items-center justify-between px- mb-2">
+                                <span className=" text-slate-50 text-[1.2rem] pl-4 font-onest tracking-wide font-bold">
+                                    Applied Candidates
+                                </span>
+
+                                <DialogActions>
+                                    <Button
+                                        onClick={() => (
+                                            onClose(),
+                                            setBookingPaginationData(
+                                                initialBookingData
+                                            )
+                                        )}
+                                        sx={{
+                                            color: "#000",
+                                            fontWeight: "bold",
+                                            backgroundColor: "#f1f1f1",
+                                            "&:hover": {
+                                                backgroundColor: "#f1f1f1",
+                                            },
+                                        }}
+                                    >
+                                        Close
+                                    </Button>
+                                </DialogActions>
+                            </div>
                             <DataGrid
                                 rows={candidateRows}
                                 columns={candidateColumns}
@@ -241,7 +234,7 @@ const BookedCandidates: FC<{
                                 sx={{
                                     width: 1200,
                                     "& .MuiDataGrid-toolbarContainer": {
-                                        marginBottom: 1,
+                                        marginBottom: 0.3,
                                         paddingBottom: 1,
                                         backgroundColor: "rgb(201, 224, 255)",
                                     },
@@ -255,6 +248,7 @@ const BookedCandidates: FC<{
                                         fontSize: "17px",
                                     },
                                     "& .MuiDataGrid-root": {
+                                        borderRadius: "10px",
                                         border: "none",
                                         borderWidth: "0px",
                                         outline: "none",
@@ -279,6 +273,9 @@ const BookedCandidates: FC<{
                                         "&:active": {
                                             backgroundColor: "#e1fff8",
                                         },
+                                    },
+                                    "& .MuiDataGrid-row": {
+                                        border: "0.2px solid #eaeaea",
                                     },
                                     "& .MuiDataGrid-row.Mui-selected": {
                                         backgroundColor: "#fcfff4",

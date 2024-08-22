@@ -80,57 +80,60 @@ const ShowJobs: FC = () => {
                         }}
                         sx={{
                             width: 1200,
-                            '& .MuiDataGrid-toolbarContainer': {
-                                marginBottom: .3,
+                            "& .MuiDataGrid-toolbarContainer": {
+                                marginBottom: 0.3,
                                 paddingBottom: 1,
-                                backgroundColor: 'rgb(201, 224, 255)',
+                                backgroundColor: "rgb(201, 224, 255)",
                             },
-                            '& .MuiDataGrid-columnHeader': {
-                                backgroundColor: '#d0fdeb',
+                            "& .MuiDataGrid-columnHeader": {
+                                backgroundColor: "#d0fdeb",
                             },
-                            '& .MuiDataGrid-cell': {
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '17px'
+                            "& .MuiDataGrid-cell": {
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "17px",
                             },
-                            '& .MuiDataGrid-root': {
-                                border: 'none',
-                                borderWidth: '0px',
-                                outline: 'none',
+                            "& .MuiDataGrid-root": {
+                                border: "none",
+                                borderWidth: "0px",
+                                outline: "none",
                             },
-                            '& .pending-row': {
-                                border: 'none',
-                                backgroundColor: '#eafffa',
-                                color: '#353938',
-                                '&:hover': {
-                                    backgroundColor: '#7e8e01',
-                                    color: '#f8ffc1', 
+                            "& .pending-row": {
+                                border: "none",
+                                backgroundColor: "#eafffa",
+                                color: "#353938",
+                                "&:hover": {
+                                    backgroundColor: "#9cc3c9",
+                                    color: "#fff",
                                 },
                             },
-                            '& .approved-row': {
-                                border: 'none',
-                                backgroundColor: '#d8f9ff',
-                                color: '#003d48',
-                                '&:hover': {
-                                    backgroundColor: '#7e8e01',
-                                    color: '#f8ffc1', 
+                            "& .approved-row": {
+                                border: "none",
+                                backgroundColor: "#d8f9ff",
+                                color: "#003d48",
+                                "&:hover": {
+                                    backgroundColor: "#9cc3c9",
+                                    color: "#fff",
                                 },
-                                '&:active': {
-                                    backgroundColor: '#e1fff8',
-                                }
+                                "&:active": {
+                                    backgroundColor: "#e1fff8",
+                                },
                             },
-                            '& .MuiDataGrid-row.Mui-selected': {
-                                backgroundColor: '#3f99b8',
-                                color: '#dff6fe'
+                            "& .MuiDataGrid-row": {
+                                border: "0.2px solid #eaeaea",
                             },
-                            '&  .MuiDataGrid-row.Mui-selected:hover': {
-                                 backgroundColor: '#3f99b8',
-                                color: '#dff6fe'
+                            "& .MuiDataGrid-row.Mui-selected": {
+                                backgroundColor: "#3f99b8",
+                                color: "#dff6fe",
                             },
-                            '& .MuiDataGrid-footerContainer ': {
-                                display: 'none',
-                                border: 'none',
+                            "&  .MuiDataGrid-row.Mui-selected:hover": {
+                                backgroundColor: "#3f99b8",
+                                color: "#dff6fe",
+                            },
+                            "& .MuiDataGrid-footerContainer ": {
+                                display: "none",
+                                border: "none",
                             },
                         }}
                         className="custom-class"

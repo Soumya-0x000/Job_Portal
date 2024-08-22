@@ -9,12 +9,14 @@ interface bookingProps {
     bookings: UserBooking[];
     setPaginationData: Dispatch<SetStateAction<userBookingPaginationType>>;
     paginationData: userBookingPaginationType;
+    isMoreData: boolean;
 }
 
 export const BookingTable: FC<bookingProps> = ({
     bookings,
     setPaginationData,
     paginationData,
+    isMoreData,
 }) => {
     const [userName, setUserName] = useState<string>("");
     const theme = useTheme();
@@ -64,7 +66,7 @@ export const BookingTable: FC<bookingProps> = ({
             renderCell: (params: GridRenderCellParams<UserBooking>) => (
                 <strong>
                     <button
-                        className=" bg-slate-800 text-slate-100 font-mono text-lg px-3 py-1.5 rounded-lg active:scale-110 transition-all"
+                        className=" bg-slate-200 ring-1 ring-slate-400 text-slate-700 font-mono text-lg px-3 py-1.5 rounded-lg active:scale-110 hover:scale-95 transition-all"
                         onClick={() =>
                             handleCandidateClick(params.row.username)
                         }
@@ -108,7 +110,7 @@ export const BookingTable: FC<bookingProps> = ({
                 className="custom-class"
                 sx={{
                     "& .MuiDataGrid-toolbarContainer": {
-                        marginBottom: 1,
+                        marginBottom: 0.3,
                         paddingBottom: 1,
                         backgroundColor: "rgb(201, 224, 255)",
                     },
@@ -117,6 +119,7 @@ export const BookingTable: FC<bookingProps> = ({
                         width: "100%",
                     },
                     "& .MuiDataGrid-cell": {
+                        marginBottom: 0.1,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -134,6 +137,9 @@ export const BookingTable: FC<bookingProps> = ({
                             backgroundColor: "#f8ffc1",
                             color: "#7e8e01",
                         },
+                    },
+                    "& .MuiDataGrid-row": {
+                        border: "0.2px solid #eaeaea",
                     },
                     "& .MuiDataGrid-row.Mui-selected": {
                         backgroundColor: "#5ebfe0",
@@ -158,17 +164,20 @@ export const BookingTable: FC<bookingProps> = ({
                 getRowClassName={() => "userBookings"}
             />
 
-            <div className=" fixed left-1/2 -translate-x-1/2 bottom-2 bg-slate-100 px-2 py-1.5 rounded-lg overflow-hidden">
-                <Pagination
-                    count={Math.ceil(
-                        paginationData.totalUsers / paginationData.limit
-                    )}
-                    page={page}
-                    onChange={handlePaginationPgCount}
-                    variant="outlined"
-                    shape="rounded"
-                />
-            </div>
+            {/* pagination */}
+            {isMoreData && (
+                <div className=" fixed left-1/2 -translate-x-1/2 bottom-2 bg-slate-100 px-2 py-1.5 rounded-lg overflow-hidden">
+                    <Pagination
+                        count={Math.ceil(
+                            paginationData.totalUsers / paginationData.limit
+                        )}
+                        page={page}
+                        onChange={handlePaginationPgCount}
+                        variant="outlined"
+                        shape="rounded"
+                    />
+                </div>
+            )}
         </div>
     );
 };
