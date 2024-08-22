@@ -41,7 +41,8 @@ const Dropdown: FC<{
         }
     }, [open])
 
-    const fetchRoomDetails: (authToken: string) => void = async(authToken) => {
+    const fetchRoomDetails: (authToken: string) => void = async (authToken) => {
+        console.log(authToken)
         const response = await axios.get(
             `${URL}/room-booking/check-existing-rooms`,
             {
@@ -55,6 +56,7 @@ const Dropdown: FC<{
 
         if (response.status === 200) {
             setRoomDetails(response.data)
+            console.log(roomDetails)
             setOptionLoading(false)
         }
     }

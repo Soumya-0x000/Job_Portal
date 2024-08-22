@@ -118,7 +118,7 @@ const Career: FC = () => {
                                 count={Math.ceil(demoJobRoles.length / itemsPerPage)} 
                                 variant="outlined" 
                                 shape="rounded" 
-                                />
+                            />
                         </Stack>
                     </div>
                 </>
