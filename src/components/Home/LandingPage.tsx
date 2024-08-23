@@ -7,10 +7,10 @@ import banner from '../../images/banner/homeback.jpg';
 import { buttonsData, coursesCard, onlineCourses, tabs } from '../../common/DemoData';
 import { GoArrowLeft, GoArrowRight } from "react-icons/go";
 import { TiStarFullOutline  } from "react-icons/ti";
-import { Footer } from '../../common/Footer';
 import { NavBar } from '../../common/Navbar';
 import PageRender from './PageRender';
 import { Stats } from '../AboutUs';
+import { Footer } from "../Footer";
 
 interface BtnCardType {
     imgSrc: string;

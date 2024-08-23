@@ -12,26 +12,9 @@ import {
     useMediaQuery,
     useTheme,
 } from "@mui/material";
-import { IoClose } from "react-icons/io5";
 import { DataGrid, GridRowParams, GridToolbar } from "@mui/x-data-grid";
-import RoomNumDtFilter from "../../../../common/RoomNumDtFilter";
 import { URL } from "../../../../API";
 import { showToastMsg } from "../../../../common/ToastMsg";
-
-const filterItems = [
-    {
-        label: "All data",
-        value: "allTotal",
-    },
-    {
-        label: "Room Number",
-        value: "roomNumber",
-    },
-    {
-        label: "Room number + date",
-        value: "roomNumberNDate",
-    },
-];
 
 const initialBookingData = {
     totalBookings: 0,
@@ -55,11 +38,6 @@ const BookedCandidates: FC<{
     const [moreData, setMoreData] = useState<boolean>(true);
     const [page, setPage] = useState<number>(1);
     const [bookedSeats, setBookedSeats] = useState([]);
-    const [fetchingMode, setFetchingMode] = useState<string>(
-        filterItems[0].value
-    );
-    const [showInputs, setShowInputs] = useState<boolean>(false);
-    const [roomNumDDopen, setRoomNumDDopen] = useState<boolean>(false);
 
     const theme = useTheme();
     const isSmToMd = useMediaQuery(theme.breakpoints.between(640, 768));
@@ -115,13 +93,10 @@ const BookedCandidates: FC<{
             else if (error instanceof Error)
                 showToastMsg(error.message);
             else
-                console.error(
-                    "An unknown error occurred while fetching room details"
-                );
+                console.error("An unknown error occurred while fetching room details");
         }
     };
 
-    // console.log(bookedSeats);
     const candidateRows = bookedSeats.map(
         (bookings: bookedCandidateType, index) => ({
             count: index + 1,
@@ -130,13 +105,6 @@ const BookedCandidates: FC<{
             status: bookings.bookingStatus,
         })
     );
-
-    useEffect(() => {
-        if (userName !== "") {
-            // primaryURL();
-            getUserBookings(primaryURL());
-        }
-    }, [userName]);
 
     useEffect(() => {
         if (userName !== "") {
@@ -149,9 +117,9 @@ const BookedCandidates: FC<{
         {
             field: "bookingDate",
             headerName: "Booking Date",
-            width: getColumnWidth(400),
+            width: getColumnWidth(350),
         },
-        { field: "status", headerName: "Status", width: getColumnWidth(350) },
+        { field: "status", headerName: "Status", width: getColumnWidth(300) },
     ];
 
     const handlePaginationPgCount = async (
@@ -172,12 +140,6 @@ const BookedCandidates: FC<{
         );
     };
 
-    const handleMenuSelection: (item: string) => void = (item) => {
-        setShowInputs(true);
-        setFetchingMode(item);
-        setRoomNumDDopen(true);
-    };
-
     const getRowClassName = (params: GridRowParams) => {
         const status = params.row.status;
         return status === "past" ? "past-row" : "upcoming-row";
@@ -192,10 +154,10 @@ const BookedCandidates: FC<{
             TransitionComponent={Transition}
         >
             <DialogContent>
-                <Box sx={{ height: 500, width: "100%", position: "relative" }}>
+                <Box sx={{ height: 500, position: "relative" }}>
                     <div className=" w-full flex items-center justify-center overflow-auto">
-                        <div className=" max-w-[70rem] overflow-auto rounded-lg">
-                            <div className=" w-full bg-slate-400 flex items-center justify-between px- mb-2">
+                        <div className=" max-w-[70rem] rounded-lg">
+                            <div className=" w-full bg-slate-400 flex items-center justify-between rounded-md mb-2">
                                 <span className=" text-slate-50 text-[1.2rem] pl-4 font-onest tracking-wide font-bold">
                                     Applied Candidates
                                 </span>
@@ -232,7 +194,8 @@ const BookedCandidates: FC<{
                                 }}
                                 className="dialog-custom-class"
                                 sx={{
-                                    width: 1200,
+                                    width: 1000,
+                                    overflow: "auto",
                                     "& .MuiDataGrid-toolbarContainer": {
                                         marginBottom: 0.3,
                                         paddingBottom: 1,
@@ -248,7 +211,7 @@ const BookedCandidates: FC<{
                                         fontSize: "17px",
                                     },
                                     "& .MuiDataGrid-root": {
-                                        borderRadius: "10px",
+                                        borderRadius: "20px",
                                         border: "none",
                                         borderWidth: "0px",
                                         outline: "none",
@@ -291,6 +254,11 @@ const BookedCandidates: FC<{
                                     "& .MuiDataGrid-filler": {
                                         display: "none",
                                     },
+                                    "& .MuiDataGrid-row:last-child": {
+                                        borderBottomLeftRadius: "8px",
+                                        borderBottomRightRadius: "8px",
+                                        overflow: "hidden",
+                                    },
                                 }}
                                 getRowId={(row) => row.id}
                                 getRowClassName={getRowClassName}
@@ -312,11 +280,6 @@ const BookedCandidates: FC<{
                             />
                         </div>
                     )}
-
-                    {/* <RoomNumDtFilter
-                        filterItems={filterItems}
-                        handleMenuSelection={handleMenuSelection}
-                    />  */}
                 </Box>
             </DialogContent>
         </Dialog>

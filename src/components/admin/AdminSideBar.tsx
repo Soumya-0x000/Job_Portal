@@ -131,33 +131,34 @@ export const AdminSideBar: FC<{ userName: string }> = ({ userName }) => {
     const handleDrawerClose = () => setOpen(false)
 
     return (
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: "flex" }}>
             <CssBaseline />
 
             <AppBar position="fixed" open={open}>
                 <Toolbar>
                     <IconButton
-                    color="inherit"
-                    aria-label="open drawer"
-                    onClick={handleDrawerOpen}
-                    edge="start"
-                    sx={{
-                        marginRight: 5,
-                        ...(open && { display: 'none' }),
-                        '& .MuiSvgIcon-root': {
-                            color: "#bcfffe",
-                            '&:hover': {
-                                color: '#bcfffe',
+                        color="inherit"
+                        aria-label="open drawer"
+                        onClick={handleDrawerOpen}
+                        edge="start"
+                        sx={{
+                            marginRight: 5,
+                            ...(open && { display: "none" }),
+                            "& .MuiSvgIcon-root": {
+                                color: "#bcfffe",
+                                "&:hover": {
+                                    color: "#bcfffe",
+                                },
                             },
-                        }
-                    }}>
+                        }}
+                    >
                         <MenuIcon />
                     </IconButton>
-                    
-                    <div className=' w-full flex items-center justify-between text-[1.5rem] font-bold font-lato tracking-wider text-blue-100'>
-                        <div className=' flex  items-center justify-center gap-x-1'>
+
+                    <div className=" w-full flex items-center justify-between text-[1.5rem] font-bold font-lato tracking-wider text-blue-100">
+                        <div className=" flex  items-center justify-center gap-x-1">
                             {userName}
-                            <MdOutlineAdminPanelSettings className=' text-[1.6rem]'/>
+                            <MdOutlineAdminPanelSettings className=" text-[1.6rem]" />
                         </div>
 
                         {selectedBtn}
@@ -168,7 +169,11 @@ export const AdminSideBar: FC<{ userName: string }> = ({ userName }) => {
             <Drawer variant="permanent" open={open}>
                 <DrawerHeader>
                     <IconButton onClick={handleDrawerClose}>
-                        {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                        {theme.direction === "rtl" ? (
+                            <ChevronRightIcon />
+                        ) : (
+                            <ChevronLeftIcon />
+                        )}
                     </IconButton>
                 </DrawerHeader>
 
@@ -176,49 +181,58 @@ export const AdminSideBar: FC<{ userName: string }> = ({ userName }) => {
 
                 <List>
                     {buttonArr.map((btn, index) => (
-                        <ListItem 
-                        key={btn.name + index} 
-                        disablePadding 
-                        sx={{ 
-                            display: 'block',
-                            backgroundColor: selectedBtn === btn.name ? '#e4e2e2' : 'none',
-                        }}>
-                            <ListItemButton
+                        <ListItem
+                            key={btn.name + index}
+                            disablePadding
                             sx={{
-                                minHeight: 48,
-                                justifyContent: open ? 'initial' : 'center',
-                                px: 2.5,
+                                display: "block",
+                                backgroundColor:
+                                    selectedBtn === btn.name
+                                        ? "#e4e2e2"
+                                        : "none",
                             }}
-                            onClick={() => (
-                                setSelectedBtn(btn.name), 
-                                btn.clickEvent()
-                            )}>
-                                <ListItemIcon
+                        >
+                            <ListItemButton
                                 sx={{
-                                    minWidth: 0,
-                                    mr: open ? 3 : 'auto',
-                                    justifyContent: 'center',
-                                }}>
+                                    minHeight: 48,
+                                    justifyContent: open ? "initial" : "center",
+                                    px: 2.5,
+                                }}
+                                onClick={() => (
+                                    setSelectedBtn(btn.name), btn.clickEvent()
+                                )}
+                            >
+                                <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: open ? 3 : "auto",
+                                        justifyContent: "center",
+                                    }}
+                                >
                                     {btn.icon}
                                 </ListItemIcon>
-                                
-                                <ListItemText primary={btn.name} sx={{ opacity: open ? 1 : 0 }} />
+
+                                <ListItemText
+                                    primary={btn.name}
+                                    sx={{ opacity: open ? 1 : 0 }}
+                                />
                             </ListItemButton>
                         </ListItem>
                     ))}
                 </List>
-                
+
                 <Divider />
             </Drawer>
 
-            <Box 
-            component="main" 
-            sx={{ 
-                flexGrow: 1, 
-                p: 3,
-                overflow: 'auto' 
-            }}>
-                <Outlet/>
+            <Box
+                component="main"
+                sx={{
+                    flexGrow: 1,
+                    p: 3,
+                    overflow: "auto",
+                }}
+            >
+                <Outlet />
             </Box>
         </Box>
     );
