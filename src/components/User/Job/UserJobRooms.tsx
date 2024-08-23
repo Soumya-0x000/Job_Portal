@@ -290,7 +290,7 @@ const UserJobRooms = () => {
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <div className="bg-slate-400 h-screen w-screen">
+            <div className="bg-gradient-to-br from-[#f8ffff] to-[#cce2ff] h-screen w-screen">
                 {loading ? (
                     <Loading />
                 ) : (
