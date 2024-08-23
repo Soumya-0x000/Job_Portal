@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PersonIcon from '@mui/icons-material/Person';
 import { CiLock, CiMail, CiUnlock } from 'react-icons/ci';
 import axios from 'axios';
@@ -123,76 +123,158 @@ const Register: React.FC = () => {
     };
 
     return (
-        <div className="h-screen flex flex-col items-center pt-4 bg-gradient-to-bl from-[#000000] via-slate-900 to-black">
-            <HomePgBtn
-                navArr={{label: 'SignIn', link: '/login' }}
-            />
+        <div className="h-screen flex flex-col items-center pt-4 bg-gradient-to-bl from-[#fff] via-[#fff] to-[#fff]">
+            <HomePgBtn navArr={{ label: "SignIn", link: "/login" }} />
             <div className="flex flex-col w-full px-8 md:px-32 lg:px-24 justify-center items-center h-full">
                 <Formik
-                initialValues={{ name: '', email: '', password: '', confirmPassword: '' }}
-                validationSchema={validationSchema}
-                onSubmit={(values) => handleSubmit(values)}>
+                    initialValues={{
+                        name: "",
+                        email: "",
+                        password: "",
+                        confirmPassword: "",
+                    }}
+                    validationSchema={validationSchema}
+                    onSubmit={(values) => handleSubmit(values)}
+                >
                     {({ errors, touched, values }) => (
-                        <div className=' flex w-fit p-2 rounded-lg justify-center gap-x-3 lg:gap-x-16 bg-slate-900 ring-1 ring-slate-800'>
-                            <Form className="bg-slate-800 rounded-md shadow-2xl p-5 w-[22rem] lsm:w-[26rem] lg:w-[30rem]">
-                                <h1 className="text-white font-onest tracking-wider font-bold text-2xl mb-12">Register</h1>
+                        <div className=" flex w-fit p-2 rounded-lg justify-center gap-x-3 lg:gap-x-16 bg-gradient-to-br from-slate-50 to-green-50 ring-1 ring-slate-200">
+                            <Form className="bg-gradient-to-br from-[#eefffa] to-[#d8efff] rounded-md ring-1 ring-lime-200 p-5 w-[22rem] lsm:w-[26rem] lg:w-[26rem]">
+                                <h1 className="text-slate-600 font-onest tracking-wider font-bold text-2xl mb-12 text-center">
+                                    Register
+                                </h1>
 
-                                <div className=' grid gap-3'>
-                                    {fields.map(({ id, type, placeholder, icon }) => (
-                                        <div key={id} className="flex items-center mb-5 rounded-lg relative group">
-                                            {((id === 'password') || (id === 'confirmPassword' )) && (
-                                                <span 
-                                                    onClick={() => togglePswdVisibility(id)} 
-                                                    className=' cursor-pointer absolute right-3'>
-                                                    {icon}
-                                                </span>
-                                            )}
+                                <div className=" grid gap-3">
+                                    {fields.map(
+                                        ({ id, type, placeholder, icon }) => (
+                                            <div
+                                                key={id}
+                                                className="flex items-center mb-5 rounded-lg relative group"
+                                            >
+                                                {(id === "password" ||
+                                                    id ===
+                                                        "confirmPassword") && (
+                                                    <span
+                                                        onClick={() =>
+                                                            togglePswdVisibility(
+                                                                id
+                                                            )
+                                                        }
+                                                        className=" cursor-pointer absolute right-3 text-black"
+                                                    >
+                                                        {icon}
+                                                    </span>
+                                                )}
 
-                                            <Field
-                                                id={id}
-                                                name={id}
-                                                type={
-                                                    id === 'password' 
-                                                        ? showPassword ? 'text' : type
-                                                        : id === 'confirmPassword'
-                                                            ? showConfirmPassword ? 'text' : type
+                                                <Field
+                                                    id={id}
+                                                    name={id}
+                                                    type={
+                                                        id === "password"
+                                                            ? showPassword
+                                                                ? "text"
+                                                                : type
+                                                            : id ===
+                                                              "confirmPassword"
+                                                            ? showConfirmPassword
+                                                                ? "text"
+                                                                : type
                                                             : type
-                                                }
-                                                className={`w-full bg-black pl-3 pr-10 text-slate-200 border-none outline-none focus:outline-none rounded-lg py-3 ${focusField[id] || values[id as keyof FormValues] ? 'ring-1 ring-cyan-400 bg-slate-950' : ''} transition-all peer`}
-                                                onFocus={() => handleFocus(id)}
-                                                onBlur={() => handleBlur(id)}
-                                            />
+                                                    }
+                                                    className={`w-full bg-white pl-3 pr-10 text-slate-900 border-none outline-none focus:outline-none rounded-lg py-2.5 ${
+                                                        focusField[id] ||
+                                                        values[
+                                                            id as keyof FormValues
+                                                        ]
+                                                            ? "ring-1 ring-cyan-400 bg-slate-950"
+                                                            : ""
+                                                    } transition-all hover:ring-blue-300 ring-1 ring-blue-100 peer`}
+                                                    onFocus={() =>
+                                                        handleFocus(id)
+                                                    }
+                                                    onBlur={() =>
+                                                        handleBlur(id)
+                                                    }
+                                                />
 
-                                            <label htmlFor={id} className={`absolute transition-all left-4 text-slate-300 text-md ${focusField[id] || values[id as keyof FormValues] ? 'left-2 -top-[1.25rem] text-sm font-bold text-white' : 'top-1/2 -translate-y-1/2'}`}>
-                                                {placeholder}
-                                            </label>
+                                                <label
+                                                    htmlFor={id}
+                                                    className={`absolute transition-all left-4 text-slate-800 text-[15px] ${
+                                                        focusField[id] ||
+                                                        values[
+                                                            id as keyof FormValues
+                                                        ]
+                                                            ? "left-2 -top-[1.1rem] text-xs font-bold font-montserrat text-slate-600"
+                                                            : "top-1/2 -translate-y-1/2"
+                                                    }`}
+                                                >
+                                                    {placeholder}
+                                                </label>
 
-                                            {errors[id as keyof FormValues] && touched[id as keyof FormValues] && (
-                                                <div className="text-red-500 text-sm absolute -bottom-[1.1rem] right-2">{errors[id as keyof FormValues]}</div>
-                                            )}
-                                        </div>
-                                    ))}
+                                                {errors[
+                                                    id as keyof FormValues
+                                                ] &&
+                                                    touched[
+                                                        id as keyof FormValues
+                                                    ] && (
+                                                        <div className="text-red-500 text-sm absolute -bottom-[1.1rem] right-2">
+                                                            {
+                                                                errors[
+                                                                    id as keyof FormValues
+                                                                ]
+                                                            }
+                                                        </div>
+                                                    )}
+                                            </div>
+                                        )
+                                    )}
                                 </div>
 
-                                <button
-                                type="submit"
-                                className="flex items-center justify-center gap-x-2 w-full mt-4 py-2 rounded-lg bg-[#2b385c] ring-1 ring-slate-900 hover:bg-slate-900 active:scale-95 transition-all duration-200 text-white font-semibold font-mavenPro tracking-wider">
-                                    Register
-                                    {isSubmitting && (
-                                        <span style={{ borderTopColor: "transparent" }} className=" aspect-square h-4 border-2 border-blue-200 rounded-full animate-spin"></span>
-                                    )}
-                                </button>
+                                <div className=" flex flex-col items-center space-y-10">
+                                    <div className=" flex items-center justify-between mt-3 px-2 text-slate-500 w-full">
+                                        <span>Already have an account?</span>
+
+                                        <Link
+                                            to={"/login"}
+                                            className=" px-2 rounded-lg hover:underline font-onest"
+                                        >
+                                            Login
+                                        </Link>
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        className="flex items-center justify-center gap-x-2 mt-4 py-2 rounded-lg bg-[#dee8ff] ring-1 ring-blue-200 hover:bg-blue-200 active:scale-95 transition-all duration-200 text-slate-500 hover:text-indigo-600 font-semibold font-mavenPro tracking-wider w-1/2"
+                                    >
+                                        Register
+                                        {isSubmitting && (
+                                            <span
+                                                style={{
+                                                    borderTopColor:
+                                                        "transparent",
+                                                }}
+                                                className=" aspect-square h-4 border-2 border-blue-200 rounded-full animate-spin"
+                                            ></span>
+                                        )}
+                                    </button>
+                                </div>
                             </Form>
 
                             {isLottieLoading && (
                                 <div className=" hidden md:flex items-center justify-center pr-10 w-[20rem] lg:w-[25rem]">
-                                    <span style={{ borderTopColor: "transparent" }} className="aspect-square h-10 border-4 border-blue-200 rounded-full animate-spin"></span>
+                                    <span
+                                        style={{
+                                            borderTopColor: "transparent",
+                                        }}
+                                        className="aspect-square h-10 border-4 border-blue-200 rounded-full animate-spin"
+                                    ></span>
                                 </div>
                             )}
 
-                            <iframe 
-                                src="https://lottie.host/embed/db689947-eadf-4366-8580-774883f23e7f/pRnRZ8YKSx.json" 
-                                className={`hidden ${!isLottieLoading ? 'md:block' : ''} pr-10 w-[20rem] lg:w-[25rem]`}
+                            <iframe
+                                src="https://lottie.host/embed/db689947-eadf-4366-8580-774883f23e7f/pRnRZ8YKSx.json"
+                                className={`hidden ${
+                                    !isLottieLoading ? "md:block" : ""
+                                } pr-10 w-[20rem] lg:w-[25rem]`}
                                 onLoad={() => setIsLottieLoading(false)}
                             />
                         </div>

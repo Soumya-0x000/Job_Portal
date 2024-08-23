@@ -25,12 +25,12 @@ export const NavBar: FC<NavbarType> = ({
 
     return (
         <div
-            className={` flex items-center justify-between w-full h-[4rem] pl-4 sm:pl-3 xl:pl-8 ${
+            className={`bg-gradient-to-b from-transparent flex items-center justify-between w-full h-[4rem] pl-4 sm:pl-3 xl:pl-8 ${
                 selected === "Career"
-                    ? " bg-gradient-to- b from-slate-300"
+                    ? " from-slate-100"
                     : `${selected === "Room book"}`
-                    ? " bg-gradient-to-b from-slate-300"
-                    : "backdrop-blur-xl"
+                    ? " from-slate-300"
+                    : "backdrop-blur-xl "
             }`}
         >
             <Link to={"/"} className="hidden pl-4 md:block">
@@ -56,7 +56,7 @@ export const NavBar: FC<NavbarType> = ({
                         className="relative"
                     >
                         <motion.ul
-                            className="flex flex-col gap-2 p-2 ml-2 rounded-lg bg-slate-900 shadow-xl absolute top-[120%] left-1/2 w-48 overflow-hidden z-50 ring-1 ring-blue-400"
+                            className="flex flex-col gap-2 p-2 ml-2 rounded-lg bg-gradient-to-br from-yellow-50 to-green-50 shadow-xl absolute top-[120%] left-1/2 w-48 overflow-hidden z-50"
                             initial={wrapperVariants.closed}
                             variants={wrapperVariants}
                             style={{ originY: "top", translateX: "-50%" }}
@@ -90,7 +90,7 @@ export const NavBar: FC<NavbarType> = ({
             </div>
 
             {/* account section */}
-            <div className="relative flex items-center h-full pr-4 gap-x-8 sm:gap-x-5 lg:gap-x-5 sm:pr-3 xl:pr-8 text-yellow-600 ">
+            <div className="relative flex items-center h-full pr-4 gap-x-5 sm:pr-3 xl:pr-8 text-yellow-600 ">
                 {accountArr.map((account, indx) => (
                     <div
                         className="flex justify-center cursor-pointer lg:text-lg"
@@ -122,7 +122,7 @@ const Chip: FC<chipType> = ({ text, icon, selected, setSelected }) => {
             className={`${
                 selected
                     ? "text-white"
-                    : "text-slate-300 hover:text-slate-200 hover:bg-slate-100"
+                    : "text-slate-300 hover:text-slate-200 hover:bg-white hover:ring-1 hover:ring-[#a6ffff]"
             } transition-colors px-3 py-1.5 rounded-md overflow-hidden relative flex items-center justify-center group`}
         >
             <div className="z-10 flex items-center justify-center gap-x-2 group overflow-hidden">
@@ -190,7 +190,7 @@ const Option: FC<OptionType> = ({
     return (
         <motion.li
             variants={itemVariants}
-            className="flex items-center w-full gap-3 p-2 text-xs font-medium transition-colors rounded-md cursor-pointer whitespace-nowrap hover:bg-indigo-600 text-cyan-100 hover:text-indigo-100"
+            className="flex items-center w-full gap-3 p-2 text-xs font-medium transition-colors rounded-md cursor-pointer whitespace-nowrap hover:bg-indigo-100 text-slate-700 hover:text-indigo-800"
             onClick={() => handleClick()}
         >
             <motion.span
@@ -200,7 +200,7 @@ const Option: FC<OptionType> = ({
                 {Icon}
             </motion.span>
 
-            <span className="text-[1rem] font-robotoMono">{text}</span>
+            <span className="text-[1rem] font-onest">{text}</span>
         </motion.li>
     );
 };
@@ -259,26 +259,26 @@ const AnimatedHamburgerButton: FC<hamburgerMenuType> = ({
             onClick={() => setHamburgerActive((pv) => !pv)}
         >
             <div
-                className={`flex items-center justify-center flex-col gap-y-[.4rem] rounded-full w-10 h-[2.4rem] p-1 bg-slate-900 ring-1 ring-slate-600 transition-all cursor-pointer`}
+                className={`flex items-center justify-center flex-col gap-y-[.4rem] rounded-full w-10 h-[2.4rem] p-1 bg-yellow-100 ring- 1 ring-slate-600 transition-all cursor-pointer`}
             >
                 <div
-                    className={`w-7 h-[1.5px] transition-all ${
+                    className={`w-7 h-[1.6px] transition-all ${
                         hamburgerActive
                             ? "rotate-45 translate-y-[4px]"
                             : "rotate-0"
-                    }  bg-cyan-300`}
+                    }  bg-yellow-700`}
                 />
                 <div
-                    className={`w-7 h-[1.5px] ${
+                    className={`w-7 h-[1.6px] ${
                         !hamburgerActive ? "block" : "hidden"
-                    } bg-cyan-300`}
+                    } bg-yellow-700`}
                 />
                 <div
                     className={`w-7 h-[1.5px] ${
                         hamburgerActive
                             ? "-rotate-45 -translate-y-[4px]"
                             : "rotate-0"
-                    }  transition-all bg-cyan-300`}
+                    }  transition-all bg-yellow-700`}
                 />
             </div>
         </button>
@@ -298,10 +298,6 @@ const FlyoutLink: FC<{ children: string }> = ({ children }) => {
         >
             <span className="relative text-slate-800 font-onest px-2.5 py-1.5 rounded-lg hover:bg-slate-100 hover:text-slate-700 transition-all">
                 {children}
-                {/* <span
-                    style={{ transform: showFlyout ? "scaleX(1)" : "scaleX(0)" }}
-                    className="absolute h-1 transition-transform duration-300 ease-out origin-left scale-x-0 bg-yellow-300 rounded-full -bottom-2 -left-2 -right-2"
-                /> */}
             </span>
 
             <AnimatePresence>

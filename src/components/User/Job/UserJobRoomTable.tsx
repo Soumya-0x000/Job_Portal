@@ -277,7 +277,7 @@ export const UserJobRoomTable: FC<JobRoomTableProps> = ({
     return (
         <>
             {validateRooms() ? (
-                <div className=" max-w-[100%] overflow-auto rounded-lg">
+                <div className=" max-w-[100%] overflow-auto rounded-lg shadow-lg">
                     <DataGrid
                         rows={rooms} // change to demoUserRooms for testing
                         columns={columns}
