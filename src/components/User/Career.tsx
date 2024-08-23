@@ -85,8 +85,6 @@ const Career: FC = () => {
 
         const user = JSON.parse(localStorage.getItem('userDetails') || '');
         setToken(user?.token)
-
-        console.log(token)
     }, []);
 
     const startIndex = (currentPage - 1) * itemsPerPage;

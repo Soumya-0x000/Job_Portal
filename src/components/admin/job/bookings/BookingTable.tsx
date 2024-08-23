@@ -99,7 +99,7 @@ export const BookingTable: FC<bookingProps> = ({
     };
 
     return (
-        <div className="w-[100%] overflow-auto rounded-lg">
+        <div className="w-fit overflow-auto rounded-lg h-fit">
             <DataGrid
                 rows={bookingRows}
                 columns={roomColumns}
@@ -153,12 +153,20 @@ export const BookingTable: FC<bookingProps> = ({
                         display: "none",
                         backgroundColor: "rgb(201, 224, 255)",
                     },
+                    "& .MuiDataGrid-bottomContainer": {
+                        display: "none",
+                    },
                     "& .MuiDataGrid-filler": {
                         display: "none",
                     },
                     "& .MuiDataGrid-cellEmpty": {
                         display: "none",
                         width: "1rem",
+                    },
+                    "& .MuiDataGrid-row:last-child": {
+                        borderBottomLeftRadius: "8px",
+                        borderBottomRightRadius: "8px",
+                        overflow: "hidden",
                     },
                 }}
                 getRowClassName={() => "userBookings"}

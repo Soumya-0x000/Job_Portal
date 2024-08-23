@@ -3,7 +3,7 @@ import { aboutUsCardContent, statCard } from '../common/DemoData';
 import aboutUs from '../images/banner/aboutUs.jpg';
 import statBg from '../images/stats/statBg.jpg';
 import { FC } from 'react';
-import { Footer } from '../common/Footer';
+import { Footer } from "./Footer";
 
 interface aboutUsType {
     link: string;

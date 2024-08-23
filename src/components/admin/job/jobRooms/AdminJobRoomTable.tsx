@@ -357,9 +357,6 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({
                             color: "#7e8e01",
                         },
                     },
-                    "& .MuiDataGrid-row": {
-                        border: "0.2px solid #eaeaea",
-                    },
                     "& .MuiDataGrid-row.Mui-selected": {
                         backgroundColor: "#5ebfe0",
                         color: "#dff6fe",
@@ -374,6 +371,14 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({
                     },
                     "& .MuiDataGrid-filler": {
                         display: "none",
+                    },
+                    "& .MuiDataGrid-row": {
+                        border: "0.2px solid #eaeaea",
+                    },
+                    "& .MuiDataGrid-row:last-child": {
+                        borderBottomLeftRadius: "8px",
+                        borderBottomRightRadius: "8px",
+                        overflow: "hidden",
                     },
                 }}
                 getRowClassName={getRowClassName}

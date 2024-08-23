@@ -3,26 +3,42 @@ import { Link, useNavigate } from "react-router-dom";
 import { tabsType } from "./DemoData";
 import { AnimatePresence, motion } from "framer-motion";
 import { accType } from "../components/Home/LandingPage";
-import fullLogo from '../assets/sentientFullLogo.png';
-import logo from '../assets/sentientLogo.png';
+import fullLogo from "../assets/sentientFullLogo.png";
+import logo from "../assets/sentientLogo.png";
 
 interface NavbarType {
     accountArr: accType[];
     tabsArr: tabsType[];
     selected: string;
-    setSelected: Dispatch<SetStateAction<string>>
+    setSelected: Dispatch<SetStateAction<string>>;
 }
 
-export const NavBar: FC<NavbarType> = ({ tabsArr, accountArr, selected, setSelected }) => {
+export const NavBar: FC<NavbarType> = ({
+    tabsArr,
+    accountArr,
+    selected,
+    setSelected,
+}) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const [hamburgerActive, setHamburgerActive] = useState<boolean>(false);
     const navigate = useNavigate();
 
     return (
-        <div className={` flex items-center justify-between w-full h-[4rem] backdrop-blur-xl pl-4 sm:pl-3 xl:pl-8 ${selected === 'Career' ? ' bg-[#4e5b6b7d]' : ''}`}>
-            <Link to={'/'} className='hidden pl-4 md:block'>
-                <img src={fullLogo} className=' h-10 scale-125 hidden Lmd:block'/>
-                <img src={logo} className=' h-10 scale-125 block Lmd:hidden'/>
+        <div
+            className={` flex items-center justify-between w-full h-[4rem] pl-4 sm:pl-3 xl:pl-8 ${
+                selected === "Career"
+                    ? " bg-gradient-to- b from-slate-300"
+                    : `${selected === "Room book"}`
+                    ? " bg-gradient-to-b from-slate-300"
+                    : "backdrop-blur-xl"
+            }`}
+        >
+            <Link to={"/"} className="hidden pl-4 md:block">
+                <img
+                    src={fullLogo}
+                    className=" h-10 scale-125 hidden Lmd:block"
+                />
+                <img src={logo} className=" h-10 scale-125 block Lmd:hidden" />
             </Link>
 
             {/* hamburger icon in less than 1024 screen width */}
@@ -35,15 +51,19 @@ export const NavBar: FC<NavbarType> = ({ tabsArr, accountArr, selected, setSelec
                 </div>
 
                 <div className="absolute flex items-center justify-center -right-11">
-                    <motion.div animate={isDropdownOpen ? "open" : "closed"} className="relative">
+                    <motion.div
+                        animate={isDropdownOpen ? "open" : "closed"}
+                        className="relative"
+                    >
                         <motion.ul
-                        className="flex flex-col gap-2 p-2 ml-2 rounded-lg bg-slate-900 shadow-xl absolute top-[120%] left-1/2 w-48 overflow-hidden z-50 ring-1 ring-blue-400"
-                        initial={wrapperVariants.closed}
-                        variants={wrapperVariants}
-                        style={{ originY: "top", translateX: "-50%" }}>
+                            className="flex flex-col gap-2 p-2 ml-2 rounded-lg bg-slate-900 shadow-xl absolute top-[120%] left-1/2 w-48 overflow-hidden z-50 ring-1 ring-blue-400"
+                            initial={wrapperVariants.closed}
+                            variants={wrapperVariants}
+                            style={{ originY: "top", translateX: "-50%" }}
+                        >
                             {tabsArr.map((tab: tabsType, indx) => (
-                                <Option 
-                                    key={tab.text+indx}
+                                <Option
+                                    key={tab.text + indx}
                                     Icon={tab.icon}
                                     text={tab.text}
                                     setIsDropdownOpen={setIsDropdownOpen}
@@ -70,18 +90,18 @@ export const NavBar: FC<NavbarType> = ({ tabsArr, accountArr, selected, setSelec
             </div>
 
             {/* account section */}
-            <div className='relative flex items-center h-full pr-4 gap-x-8 sm:gap-x-5 lg:gap-x-5 sm:pr-3 xl:pr-8 text-yellow-600 '>
+            <div className="relative flex items-center h-full pr-4 gap-x-8 sm:gap-x-5 lg:gap-x-5 sm:pr-3 xl:pr-8 text-yellow-600 ">
                 {accountArr.map((account, indx) => (
-                    <div className="flex justify-center cursor-pointer lg:text-lg"
-                    key={indx}
-                    onClick={() => navigate(account.path)}>
-                        <FlyoutLink>
-                            {account.name}
-                        </FlyoutLink>
+                    <div
+                        className="flex justify-center cursor-pointer lg:text-lg"
+                        key={indx}
+                        onClick={() => navigate(account.path)}
+                    >
+                        <FlyoutLink>{account.name}</FlyoutLink>
                     </div>
                 ))}
 
-                <div className='absolute top-0 w-5 h-full -left-4'/>
+                <div className="absolute top-0 w-5 h-full -left-4" />
             </div>
         </div>
     );
@@ -93,14 +113,9 @@ interface chipType {
     selected: boolean;
     setSelected: Dispatch<SetStateAction<string>>;
 }
-const Chip: FC<chipType> = ({ 
-    text, 
-    icon,
-    selected, 
-    setSelected 
-}) => {
-    const handleClick = (text: string) => setSelected(text)
-    
+const Chip: FC<chipType> = ({ text, icon, selected, setSelected }) => {
+    const handleClick = (text: string) => setSelected(text);
+
     return (
         <button
             onClick={() => handleClick(text)}
@@ -156,34 +171,36 @@ interface OptionType {
     Icon: ReactElement;
     setIsDropdownOpen: Dispatch<SetStateAction<boolean>>;
     setSelected: Dispatch<SetStateAction<string>>;
-    setHamburgerActive: Dispatch<SetStateAction<boolean>>
+    setHamburgerActive: Dispatch<SetStateAction<boolean>>;
 }
 
-const Option: FC<OptionType> = ({ 
-    text, 
-    Icon, 
-    setIsDropdownOpen, 
+const Option: FC<OptionType> = ({
+    text,
+    Icon,
+    setIsDropdownOpen,
     setSelected,
-    setHamburgerActive
-}) => {    
+    setHamburgerActive,
+}) => {
     const handleClick = () => {
-        setIsDropdownOpen(false)
-        setHamburgerActive(false)
-        setSelected(text)
+        setIsDropdownOpen(false);
+        setHamburgerActive(false);
+        setSelected(text);
     };
-    
+
     return (
         <motion.li
-        variants={itemVariants}
-        className="flex items-center w-full gap-3 p-2 text-xs font-medium transition-colors rounded-md cursor-pointer whitespace-nowrap hover:bg-indigo-600 text-cyan-100 hover:text-indigo-100"
-        onClick={() => handleClick()}>
-            <motion.span 
-            className='text-xl font-robotoMono'
-            variants={actionIconVariants}>
+            variants={itemVariants}
+            className="flex items-center w-full gap-3 p-2 text-xs font-medium transition-colors rounded-md cursor-pointer whitespace-nowrap hover:bg-indigo-600 text-cyan-100 hover:text-indigo-100"
+            onClick={() => handleClick()}
+        >
+            <motion.span
+                className="text-xl font-robotoMono"
+                variants={actionIconVariants}
+            >
                 {Icon}
             </motion.span>
 
-            <span className='text-[1rem] font-robotoMono'>{text}</span>
+            <span className="text-[1rem] font-robotoMono">{text}</span>
         </motion.li>
     );
 };
@@ -204,7 +221,7 @@ const wrapperVariants = {
         },
     },
 };
-  
+
 const itemVariants = {
     open: {
         opacity: 1,
@@ -232,30 +249,53 @@ interface hamburgerMenuType {
     setHamburgerActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const AnimatedHamburgerButton: FC<hamburgerMenuType> = ({ hamburgerActive, setHamburgerActive }) => {
-    return (   
+const AnimatedHamburgerButton: FC<hamburgerMenuType> = ({
+    hamburgerActive,
+    setHamburgerActive,
+}) => {
+    return (
         <button
-        className="relative w-10 h-20 transition-colors"
-        onClick={() => setHamburgerActive((pv) => !pv)}>
-            <div className={`flex items-center justify-center flex-col gap-y-[.4rem] rounded-full w-10 h-[2.4rem] p-1 bg-slate-900 ring-1 ring-slate-600 transition-all cursor-pointer`}>
-                <div className={`w-7 h-[1.5px] transition-all ${hamburgerActive ? 'rotate-45 translate-y-[4px]' : 'rotate-0'}  bg-cyan-300`}/>
-                <div className={`w-7 h-[1.5px] ${!hamburgerActive ? 'block' : 'hidden'} bg-cyan-300`}/>
-                <div className={`w-7 h-[1.5px] ${hamburgerActive ? '-rotate-45 -translate-y-[4px]' : 'rotate-0'}  transition-all bg-cyan-300`}/>
-            </div> 
+            className="relative w-10 h-20 transition-colors"
+            onClick={() => setHamburgerActive((pv) => !pv)}
+        >
+            <div
+                className={`flex items-center justify-center flex-col gap-y-[.4rem] rounded-full w-10 h-[2.4rem] p-1 bg-slate-900 ring-1 ring-slate-600 transition-all cursor-pointer`}
+            >
+                <div
+                    className={`w-7 h-[1.5px] transition-all ${
+                        hamburgerActive
+                            ? "rotate-45 translate-y-[4px]"
+                            : "rotate-0"
+                    }  bg-cyan-300`}
+                />
+                <div
+                    className={`w-7 h-[1.5px] ${
+                        !hamburgerActive ? "block" : "hidden"
+                    } bg-cyan-300`}
+                />
+                <div
+                    className={`w-7 h-[1.5px] ${
+                        hamburgerActive
+                            ? "-rotate-45 -translate-y-[4px]"
+                            : "rotate-0"
+                    }  transition-all bg-cyan-300`}
+                />
+            </div>
         </button>
     );
 };
 
-const FlyoutLink: FC<{children: string}> = ({children}) => {
+const FlyoutLink: FC<{ children: string }> = ({ children }) => {
     const [open, setOpen] = useState(false);
 
     const showFlyout = open;
-  
+
     return (
         <div
-        className="relative w-fit h-fit"
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}>
+            className="relative w-fit h-fit"
+            onMouseEnter={() => setOpen(true)}
+            onMouseLeave={() => setOpen(false)}
+        >
             <span className="relative text-slate-800 font-onest px-2.5 py-1.5 rounded-lg hover:bg-slate-100 hover:text-slate-700 transition-all">
                 {children}
                 {/* <span
@@ -267,12 +307,13 @@ const FlyoutLink: FC<{children: string}> = ({children}) => {
             <AnimatePresence>
                 {showFlyout && (
                     <motion.div
-                    className="absolute -right-[6rem] lg:-right-[8rem] top-[3.2rem] z-30"
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 15 }}
-                    style={{ translateX: "-50%" }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}>
+                        className="absolute -right-[6rem] lg:-right-[8rem] top-[3.2rem] z-30"
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 15 }}
+                        style={{ translateX: "-50%" }}
+                        transition={{ duration: 0.3, ease: "easeOut" }}
+                    >
                         <div className="absolute left-0 right-0 h-6 bg-transparent -top-6 " />
                     </motion.div>
                 )}

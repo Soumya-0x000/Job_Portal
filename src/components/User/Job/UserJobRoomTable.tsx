@@ -342,6 +342,14 @@ export const UserJobRoomTable: FC<JobRoomTableProps> = ({
                             "& .MuiDataGrid-filler": {
                                 display: "none",
                             },
+                            "& .MuiDataGrid-row": {
+                                border: "0.2px solid #eaeaea",
+                            },
+                            "& .MuiDataGrid-row:last-child": {
+                                borderBottomLeftRadius: "8px",
+                                borderBottomRightRadius: "8px",
+                                overflow: "hidden",
+                            },
                         }}
                         getRowId={(row) => row.bookingId}
                         getRowClassName={getRowClassName}

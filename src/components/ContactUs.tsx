@@ -1,5 +1,5 @@
 import banner from '../images/courses/coursesBanner.jpg';
-import { Footer } from '../common/Footer';
+import { Footer } from './Footer';
 import * as Yup from 'yup';
 import { ErrorMessage, Field, Formik, Form } from 'formik';
 
