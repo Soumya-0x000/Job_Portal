@@ -26,6 +26,8 @@ interface bookedCandidateType {
     bookingId: string;
     bookingDate: string;
     bookingStatus: string;
+    roomName: string;
+    roomNumber: number;
 }
 
 const BookedCandidates: FC<{
@@ -38,6 +40,7 @@ const BookedCandidates: FC<{
     const [moreData, setMoreData] = useState<boolean>(true);
     const [page, setPage] = useState<number>(1);
     const [bookedSeats, setBookedSeats] = useState([]);
+    const [startingIndex, setStartingIndex] = useState<number>(0);
 
     const theme = useTheme();
     const isSmToMd = useMediaQuery(theme.breakpoints.between(640, 768));
@@ -99,10 +102,12 @@ const BookedCandidates: FC<{
 
     const candidateRows = bookedSeats.map(
         (bookings: bookedCandidateType, index) => ({
-            count: index + 1,
+            count: startingIndex + index + 1,
             id: bookings.bookingId,
             bookingDate: formatDateTime(bookings.bookingDate),
             status: bookings.bookingStatus,
+            roomNumber: bookings.roomNumber,
+            roomName: bookings.roomName,
         })
     );
 
@@ -113,13 +118,15 @@ const BookedCandidates: FC<{
     }, [userName]);
 
     const candidateColumns = [
-        { field: "count", headerName: "Index", width: getColumnWidth(250) },
+        { field: "count", headerName: "Index", width: getColumnWidth(200) },
         {
             field: "bookingDate",
             headerName: "Booking Date",
             width: getColumnWidth(350),
         },
-        { field: "status", headerName: "Status", width: getColumnWidth(300) },
+        { field: "status", headerName: "Status", width: getColumnWidth(200) },
+        { field: "roomNumber", headerName: "Room number", width: getColumnWidth(240) },
+        { field: "roomName", headerName: "Room name", width: getColumnWidth(240) },
     ];
 
     const handlePaginationPgCount = async (
@@ -128,6 +135,7 @@ const BookedCandidates: FC<{
     ) => {
         setPage(page);
         const newOffset = (page - 1) * bookingPaginationData.limit;
+        setStartingIndex(newOffset)
 
         setBookingPaginationData((prev: typeof initialBookingData) => ({
             ...prev,
@@ -156,7 +164,7 @@ const BookedCandidates: FC<{
             <DialogContent>
                 <Box sx={{ height: 500, position: "relative" }}>
                     <div className=" w-full flex items-center justify-center overflow-auto">
-                        <div className=" max-w-[70rem] rounded-lg">
+                        <div className=" max-w-[85rem] rounded-lg overflow-auto">
                             <div className=" w-full bg-slate-400 flex items-center justify-between rounded-md mb-2">
                                 <span className=" text-slate-50 text-[1.2rem] pl-4 font-onest tracking-wide font-bold">
                                     Applied Candidates
@@ -183,6 +191,7 @@ const BookedCandidates: FC<{
                                     </Button>
                                 </DialogActions>
                             </div>
+
                             <DataGrid
                                 rows={candidateRows}
                                 columns={candidateColumns}
@@ -194,7 +203,6 @@ const BookedCandidates: FC<{
                                 }}
                                 className="dialog-custom-class"
                                 sx={{
-                                    width: 1000,
                                     overflow: "auto",
                                     "& .MuiDataGrid-toolbarContainer": {
                                         marginBottom: 0.3,

@@ -28,6 +28,7 @@ export const BookingTable: FC<bookingProps> = ({
 
     const [page, setPage] = useState<number>(1);
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+    const [startingIndex, setStartingIndex] = useState<number>(0);
 
     const getColumnWidth = (defaultWidth: number) => {
         if (isSmToMd) return defaultWidth * 0.5;
@@ -80,7 +81,7 @@ export const BookingTable: FC<bookingProps> = ({
 
     const bookingRows = (Array.isArray(bookings) ? bookings : [bookings]).map(
         (booking, index) => ({
-            count: index + 1,
+            count: startingIndex + index + 1,
             id: generateUniqueId(),
             username: booking.username,
             email: booking.email,
@@ -92,9 +93,11 @@ export const BookingTable: FC<bookingProps> = ({
         page: number
     ) => {
         setPage(page);
+        const offset = (page - 1) * paginationData.limit;
+        setStartingIndex(offset);
         setPaginationData((prev: userBookingPaginationType) => ({
             ...prev,
-            offset: (page - 1) * prev.limit,
+            offset
         }));
     };
 

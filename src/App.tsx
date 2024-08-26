@@ -25,7 +25,7 @@ const App = () => {
         const user = JSON.parse(localStorage.getItem("userDetails") || "");
         const savedToken = user?.token;
 
-        if (uniqueId !== savedToken) navigate("/home"); //change it to '/'
+        if (uniqueId !== savedToken) navigate("/");
         else {
             const getUser = async () => {
                 const response = await axios.get(`${URL}/users/me`, {
@@ -72,10 +72,6 @@ const App = () => {
         ];
 
         const newAccArr: accType[] = [
-            // {
-            //     name: 'Delete account',
-            //     path: '/'
-            // },
             {
                 name: "Sign Out",
                 path: "/",

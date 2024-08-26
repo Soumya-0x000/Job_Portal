@@ -65,8 +65,7 @@ const ContactUs = () => {
                         <Formik
                         initialValues={initialFormValues}
                         validationSchema={validationSchema}
-                        onSubmit={(values, { setSubmitting }) => {
-                            console.log(values);
+                        onSubmit={(_values, { setSubmitting }) => {
                             setSubmitting(false);
                         }}>
                             {({ isSubmitting, handleReset }) => (

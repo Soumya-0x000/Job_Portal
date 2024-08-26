@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { UserBooking, userBookingPaginationType } from "../../AdminDataTypes";
 import { initialValue } from "../../../User/Job/UserJobRoomTable";
 import { Dayjs } from "dayjs";
@@ -16,141 +16,178 @@ import RoomNumDtFilter from "../../../../common/RoomNumDtFilter";
 import { BookingTable } from "./BookingTable";
 
 const initialBookings: UserBooking = {
-    username: '',
-    email: ''
+    username: "",
+    email: "",
 };
 
-const filterItems = [ 
+const filterItems = [
     {
-        label: 'All data',
-        value: 'allTotal',
-    }, 
+        label: "All data",
+        value: "allTotal",
+    },
     {
-        label: 'Room Number',
-        value: 'roomNumber',
-    }, 
+        label: "Room Number",
+        value: "roomNumber",
+    },
     {
-        label: 'Room number + date',
-        value: 'roomNumberNDate',
-    }
-]
+        label: "Room number + date",
+        value: "roomNumberNDate",
+    },
+];
 
 export const initialUserBookingsData = {
     totalBookings: 0,
     bookingLimit: 0,
-    bookingOffset: 0
-}
+    bookingOffset: 0,
+};
 
 const initialPaginateData = {
     totalUsers: 0,
     limit: 10,
-    offset: 0
-}
+    offset: 0,
+};
 
 const UserBookings = () => {
     const [bookings, setBookings] = useState<UserBooking[]>([initialBookings]);
-    const [fetchingMode, setFetchingMode] = useState<string>(filterItems[0].value);
+    const [fetchingMode, setFetchingMode] = useState<string>(
+        filterItems[0].value
+    );
     const [showInputs, setShowInputs] = useState<boolean>(false);
     const [roomNumDDopen, setRoomNumDDopen] = useState<boolean>(false);
-    const [filteringData, setFilteringData] = useState<typeof initialValue>(initialValue);
-    const [paginationData, setPaginationData] = useState<userBookingPaginationType>(initialPaginateData);
+    const [filteringData, setFilteringData] =
+        useState<typeof initialValue>(initialValue);
+    const [paginationData, setPaginationData] =
+        useState<userBookingPaginationType>(initialPaginateData);
     const [loading, setLoading] = useState<boolean>(true);
     const [isCheckingAvail, setIsCheckingAvail] = useState<boolean>(false);
     const [isMoreData, setIsMoreData] = useState<boolean>(false);
+    const [noBookings, setNoBookings] = useState<boolean>(false);
+    const toastRef = useRef(true);
 
     const primaryURL: () => string = () =>
         `room-booking/get-booking-details?limit=${paginationData.limit}&offset=${paginationData.offset}`;
 
     const handleMenuSelection: (item: string) => void = (item) => {
-        setShowInputs(true)
-        setFetchingMode(item)
-        setRoomNumDDopen(true)
+        setShowInputs(true);
+        setFetchingMode(item);
+        setRoomNumDDopen(true);
     };
 
     const handleRoomSelection = (roomNumber: number) => {
-        setFilteringData(prev => ({
-            ...prev, roomNumber
-        }))
-    }
-
-    const handleDateSelection = (bookingDate: Dayjs | null) => {
-        setFilteringData(prev => ({
-            ...prev, bookingDate
+        setFilteringData((prev) => ({
+            ...prev,
+            roomNumber,
         }));
     };
 
-    const getBookingDetails: (endPoint: string) => void = async(endPoint) => {
-        const admin = JSON.parse(localStorage.getItem('adminDetails') || '');
+    const handleDateSelection = (bookingDate: Dayjs | null) => {
+        setFilteringData((prev) => ({
+            ...prev,
+            bookingDate,
+        }));
+    };
+
+    const getBookingDetails: (endPoint: string) => void = async (endPoint) => {
+        const admin = JSON.parse(localStorage.getItem("adminDetails") || "");
 
         const requestHeader = {
-            'Content-Type': 'application/json',
-            'ngrok-skip-browser-warning': '69420',
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "69420",
             authorization: `token ${admin?.token}`,
-        }
+        };
 
-        const finalURL = `${URL}/${endPoint}`
+        const finalURL = `${URL}/${endPoint}`;
 
         try {
-            const { data, status } = await axios.get(finalURL, { headers: requestHeader });
+            const { data, status } = await axios.get(finalURL, {
+                headers: requestHeader,
+            });
 
             if (status === 200) {
-                const { totalUsers, limit, offset } = data.data
-                setPaginationData(prev => ({
-                    ...prev, 
-                    totalUsers, limit, offset
-                }))
+                if (!data.data) {
+                    setNoBookings(true);
+                    return;
+                }
 
-                const moreData = totalUsers - limit
-                setIsMoreData(moreData > 0 ? true : false)
+                const { totalUsers, limit, offset } = data.data;
+                setPaginationData((prev) => ({
+                    ...prev,
+                    totalUsers,
+                    limit,
+                    offset,
+                }));
 
-                setBookings(data?.data?.allUserBookings || [])
+                const moreData = totalUsers - limit;
+                setIsMoreData(moreData > 0 ? true : false);
+
+                setBookings(data?.data?.allUserBookings || []);
                 setLoading(false);
-            } else showToastMsg('Failed to fetch room details')
+            } else {
+                if (toastRef.current) {
+                    showToastMsg("Failed to fetch room details");
+                    toastRef.current = false;
+                }
+            }
         } catch (error: unknown) {
-            if (axios.isAxiosError(error)) showToastMsg("No bookings for this day");
-            else if (error instanceof Error) showToastMsg("No bookings for this day");
-            else console.error('An unknown error occurred while fetching room details');
+            if (toastRef.current) {
+                if (axios.isAxiosError(error)) {
+                    showToastMsg("No bookings for this day");
+                    toastRef.current = false;
+                } else if (error instanceof Error) {
+                    showToastMsg("No bookings for this day");
+                    toastRef.current = false;
+                } else {
+                    console.error(
+                        "An unknown error occurred while fetching room details"
+                    );
+                }
+            }
         }
     };
 
     const fetchConditionalData = () => {
-        switch(fetchingMode) {
-            case 'allTotal':
+        switch (fetchingMode) {
+            case "allTotal":
                 setPaginationData(initialPaginateData);
                 getBookingDetails(primaryURL());
                 break;
-            case 'roomNumber':
+            case "roomNumber":
                 if (filteringData.roomNumber) {
                     setPaginationData(initialPaginateData);
-                    const newURL = `${primaryURL()}&roomNumber=${filteringData.roomNumber}`
+                    const newURL = `${primaryURL()}&roomNumber=${
+                        filteringData.roomNumber
+                    }`;
                     getBookingDetails(newURL);
-                } else showToastMsg('Enter a room number first')
+                } else showToastMsg("Enter a room number first");
                 break;
-            case 'roomNumberNDate':
-                if(filteringData.roomNumber && filteringData.bookingDate) {
+            case "roomNumberNDate":
+                if (filteringData.roomNumber && filteringData.bookingDate) {
                     setPaginationData(initialPaginateData);
-                    const newURL = `${primaryURL()}&roomNumber=${filteringData.roomNumber}&date=${filteringData.bookingDate.format('YYYY-MM-DD')}`
+                    const newURL = `${primaryURL()}&roomNumber=${
+                        filteringData.roomNumber
+                    }&date=${filteringData.bookingDate.format("YYYY-MM-DD")}`;
                     getBookingDetails(newURL);
-                } else showToastMsg('Enter a room number and date first')
+                } else showToastMsg("Enter a room number and date first");
                 break;
             default:
-                showToastMsg('Select a valid filtering mode')
+                showToastMsg("Select a valid filtering mode");
                 break;
         }
 
-        setShowInputs(false)
-    }
+        setShowInputs(false);
+    };
 
     useEffect(() => {
-        switch(fetchingMode) {
-            case 'roomNumber':
-                if(filteringData.roomNumber) setIsCheckingAvail(true)
+        switch (fetchingMode) {
+            case "roomNumber":
+                if (filteringData.roomNumber) setIsCheckingAvail(true);
                 break;
-            case 'roomNumberNDate':
-                if(filteringData.roomNumber && filteringData.bookingDate) setIsCheckingAvail(true)
+            case "roomNumberNDate":
+                if (filteringData.roomNumber && filteringData.bookingDate)
+                    setIsCheckingAvail(true);
                 break;
             default:
-                setIsCheckingAvail(false)
+                setIsCheckingAvail(false);
                 break;
         }
     }, [filteringData]);
@@ -158,13 +195,12 @@ const UserBookings = () => {
     useEffect(() => {
         if (fetchingMode === "allTotal") {
             primaryURL();
-            fetchConditionalData()
+            fetchConditionalData();
         }
     }, [fetchingMode, paginationData.offset]);
 
     useEffect(() => {
         if (fetchingMode !== "allTotal") {
-            console.log('second')
             const newURL = `${primaryURL()}&roomNumber=${
                 filteringData.roomNumber
             }`;
@@ -173,20 +209,31 @@ const UserBookings = () => {
     }, [paginationData.offset]);
 
     return (
-        <div>
+        <div className="flex items-center justify-center overflow-y-auto px-4 pt-20 pb-6">
             {loading ? (
-                <div className=" w-full h-full flex items-center justify-center bg-black">
+                <div className=" absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ">
                     <Loading />
                 </div>
             ) : (
-                <div className=" w-full h-fit flex items-center flex-col pt-16">
-                    <BookingTable
-                        bookings={bookings}
-                        setPaginationData={setPaginationData}
-                        paginationData={paginationData}
-                        isMoreData={isMoreData}
-                    />
-                </div>
+                <>
+                    {noBookings ? (
+                        <div className=" w-full h-full flex items-center justify-center pt-16">
+                            <iframe
+                                src="https://lottie.host/embed/eb65fabc-2cf5-423d-8e2b-5565df8f2b3f/ufOHvLNO9d.json"
+                                className="w-[30rem] aspect-square"
+                            />
+                        </div>
+                    ) : (
+                        <div className=" w-full h-fit flex items-center flex-col">
+                            <BookingTable
+                                bookings={bookings}
+                                setPaginationData={setPaginationData}
+                                paginationData={paginationData}
+                                isMoreData={isMoreData}
+                            />
+                        </div>
+                    )}
+                </>
             )}
 
             <RoomNumDtFilter
@@ -260,6 +307,6 @@ const UserBookings = () => {
             )}
         </div>
     );
-}
+};
 
 export default UserBookings;

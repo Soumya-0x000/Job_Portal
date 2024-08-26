@@ -49,8 +49,6 @@ export const Footer = () => {
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log("Form Submitted!");
-        console.log(email);
     };
 
     const handleRedirect = () => {

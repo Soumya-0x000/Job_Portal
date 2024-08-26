@@ -53,7 +53,6 @@ const LoginPage: React.FC = () => {
     };
 
     const handleNavigation = async (values: FormValues) => {
-        console.log(values);
         setIsSubmitting(true);
 
         try {
