@@ -17,7 +17,7 @@ const AdminPanel: FC = () => {
         setUserName(admin?.username)
 
         if(uniqueId !== savedToken) {
-            navigate('/')
+            navigate('/');
         } else {
             (async() => {
                 const { data, status } = await axios.get(`${URL}/users/me`, {
