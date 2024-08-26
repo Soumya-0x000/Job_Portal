@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import { Link, useNavigate } from 'react-router-dom';
-import { CiLock, CiMail, CiUnlock } from "react-icons/ci";
+import { CiLock, CiUnlock } from "react-icons/ci";
 import { showToastMsg } from '../../common/ToastMsg';
 import axios from 'axios';
 import { URL } from '../../API';
@@ -32,7 +32,6 @@ const LoginPage: React.FC = () => {
             id: 'email', 
             type: 'email', 
             placeholder: 'Email Address', 
-            icon: <CiMail className=' text-white text-2xl'/>
         }, 
         { 
             id: 'password', 
