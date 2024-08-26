@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import { Link, useNavigate } from 'react-router-dom';
-import PersonIcon from '@mui/icons-material/Person';
-import { CiLock, CiMail, CiUnlock } from 'react-icons/ci';
+import { CiLock, CiUnlock } from 'react-icons/ci';
 import axios from 'axios';
 import { showToastMsg } from '../../common/ToastMsg';
 import { URL } from '../../API';
@@ -83,29 +82,27 @@ const Register: React.FC = () => {
             id: 'name',
             type: 'text',
             placeholder: 'Name',
-            icon: <PersonIcon className=' text-white text-2xl'/>
         },
         { 
             id: 'email', 
             type: 'email', 
             placeholder: 'Email Address', 
-            icon: <CiMail className=' text-white text-2xl'/>
         }, 
         { 
             id: 'password', 
             type: 'password', 
             placeholder: 'Password', 
             icon: showPassword 
-                ? <CiUnlock className=' text-white text-2xl'/> 
-                : <CiLock className=' text-white text-2xl'/>
+                ? <CiUnlock className=' text-black text-2xl'/> 
+                : <CiLock className=' text-black text-2xl'/>
         }, 
         {
             id: 'confirmPassword',
             type: 'password',
             placeholder: 'Confirm Password',
             icon: showConfirmPassword
-                ? <CiUnlock className=' text-white text-2xl'/> 
-                : <CiLock className=' text-white text-2xl'/>
+                ? <CiUnlock className=' text-black text-2xl'/> 
+                : <CiLock className=' text-black text-2xl'/>
         }
     ];
 

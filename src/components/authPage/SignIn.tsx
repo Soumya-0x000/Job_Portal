@@ -39,8 +39,8 @@ const LoginPage: React.FC = () => {
             type: 'password', 
             placeholder: 'Password', 
             icon: passwordVisible 
-                ? <CiUnlock className=' text-white text-2xl'/> 
-                : <CiLock className=' text-white text-2xl'/>
+                ? <CiUnlock className=' text-2xl'/> 
+                : <CiLock className=' text-2xl'/>
         }
     ];
 
@@ -119,7 +119,7 @@ const LoginPage: React.FC = () => {
                                                                 ? togglePasswordVisibility
                                                                 : undefined
                                                         }
-                                                        className="cursor-pointer absolute right-3"
+                                                        className="cursor-pointer absolute right-3 text-black"
                                                     >
                                                         {icon}
                                                     </span>
