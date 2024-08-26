@@ -17,23 +17,23 @@ const AdminPanel: FC = () => {
         setUserName(admin?.username)
 
         if(uniqueId !== savedToken) {
-            navigate('/')
+            navigate('/admin')
         } else {
             (async() => {
-                const response = await axios.get(`${URL}/users/me`, {
+                const { data, status } = await axios.get(`${URL}/users/me`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'ngrok-skip-browser-warning': '69420',
                         authorization: `token ${savedToken}`,
                     }
                 })
-                console.log(response)
+                console.log(data, status)
             })();
         }
     }, []);
 
     return (
-        <div className=' bg-slate-400 min-h-screen w-full'>
+        <div className=' bg-slate -400 min-h-screen w-full'>
             <AdminSideBar userName={userName} />
         </div>
     );

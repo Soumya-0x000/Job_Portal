@@ -215,7 +215,7 @@ const RoomRow: React.FC<{
                     className=" text-indigo-900 font-mono font-bold bg-indigo-200 rounded-lg h-9 flex items-center justify-center px-4"
                     onClick={handleCandidateClick}
                 >
-                    Applied Candidates
+                    Booked Candidates
                 </button>
             </div>
 
@@ -245,6 +245,7 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({
     const isXlUp = useMediaQuery(theme.breakpoints.up(1536));
 
     const [page, setPage] = useState<number>(1);
+    const [startingIndex, setStartingIndex] = useState<number>(0);
 
     const getColumnWidth = (defaultWidth: number) => {
         if (isSmToMd) return defaultWidth * 0.5;
@@ -288,7 +289,7 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({
 
     const roomRows = (Array.isArray(rooms) ? rooms : [rooms]).map(
         (room, index) => ({
-            count: index + 1,
+            count: startingIndex + index + 1,
             id: room._id,
             roomName: room.roomName,
             roomNumber: room.roomNumber,
@@ -296,8 +297,7 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({
             appliedCandidates: room.appliedCandidates,
             totalBookings:
                 room.totalBookings || initialBookingsData.totalBookings,
-            bookingLimit:
-                room.bookingLimit || initialBookingsData.bookingLimit,
+            bookingLimit: room.bookingLimit || initialBookingsData.bookingLimit,
             bookingOffset:
                 room.bookingOffset || initialBookingsData.bookingOffset,
         })
@@ -313,6 +313,8 @@ export const AdminJobRoomTable: FC<JobRoomTableProps> = ({
         page: number
     ) => {
         setPage(page);
+        const offset = (page - 1) * paginationData.limit;
+        setStartingIndex(offset);
         setPaginationData((prev: adminPaginationType) => ({
             ...prev,
             offset: (page - 1) * prev.limit,

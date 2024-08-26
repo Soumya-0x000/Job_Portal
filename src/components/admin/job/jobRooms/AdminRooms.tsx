@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Loading } from "../../../../common/Loading";
 import { IoIosAdd } from "react-icons/io";
 import * as Yup from "yup";
@@ -104,7 +104,7 @@ const AdminRooms = () => {
     const [showInputs, setShowInputs] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true); //make it false for testing
     const [isCheckingAvail, setIsCheckingAvail] = useState<boolean>(false);
-    const [token, setToken] = useState<string>("");
+    // const [token, setToken] = useState<string>("");
     const [rooms, setRooms] = useState<roomType[]>([]);
     const [fetchingMode, setFetchingMode] = useState<string>(
         filterItems[0].value
@@ -117,15 +117,14 @@ const AdminRooms = () => {
     const [bookingPaginationData, setBookingPaginationData] =
         useState<bookingPaginationType>(initialBookingsData);
     const [isRoomBooked, setIsRoomBooked] = useState<boolean>(false);
+    const [noBookings, setNoBookings] = useState<boolean>(false);
+    const toastRef = useRef(true);
 
     const primaryURL = () =>
         `room-booking/get-room-details?limit=${paginationData.limit}&offset=${paginationData.offset}&bookingLimit=${bookingPaginationData.bookingLimit}&bookingOffset=${bookingPaginationData.bookingOffset}`;
     const handleClose = () => setOpen(false);
 
-    useEffect(() => {
-        const admin = JSON.parse(localStorage.getItem("adminDetails") || "");
-        setToken(admin?.token);
-    }, []);
+    const adminToken = () => (JSON.parse(localStorage.getItem("adminDetails") || ""))?.token;
 
     const dialogInputs = [
         { id: "seatCapacity", type: "number", placeholder: "Room Capacity" },
@@ -141,12 +140,11 @@ const AdminRooms = () => {
                 headers: {
                     "Content-Type": "application/json",
                     "ngrok-skip-browser-warning": "69420",
-                    authorization: `token ${token}`,
+                    authorization: `token ${adminToken()}`,
                 },
             }
         );
         if (response?.status === 201) {
-            // showToastMsg(`${response?.data?.message}`);
             setIsRoomBooked(true);
         }
 
@@ -165,11 +163,11 @@ const AdminRooms = () => {
         }
     }, [fetchingMode]);
 
-    const getRoomDetails: (endPoint: string) => void = async (endPoint) => {
+    const getRoomDetails: (endPoint: string) => void = async (endPoint) => {        
         const requestHeader = {
             "Content-Type": "application/json",
             "ngrok-skip-browser-warning": "69420",
-            authorization: `token ${token}`,
+            authorization: `token ${adminToken()}`,
         };
 
         const finalURL = `${URL}/${endPoint}`;
@@ -178,8 +176,13 @@ const AdminRooms = () => {
             const { data, status } = await axios.get(finalURL, {
                 headers: requestHeader,
             });
-
             if (status === 200) {
+                if (!data.data) {
+                    setNoBookings(true);
+                    setLoading(false);
+                    return;
+                }
+
                 setPaginationData((prev) => ({
                     ...prev,
                     totalRooms: data?.data?.totalRooms,
@@ -189,15 +192,29 @@ const AdminRooms = () => {
 
                 setRooms(data?.data?.rooms || []);
                 setLoading(false);
-            } else showToastMsg("Failed to fetch room details");
+                toastRef.current = true;
+            } else if (toastRef.current) {
+                setLoading(false)
+                showToastMsg("Failed to fetch room details");
+                toastRef.current = false;
+            }
         } catch (error: unknown) {
-            if (axios.isAxiosError(error))
-                showToastMsg(error.response?.data?.message || error.message);
-            else if (error instanceof Error) showToastMsg(error.message);
-            else
-                console.error(
-                    "An unknown error occurred while fetching room details"
-                );
+            if (toastRef.current) {
+                if (axios.isAxiosError(error)) {
+                    showToastMsg(
+                        error.response?.data?.message || error.message
+                    );
+                    toastRef.current = false;
+                } else if (error instanceof Error) {
+                    showToastMsg(error.message);
+                    toastRef.current = false;
+                } else {
+                    console.error(
+                        "An unknown error occurred while fetching room details"
+                    );
+                    toastRef.current = false; 
+                }
+            }
         }
     };
 
@@ -266,28 +283,39 @@ const AdminRooms = () => {
     };
 
     useEffect(() => {
-        // setPaginationData(initialPaginationData);
-    }, [fetchingMode]);
-
-    useEffect(() => {
         primaryURL();
         fetchConditionalData();
     }, [paginationData.offset, bookingPaginationData.bookingOffset]);
 
     return (
-        <div className=" bg-slate-400 overflow-auto">
+        <div className="flex items-center justify-center overflow-y-auto px-4 pt-20 pb-6">
             {loading ? (
-                <Loading />
-            ) : (
-                <div className=" w-full h-fit flex items-center flex-col pt-16">
-                    <AdminJobRoomTable
-                        rooms={rooms}
-                        setPaginationData={setPaginationData}
-                        paginationData={paginationData}
-                        setBookingPaginationData={setBookingPaginationData}
-                        bookingPaginationData={bookingPaginationData}
-                    />
+                <div className=" absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <Loading />
                 </div>
+            ) : (
+                <>
+                    {noBookings ? (
+                        <div className=" w-full h-full flex items-center justify-center pt-16">
+                            <iframe
+                                src="https://lottie.host/embed/eb65fabc-2cf5-423d-8e2b-5565df8f2b3f/ufOHvLNO9d.json"
+                                className="w-[30rem] aspect-square"
+                            />
+                        </div>
+                    ) : (
+                        <div className=" w-full h-fit flex items-center flex-col">
+                            <AdminJobRoomTable
+                                rooms={rooms}
+                                setPaginationData={setPaginationData}
+                                paginationData={paginationData}
+                                setBookingPaginationData={
+                                    setBookingPaginationData
+                                }
+                                bookingPaginationData={bookingPaginationData}
+                            />
+                        </div>
+                    )}
+                </>
             )}
 
             <>

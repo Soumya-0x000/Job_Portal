@@ -16,7 +16,6 @@ const Career: FC = () => {
     const [itemsPerPage, setItemsPerPage] = useState<number>(8)
     const location = useLocation();
     const formData = location?.state?.values
-    console.log(formData)
 
     useLayoutEffect(() => {
         const handleScreenSize = () => {
@@ -95,7 +94,6 @@ const Career: FC = () => {
             {loading 
                 ? <Loading />
                 : <>
-                {console.log('first')}
                     <div className=" grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-10 Llg:grid-cols-3 2xl:grid-cols-4 xl:gap-8 2xl:gap-6 mt-20">
                         {selectedJobs.map((job, indx) => (
                             <JobCard 

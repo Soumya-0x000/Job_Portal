@@ -66,7 +66,7 @@ const Dropdown: FC<{
             }
         } catch (error: unknown) {
             if (axios.isAxiosError(error)) {
-                console.log(error.response?.data?.message);
+                console.error(error.response?.data?.message);
             }
         }
     };

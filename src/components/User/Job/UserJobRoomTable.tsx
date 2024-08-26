@@ -133,7 +133,7 @@ export const UserJobRoomTable: FC<JobRoomTableProps> = ({
                     selectionDetails.bookingDate &&
                     selectionDetails.bookingDate?.format("YYYY-MM-DD"),
             };
-            console.log(newDetails);
+
             const response = await axios.post(
                 `${URL}/room-booking/book-room`,
                 newDetails,
@@ -147,7 +147,6 @@ export const UserJobRoomTable: FC<JobRoomTableProps> = ({
             );
 
             if (response.status === 200) setIsRoomBooked(true);
-            // console.log(response);
             setIsBookingAvail(false);
 
             const {
@@ -257,7 +256,6 @@ export const UserJobRoomTable: FC<JobRoomTableProps> = ({
         }));
     };
 
-    console.log(rooms);
     const validateRooms: () => boolean = () => {
         return (
             Array.isArray(rooms) &&
